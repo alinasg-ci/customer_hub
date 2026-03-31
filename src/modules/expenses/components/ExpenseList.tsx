@@ -139,7 +139,7 @@ export function ExpenseList({ projectId, phases }: ExpenseListProps) {
                   <td className="px-3 py-2">
                     <button
                       onClick={() => remove(expense.id)}
-                      className="text-gray-300 opacity-0 hover:text-red-500 group-hover:opacity-100"
+                      className="rounded p-1.5 text-gray-300 opacity-0 hover:text-red-500 group-hover:opacity-100"
                       aria-label="Delete expense"
                     >
                       x

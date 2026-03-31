@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import { useSubProjects } from '../hooks/useSubProjects';
 import { Skeleton } from '@/shared/ui/Skeleton';
+import { cn } from '@/shared/utils/cn';
 
 type SubProjectListProps = {
   readonly projectId: string;
@@ -117,6 +118,3 @@ export function SubProjectList({ projectId, totalBankHours }: SubProjectListProp
   );
 }
 
-function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(' ');
-}

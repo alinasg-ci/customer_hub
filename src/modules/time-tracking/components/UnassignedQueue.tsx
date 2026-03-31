@@ -105,7 +105,8 @@ export function UnassignedQueue({ projectId, phases }: UnassignedQueueProps) {
                         {kw.keyword}
                         <button
                           onClick={() => removeKeyword(kw.id)}
-                          className="text-blue-400 hover:text-red-500"
+                          className="rounded p-1 text-blue-400 hover:text-red-500"
+                          aria-label={`Remove keyword ${kw.keyword}`}
                         >
                           x
                         </button>

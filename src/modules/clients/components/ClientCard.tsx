@@ -47,7 +47,7 @@ export function ClientCard({ client, onEdit, onArchive, onReactivate, onClick }:
         >
           <button
             onClick={() => onEdit(client)}
-            className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded p-2.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
             aria-label={`Edit ${client.name}`}
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,7 +57,7 @@ export function ClientCard({ client, onEdit, onArchive, onReactivate, onClick }:
           {isArchived && onReactivate ? (
             <button
               onClick={() => onReactivate(client.id)}
-              className="rounded p-1.5 text-green-500 hover:bg-green-50 hover:text-green-700"
+              className="rounded p-2.5 text-green-500 hover:bg-green-50 hover:text-green-700"
               aria-label={`Reactivate ${client.name}`}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,7 +67,7 @@ export function ClientCard({ client, onEdit, onArchive, onReactivate, onClick }:
           ) : (
             <button
               onClick={() => onArchive(client.id)}
-              className="rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500"
+              className="rounded p-2.5 text-gray-400 hover:bg-red-50 hover:text-red-500"
               aria-label={`Archive ${client.name}`}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

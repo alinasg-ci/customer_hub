@@ -163,7 +163,7 @@ export function PhaseTile({ phase, layer, onUpdate, onDelete }: PhaseTileProps) 
         {/* Delete */}
         <button
           onClick={() => onDelete(phase.id)}
-          className="ml-1 rounded p-1 text-gray-300 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+          className="ml-1 rounded p-2 text-gray-300 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
           aria-label={`Delete ${phase.name}`}
         >
           <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
