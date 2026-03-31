@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { authenticateRequest, generateErrorId } from '../lib/auth';
 
 export async function POST(req: NextRequest) {
+  const authResult = await authenticateRequest(req);
+  if (authResult.error) return authResult.error;
+
   try {
     const { apiToken } = await req.json();
 
-    if (!apiToken) {
+    if (!apiToken || typeof apiToken !== 'string') {
       return NextResponse.json(
-        { data: null, error: { code: 'MISSING_TOKEN', message: 'API token is required' } },
+        { data: null, error: { code: 'MISSING_TOKEN', message: 'API token is required', id: generateErrorId() } },
         { status: 400 }
       );
     }
@@ -19,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       return NextResponse.json(
-        { data: null, error: { code: 'TOGGL_ERROR', message: 'Failed to fetch workspaces' } },
+        { data: null, error: { code: 'TOGGL_ERROR', message: 'Failed to fetch workspaces', id: generateErrorId() } },
         { status: response.status }
       );
     }
@@ -33,7 +37,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ data: mapped, error: null });
   } catch {
     return NextResponse.json(
-      { data: null, error: { code: 'FETCH_ERROR', message: 'Failed to fetch workspaces' } },
+      { data: null, error: { code: 'FETCH_ERROR', message: 'Failed to fetch workspaces', id: generateErrorId() } },
       { status: 500 }
     );
   }

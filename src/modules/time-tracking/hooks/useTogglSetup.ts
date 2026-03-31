@@ -1,8 +1,15 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { supabase } from '@/shared/hooks/useSupabase';
 import { fetchTogglConnection, saveTogglConnection, disconnectToggl } from '../api/toggl';
 import type { TogglConnection, TogglWorkspace, TogglProject } from '../types';
+
+async function getAuthHeader(): Promise<string> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) throw new Error('Not authenticated');
+  return `Bearer ${session.access_token}`;
+}
 
 export function useTogglSetup() {
   const [connection, setConnection] = useState<TogglConnection | null>(null);
@@ -22,22 +29,33 @@ export function useTogglSetup() {
     }
   }, []);
 
-  const validateToken = useCallback(async (apiToken: string): Promise<{ valid: boolean; error?: string }> => {
-    const response = await fetch('/api/toggl/validate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ apiToken }),
-    });
+  // Auto-load on mount
+  useEffect(() => {
+    loadConnection();
+  }, [loadConnection]);
 
-    const result = await response.json();
-    if (result.error) return { valid: false, error: result.error.message };
-    return { valid: true };
+  const validateToken = useCallback(async (apiToken: string): Promise<{ valid: boolean; error?: string }> => {
+    try {
+      const authHeader = await getAuthHeader();
+      const response = await fetch('/api/toggl/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': authHeader },
+        body: JSON.stringify({ apiToken }),
+      });
+
+      const result = await response.json();
+      if (result.error) return { valid: false, error: result.error.message };
+      return { valid: true };
+    } catch (err: unknown) {
+      return { valid: false, error: err instanceof Error ? err.message : 'Validation failed' };
+    }
   }, []);
 
   const fetchWorkspaces = useCallback(async (apiToken: string): Promise<TogglWorkspace[]> => {
+    const authHeader = await getAuthHeader();
     const response = await fetch('/api/toggl/workspaces', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': authHeader },
       body: JSON.stringify({ apiToken }),
     });
 
@@ -47,9 +65,10 @@ export function useTogglSetup() {
   }, []);
 
   const fetchProjects = useCallback(async (apiToken: string, workspaceId: string): Promise<TogglProject[]> => {
+    const authHeader = await getAuthHeader();
     const response = await fetch('/api/toggl/projects', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': authHeader },
       body: JSON.stringify({ apiToken, workspaceId }),
     });
 
@@ -69,8 +88,12 @@ export function useTogglSetup() {
   }, []);
 
   const disconnect = useCallback(async () => {
-    await disconnectToggl();
-    setConnection(null);
+    try {
+      await disconnectToggl();
+      setConnection(null);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to disconnect');
+    }
   }, []);
 
   return {

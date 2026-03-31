@@ -5,7 +5,7 @@ import { useReport } from '../hooks/useReport';
 import { ManualEntryForm } from './ManualEntryForm';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { cn } from '@/shared/utils/cn';
-import type { Phase } from '@/modules/planning/types';
+import type { Phase } from '@/modules/planning';
 import type { GroupBy, SortBy } from '../types';
 
 type ReportTableProps = {

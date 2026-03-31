@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { fetchCachedEntries } from '@/modules/time-tracking/api/toggl';
+import { fetchCachedEntries } from '@/modules/time-tracking';
 import { fetchManualEntries, createManualEntry, deleteManualEntry } from '../api/reportsApi';
 import type {
   ReportEntry,
@@ -12,7 +12,7 @@ import type {
   GroupedEntries,
   CreateManualEntryInput,
 } from '../types';
-import type { Phase } from '@/modules/planning/types';
+import type { Phase } from '@/modules/planning';
 
 export function useReport(projectId: string, phases: readonly Phase[]) {
   const [allEntries, setAllEntries] = useState<readonly ReportEntry[]>([]);
@@ -122,9 +122,9 @@ export function useReport(projectId: string, phases: readonly Phase[]) {
     }));
   }, [sorted, groupBy]);
 
-  // Totals
-  const totalHours = filtered.reduce((sum, e) => sum + e.hours, 0);
-  const billableHours = filtered.filter((e) => e.billable).reduce((sum, e) => sum + e.hours, 0);
+  // Totals (memoized)
+  const totalHours = useMemo(() => filtered.reduce((sum, e) => sum + e.hours, 0), [filtered]);
+  const billableHours = useMemo(() => filtered.filter((e) => e.billable).reduce((sum, e) => sum + e.hours, 0), [filtered]);
 
   // Selected entries subtotal
   const selectedSubtotal = useMemo(() => {

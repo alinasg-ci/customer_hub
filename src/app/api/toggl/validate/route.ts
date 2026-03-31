@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { authenticateRequest, generateErrorId } from '../lib/auth';
 
 export async function POST(req: NextRequest) {
+  const authResult = await authenticateRequest(req);
+  if (authResult.error) return authResult.error;
+
   try {
     const { apiToken } = await req.json();
 
-    if (!apiToken) {
+    if (!apiToken || typeof apiToken !== 'string') {
       return NextResponse.json(
-        { data: null, error: { code: 'MISSING_TOKEN', message: 'API token is required' } },
+        { data: null, error: { code: 'MISSING_TOKEN', message: 'API token is required', id: generateErrorId() } },
         { status: 400 }
       );
     }
@@ -19,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       return NextResponse.json(
-        { data: null, error: { code: 'INVALID_TOKEN', message: 'Invalid API token. You can find your token in Toggl under Profile Settings.' } },
+        { data: null, error: { code: 'INVALID_TOKEN', message: 'Invalid API token. You can find your token in Toggl under Profile Settings.', id: generateErrorId() } },
         { status: 401 }
       );
     }
@@ -28,7 +32,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ data: { email: user.email, fullname: user.fullname }, error: null });
   } catch {
     return NextResponse.json(
-      { data: null, error: { code: 'VALIDATION_ERROR', message: 'Failed to validate token' } },
+      { data: null, error: { code: 'VALIDATION_ERROR', message: 'Failed to validate token', id: generateErrorId() } },
       { status: 500 }
     );
   }

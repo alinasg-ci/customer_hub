@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import type { CreateManualEntryInput } from '../types';
-import type { Phase } from '@/modules/planning/types';
+import type { Phase } from '@/modules/planning';
 
 type ManualEntryFormProps = {
   readonly projectId: string;

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useExpenses } from '../hooks/useExpenses';
 import { ExpenseForm } from './ExpenseForm';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import type { Phase } from '@/modules/planning/types';
+import type { Phase } from '@/modules/planning';
 import type { CreateExpenseInput, Expense } from '../types';
 import type { ExpenseCategory } from '@/shared/types';
 

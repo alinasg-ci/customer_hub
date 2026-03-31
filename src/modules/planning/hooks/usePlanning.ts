@@ -49,9 +49,11 @@ export function usePlanning(projectId: string) {
   }, [load]);
 
   const add = useCallback(async (input: CreatePhaseInput) => {
-    const maxOrder = phases.length > 0
-      ? Math.max(...phases.map((p) => p.display_order))
-      : -1;
+    let maxOrder = -1;
+    setPhases((prev) => {
+      maxOrder = prev.length > 0 ? Math.max(...prev.map((p) => p.display_order)) : -1;
+      return prev;
+    });
 
     const created = await createPhase({
       ...input,
@@ -59,7 +61,7 @@ export function usePlanning(projectId: string) {
     });
     setPhases((prev) => [...prev, created]);
     return created;
-  }, [phases]);
+  }, []);
 
   const addAtPosition = useCallback(async (input: CreatePhaseInput, position: number) => {
     // Shift existing phases after the insertion point

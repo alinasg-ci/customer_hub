@@ -5,7 +5,7 @@ import { useTogglSetup } from '../hooks/useTogglSetup';
 import { createTogglMapping, fetchTogglMappings, deleteTogglMapping } from '../api/toggl';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import type { TogglWorkspace, TogglProject, TogglMapping } from '../types';
-import type { Project } from '@/modules/projects/types';
+import type { Project } from '@/modules/projects';
 
 type TogglSetupProps = {
   readonly hubProjects: readonly Project[];

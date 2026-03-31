@@ -6,7 +6,7 @@ import {
   calculateBankProfitability,
 } from '../calculations';
 import { cn } from '@/shared/utils/cn';
-import type { Project } from '@/modules/projects/types';
+import type { Project } from '@/modules/projects';
 
 type ProfitabilityCardProps = {
   readonly project: Project;

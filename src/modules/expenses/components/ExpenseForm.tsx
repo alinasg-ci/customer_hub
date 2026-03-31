@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import type { Currency, ExpenseCategory } from '@/shared/types';
 import type { CreateExpenseInput } from '../types';
-import type { Phase } from '@/modules/planning/types';
+import type { Phase } from '@/modules/planning';
 
 type ExpenseFormProps = {
   readonly projectId: string;

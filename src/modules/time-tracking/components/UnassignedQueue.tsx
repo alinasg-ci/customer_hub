@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { usePhaseMapping } from '../hooks/usePhaseMapping';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import type { Phase } from '@/modules/planning/types';
+import type { Phase } from '@/modules/planning';
 
 type UnassignedQueueProps = {
   readonly projectId: string;
