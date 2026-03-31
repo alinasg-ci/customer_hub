@@ -4,5 +4,5 @@ export { ArchiveList } from './components/ArchiveList';
 export { ClientCard } from './components/ClientCard';
 export { ClientForm } from './components/ClientForm';
 export { useClients } from './hooks/useClients';
-export { fetchClientById } from './api/clientsApi';
+export { fetchClientById, deleteClient } from './api/clientsApi';
 export type { Client, CreateClientInput, UpdateClientInput } from './types';

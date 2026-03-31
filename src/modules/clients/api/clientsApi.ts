@@ -83,6 +83,47 @@ export async function reactivateClient(id: string): Promise<Client> {
   return data as Client;
 }
 
+export async function deleteClient(id: string): Promise<void> {
+  // Notes use polymorphic parent_type/parent_id with no FK —
+  // cascade delete won't clean them up. Gather related IDs first.
+  const { data: projects } = await supabase
+    .from('projects')
+    .select('id')
+    .eq('client_id', id);
+
+  const projectIds = (projects ?? []).map((p: { id: string }) => p.id);
+
+  if (projectIds.length > 0) {
+    // Fetch phases and sub_projects for note cleanup
+    const [{ data: phases }, { data: subProjects }] = await Promise.all([
+      supabase.from('phases').select('id').in('project_id', projectIds),
+      supabase.from('sub_projects').select('id').in('project_id', projectIds),
+    ]);
+
+    const phaseIds = (phases ?? []).map((p: { id: string }) => p.id);
+    const subProjectIds = (subProjects ?? []).map((s: { id: string }) => s.id);
+
+    // Delete orphan-prone notes for all related entities
+    if (projectIds.length > 0) {
+      await supabase.from('notes').delete().eq('parent_type', 'project').in('parent_id', projectIds);
+    }
+    if (phaseIds.length > 0) {
+      await supabase.from('notes').delete().eq('parent_type', 'phase').in('parent_id', phaseIds);
+    }
+    if (subProjectIds.length > 0) {
+      await supabase.from('notes').delete().eq('parent_type', 'sub_project').in('parent_id', subProjectIds);
+    }
+  }
+
+  // Now delete the client — CASCADE handles projects and all their children
+  const { error } = await supabase
+    .from('clients')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+}
+
 export async function searchClients(query: string, status: 'active' | 'archived' = 'active'): Promise<Client[]> {
   const { data, error } = await supabase
     .from('clients')

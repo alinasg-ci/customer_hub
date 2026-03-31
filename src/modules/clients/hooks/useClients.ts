@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { fetchClients, createClient, updateClient, archiveClient, reactivateClient, searchClients } from '../api/clientsApi';
+import { fetchClients, createClient, updateClient, archiveClient, reactivateClient, searchClients, deleteClient } from '../api/clientsApi';
 import type { Client, CreateClientInput, UpdateClientInput } from '../types';
 
 export function useClients(status: 'active' | 'archived' = 'active') {
@@ -53,6 +53,11 @@ export function useClients(status: 'active' | 'archived' = 'active') {
     return activated;
   }, []);
 
+  const remove = useCallback(async (id: string) => {
+    await deleteClient(id);
+    setClients((prev) => prev.filter((c) => c.id !== id));
+  }, []);
+
   const search = useCallback(async (query: string) => {
     if (!query.trim()) {
       await load();
@@ -70,5 +75,5 @@ export function useClients(status: 'active' | 'archived' = 'active') {
     }
   }, [status, load]);
 
-  return { clients, loading, error, add, edit, archive, reactivate, search, reload: load };
+  return { clients, loading, error, add, edit, archive, reactivate, remove, search, reload: load };
 }

@@ -72,3 +72,26 @@ export type TimeEntry = {
   readonly billable: boolean;
   readonly assignmentType: PhaseAssignmentType;
 };
+
+export type SyncStatus = 'pending' | 'accepted' | 'excluded';
+
+export type SyncPreviewEntry = {
+  readonly toggl_entry_id: number;
+  readonly description: string | null;
+  readonly start_time: string;
+  readonly duration_hours: number;
+  readonly billable: boolean;
+  readonly toggl_project_name: string | null;
+  readonly proposed_project_id: string | null;
+  readonly proposed_phase_id: string | null;
+  readonly proposed_phase_name: string | null;
+  action: 'accept' | 'reassign' | 'exclude';
+  reassigned_phase_id: string | null;
+};
+
+export type TogglExclusion = {
+  readonly id: string;
+  readonly toggl_entry_id: number;
+  readonly excluded_at: string;
+  readonly user_id: string;
+};

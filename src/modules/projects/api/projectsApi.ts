@@ -67,6 +67,36 @@ export async function updateProjectStatus(id: string, status: 'active' | 'pendin
   return data as Project;
 }
 
+export async function deleteProject(id: string): Promise<void> {
+  // Notes use polymorphic parent_type/parent_id with no FK —
+  // cascade delete won't clean them up. Gather related IDs first.
+  const [{ data: phases }, { data: subProjects }] = await Promise.all([
+    supabase.from('phases').select('id').eq('project_id', id),
+    supabase.from('sub_projects').select('id').eq('project_id', id),
+  ]);
+
+  const phaseIds = (phases ?? []).map((p: { id: string }) => p.id);
+  const subProjectIds = (subProjects ?? []).map((s: { id: string }) => s.id);
+
+  // Delete orphan-prone notes for all related entities
+  await supabase.from('notes').delete().eq('parent_type', 'project').eq('parent_id', id);
+
+  if (phaseIds.length > 0) {
+    await supabase.from('notes').delete().eq('parent_type', 'phase').in('parent_id', phaseIds);
+  }
+  if (subProjectIds.length > 0) {
+    await supabase.from('notes').delete().eq('parent_type', 'sub_project').in('parent_id', subProjectIds);
+  }
+
+  // Now delete the project — CASCADE handles phases, sub_projects, entries, etc.
+  const { error } = await supabase
+    .from('projects')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+}
+
 // Sub-projects
 
 export async function fetchSubProjects(projectId: string): Promise<SubProject[]> {

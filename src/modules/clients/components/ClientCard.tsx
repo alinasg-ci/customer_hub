@@ -8,10 +8,11 @@ type ClientCardProps = {
   readonly onEdit: (client: Client) => void;
   readonly onArchive: (id: string) => void;
   readonly onReactivate?: (id: string) => void;
+  readonly onDelete?: (id: string) => void;
   readonly onClick: (id: string) => void;
 };
 
-export function ClientCard({ client, onEdit, onArchive, onReactivate, onClick }: ClientCardProps) {
+export function ClientCard({ client, onEdit, onArchive, onReactivate, onDelete, onClick }: ClientCardProps) {
   const isArchived = client.status === 'archived';
 
   return (
@@ -72,6 +73,17 @@ export function ClientCard({ client, onEdit, onArchive, onReactivate, onClick }:
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+              </svg>
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={() => onDelete(client.id)}
+              className="rounded p-2.5 text-gray-400 hover:bg-red-50 hover:text-red-600"
+              aria-label={`Delete ${client.name}`}
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
             </button>
           )}

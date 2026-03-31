@@ -5,13 +5,16 @@ import { useRouter } from 'next/navigation';
 import { useClients } from '../hooks/useClients';
 import { ClientCard } from './ClientCard';
 import { ClientForm } from './ClientForm';
+import { ConfirmDeleteDialog } from '@/shared/ui/ConfirmDeleteDialog';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import type { Client, CreateClientInput, UpdateClientInput } from '../types';
 
 export function ClientList() {
-  const { clients, loading, error, add, edit, archive, reload } = useClients('active');
+  const { clients, loading, error, add, edit, archive, remove, reload } = useClients('active');
   const [showForm, setShowForm] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [deletingClient, setDeletingClient] = useState<Client | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const router = useRouter();
 
   const handleCreate = useCallback(async (data: CreateClientInput | UpdateClientInput) => {
@@ -28,6 +31,24 @@ export function ClientList() {
   const handleArchive = useCallback(async (id: string) => {
     await archive(id);
   }, [archive]);
+
+  const handleDeleteClick = useCallback((id: string) => {
+    const client = clients.find((c) => c.id === id);
+    if (client) setDeletingClient(client);
+  }, [clients]);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!deletingClient) return;
+    setDeleteLoading(true);
+    try {
+      await remove(deletingClient.id);
+      setDeletingClient(null);
+    } catch {
+      // Error handled by hook
+    } finally {
+      setDeleteLoading(false);
+    }
+  }, [deletingClient, remove]);
 
   const handleClick = useCallback((id: string) => {
     router.push(`/client/${id}`);
@@ -90,6 +111,7 @@ export function ClientList() {
               client={client}
               onEdit={setEditingClient}
               onArchive={handleArchive}
+              onDelete={handleDeleteClick}
               onClick={handleClick}
             />
           ))}
@@ -110,6 +132,15 @@ export function ClientList() {
           onCancel={() => setEditingClient(null)}
         />
       )}
+
+      <ConfirmDeleteDialog
+        open={deletingClient !== null}
+        title="Delete client"
+        message={`Permanently delete "${deletingClient?.name ?? ''}" and all its projects, data, and history? This action cannot be undone.`}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeletingClient(null)}
+        loading={deleteLoading}
+      />
     </div>
   );
 }

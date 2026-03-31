@@ -6,6 +6,7 @@ import type { Project } from '../types';
 type ProjectCardProps = {
   readonly project: Project;
   readonly onStatusChange: (id: string, status: 'active' | 'pending' | 'closed') => void;
+  readonly onDelete?: (id: string) => void;
   readonly onClick: (id: string) => void;
 };
 
@@ -23,7 +24,7 @@ const TYPE_LABELS: Record<string, string> = {
 
 const CURRENCY_SYMBOLS: Record<string, string> = { ILS: '₪', USD: '$', EUR: '€' };
 
-export function ProjectCard({ project, onStatusChange, onClick }: ProjectCardProps) {
+export function ProjectCard({ project, onStatusChange, onDelete, onClick }: ProjectCardProps) {
   const isClosed = project.status === 'closed';
 
   function formatMoney(amount: number | null, currency: string): string {
@@ -35,7 +36,7 @@ export function ProjectCard({ project, onStatusChange, onClick }: ProjectCardPro
   return (
     <div
       className={cn(
-        'rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-md cursor-pointer',
+        'group rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-md cursor-pointer',
         isClosed && 'opacity-60'
       )}
       onClick={() => onClick(project.id)}
@@ -60,7 +61,7 @@ export function ProjectCard({ project, onStatusChange, onClick }: ProjectCardPro
           </div>
           <p className="mt-1 text-xs text-gray-500">{TYPE_LABELS[project.type]}</p>
         </div>
-        <div className="ml-3" onClick={(e) => e.stopPropagation()}>
+        <div className="ml-3 flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
           <select
             value={project.status}
             onChange={(e) => onStatusChange(project.id, e.target.value as 'active' | 'pending' | 'closed')}
@@ -70,6 +71,17 @@ export function ProjectCard({ project, onStatusChange, onClick }: ProjectCardPro
             <option value="pending">Pending</option>
             <option value="closed">Closed</option>
           </select>
+          {onDelete && (
+            <button
+              onClick={() => onDelete(project.id)}
+              className="rounded p-2.5 text-gray-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
+              aria-label={`Delete ${project.name}`}
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
 

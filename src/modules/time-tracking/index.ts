@@ -8,4 +8,6 @@ export { usePhaseMapping } from './hooks/usePhaseMapping';
 export { getTimeEntries, syncTime } from './adapter';
 export { fetchCachedEntries, updateEntryPhase } from './api/toggl';
 export { matchEntryToPhase, matchAllUnassigned } from './matching';
-export type { TimeEntry, CachedTimeEntry, TogglConnection, TogglMapping } from './types';
+export { SyncPreview } from './components/SyncPreview';
+export { useSyncPreview } from './hooks/useSyncPreview';
+export type { TimeEntry, CachedTimeEntry, TogglConnection, TogglMapping, SyncPreviewEntry, TogglExclusion } from './types';

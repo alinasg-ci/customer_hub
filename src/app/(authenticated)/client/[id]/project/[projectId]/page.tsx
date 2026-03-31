@@ -7,10 +7,12 @@ import { PlanningBoard, usePlanning } from '@/modules/planning';
 import { SubProjectList } from '@/modules/projects';
 import { NoteList } from '@/modules/notes';
 import { ExpenseList } from '@/modules/expenses';
-import { TimeEntryList, UnassignedQueue, useTimeEntries } from '@/modules/time-tracking';
+import { TimeEntryList, UnassignedQueue, SyncPreview, useTimeEntries } from '@/modules/time-tracking';
 import { ProfitabilityCard } from '@/modules/profitability';
 import { useExpenses } from '@/modules/expenses';
 import { ReportTable } from '@/modules/reports';
+import { PlanningTableView } from '@/modules/planning-table';
+import { ComparisonPanel } from '@/modules/comparison';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import type { Project } from '@/modules/projects';
 
@@ -160,10 +162,27 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
         </div>
       )}
 
-      {/* Planning board */}
+      {/* Planning board (M1 — budget/internal tiles) */}
       <div className="mb-6">
         <h2 className="mb-3 text-lg font-semibold text-gray-900">Planning</h2>
         <PlanningBoard projectId={project.id} />
+      </div>
+
+      {/* Budget vs Plan vs Actual comparison (M2) */}
+      <div className="mb-6">
+        <h2 className="mb-3 text-lg font-semibold text-gray-900">Budget vs Plan vs Actual</h2>
+        <ComparisonWithData projectId={project.id} />
+      </div>
+
+      {/* Internal planning table (M2 — hierarchical project plan) */}
+      <div className="mb-6">
+        <h2 className="mb-3 text-lg font-semibold text-gray-900">Project Plan</h2>
+        <PlanningTableView projectId={project.id} clientId={clientId} />
+      </div>
+
+      {/* Toggl sync preview (M2) */}
+      <div className="mb-6">
+        <SyncPreviewWithPhases projectId={project.id} />
       </div>
 
       {/* Time entries */}
@@ -218,4 +237,18 @@ function ProfitabilityWithData({ project }: { project: Project }) {
 function ReportWithPhases({ projectId }: { projectId: string }) {
   const { phases } = usePlanning(projectId);
   return <ReportTable projectId={projectId} phases={phases} />;
+}
+
+// Wrapper to load phases + time entries for comparison panel
+function ComparisonWithData({ projectId }: { projectId: string }) {
+  const { phases } = usePlanning(projectId);
+  const { entries } = useTimeEntries(projectId);
+  return <ComparisonPanel projectId={projectId} phases={phases} timeEntries={entries} />;
+}
+
+// Wrapper to load phases for sync preview
+function SyncPreviewWithPhases({ projectId }: { projectId: string }) {
+  const { phases } = usePlanning(projectId);
+  const { reload } = useTimeEntries(projectId);
+  return <SyncPreview phases={phases} onSyncComplete={reload} />;
 }

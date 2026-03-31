@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { fetchProjectsByClient, createProject, updateProject, updateProjectStatus } from '../api/projectsApi';
+import { fetchProjectsByClient, createProject, updateProject, updateProjectStatus, deleteProject } from '../api/projectsApi';
 import type { Project, CreateProjectInput, UpdateProjectInput } from '../types';
 
 export function useProjects(clientId: string) {
@@ -49,5 +49,10 @@ export function useProjects(clientId: string) {
     return updated;
   }, []);
 
-  return { projects, loading, error, add, edit, setStatus, reload: load };
+  const remove = useCallback(async (id: string) => {
+    await deleteProject(id);
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+  }, []);
+
+  return { projects, loading, error, add, edit, setStatus, remove, reload: load };
 }

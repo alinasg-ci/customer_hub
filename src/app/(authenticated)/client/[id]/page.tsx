@@ -4,9 +4,10 @@ import { useState, useEffect, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchClientById } from '@/modules/clients';
 import { ProjectCard, ProjectForm, SubProjectList, useProjects } from '@/modules/projects';
+import { ConfirmDeleteDialog } from '@/shared/ui/ConfirmDeleteDialog';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import type { Client } from '@/modules/clients';
-import type { CreateProjectInput } from '@/modules/projects';
+import type { CreateProjectInput, Project } from '@/modules/projects';
 
 export default function ClientPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -15,7 +16,9 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
   const [clientError, setClientError] = useState<string | null>(null);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [expandedHourBank, setExpandedHourBank] = useState<string | null>(null);
-  const { projects, loading: projectsLoading, error: projectsError, add, setStatus } = useProjects(id);
+  const { projects, loading: projectsLoading, error: projectsError, add, setStatus, remove } = useProjects(id);
+  const [deletingProject, setDeletingProject] = useState<Project | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -37,6 +40,24 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
     await add(data);
     setShowProjectForm(false);
   }, [add]);
+
+  const handleDeleteClick = useCallback((projectId: string) => {
+    const project = projects.find((p) => p.id === projectId);
+    if (project) setDeletingProject(project);
+  }, [projects]);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!deletingProject) return;
+    setDeleteLoading(true);
+    try {
+      await remove(deletingProject.id);
+      setDeletingProject(null);
+    } catch {
+      // Error handled by hook
+    } finally {
+      setDeleteLoading(false);
+    }
+  }, [deletingProject, remove]);
 
   if (clientLoading) {
     return (
@@ -117,7 +138,7 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
               <div className="grid gap-3 sm:grid-cols-2">
                 {activeProjects.map((project) => (
                   <div key={project.id}>
-                    <ProjectCard project={project} onStatusChange={setStatus} onClick={(pid) => router.push(`/client/${id}/project/${pid}`)} />
+                    <ProjectCard project={project} onStatusChange={setStatus} onDelete={handleDeleteClick} onClick={(pid) => router.push(`/client/${id}/project/${pid}`)} />
                     {project.type === 'hour_bank' && (
                       <div className="mt-1">
                         <button
@@ -144,7 +165,7 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
               </h2>
               <div className="grid gap-3 sm:grid-cols-2">
                 {pendingProjects.map((project) => (
-                  <ProjectCard key={project.id} project={project} onStatusChange={setStatus} onClick={(pid) => router.push(`/client/${id}/project/${pid}`)} />
+                  <ProjectCard key={project.id} project={project} onStatusChange={setStatus} onDelete={handleDeleteClick} onClick={(pid) => router.push(`/client/${id}/project/${pid}`)} />
                 ))}
               </div>
             </section>
@@ -157,7 +178,7 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
               </h2>
               <div className="grid gap-3 sm:grid-cols-2">
                 {closedProjects.map((project) => (
-                  <ProjectCard key={project.id} project={project} onStatusChange={setStatus} onClick={(pid) => router.push(`/client/${id}/project/${pid}`)} />
+                  <ProjectCard key={project.id} project={project} onStatusChange={setStatus} onDelete={handleDeleteClick} onClick={(pid) => router.push(`/client/${id}/project/${pid}`)} />
                 ))}
               </div>
             </section>
@@ -172,6 +193,15 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
           onCancel={() => setShowProjectForm(false)}
         />
       )}
+
+      <ConfirmDeleteDialog
+        open={deletingProject !== null}
+        title="Delete project"
+        message={`Permanently delete "${deletingProject?.name ?? ''}" and all its phases, time entries, expenses, and planning table? This action cannot be undone.`}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeletingProject(null)}
+        loading={deleteLoading}
+      />
     </div>
   );
 }
