@@ -42,27 +42,27 @@ export function ClientForm({ client, onSubmit, onCancel }: ClientFormProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+        <h2 className="mb-5 text-lg font-semibold text-slate-900">
           {isEdit ? 'Edit Client' : 'New Client'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="client-name" className="block text-sm font-medium text-gray-700">
-              Client Name *
+            <label htmlFor="client-name" className="block text-sm font-medium text-slate-700">
+              Client Name <span className="text-red-400">*</span>
             </label>
             <input
               id="client-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1.5 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
               autoFocus
             />
           </div>
           <div>
-            <label htmlFor="client-company" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="client-company" className="block text-sm font-medium text-slate-700">
               Company
             </label>
             <input
@@ -70,7 +70,7 @@ export function ClientForm({ client, onSubmit, onCancel }: ClientFormProps) {
               type="text"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1.5 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
             />
           </div>
           {error && (
@@ -80,14 +80,14 @@ export function ClientForm({ client, onSubmit, onCancel }: ClientFormProps) {
             <button
               type="button"
               onClick={onCancel}
-              className="rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:opacity-50"
             >
               {loading ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Client'}
             </button>

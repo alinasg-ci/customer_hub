@@ -32,10 +32,11 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
   const [togglProjects, setTogglProjects] = useState<readonly TogglProject[]>([]);
   const [mappings, setMappings] = useState<readonly TogglMapping[]>([]);
   const [validating, setValidating] = useState(false);
+  const [selectingWorkspace, setSelectingWorkspace] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadConnection().then(() => {});
+    void loadConnection();
   }, [loadConnection]);
 
   useEffect(() => {
@@ -71,15 +72,19 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
   async function handleSelectWorkspace(ws: TogglWorkspace) {
     setSelectedWorkspace(ws);
     setError(null);
+    setSelectingWorkspace(true);
     try {
       const projects = await fetchProjects(apiToken, String(ws.id));
       setTogglProjects(projects);
       await connect(apiToken, String(ws.id), ws.name);
+      setApiToken(''); // Clear token from memory after successful connect
       const existing = await fetchTogglMappings();
       setMappings(existing);
       setStep('mapping');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to load projects');
+    } finally {
+      setSelectingWorkspace(false);
     }
   }
 
@@ -93,8 +98,12 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
   }
 
   async function handleDeleteMapping(id: string) {
-    await deleteTogglMapping(id);
-    setMappings((prev) => prev.filter((m) => m.id !== id));
+    try {
+      await deleteTogglMapping(id);
+      setMappings((prev) => prev.filter((m) => m.id !== id));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to remove mapping');
+    }
   }
 
   async function handleDisconnect() {
@@ -112,10 +121,10 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-gray-900">Toggl Connection</h2>
+      <h2 className="text-lg font-semibold text-slate-900">Toggl Connection</h2>
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}
         </div>
       )}
@@ -123,7 +132,7 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
       {/* Step 1: Token input */}
       {step === 'token' && (
         <form onSubmit={handleValidateToken} className="space-y-3">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-slate-500">
             Enter your Toggl API token to connect. Find it in Toggl under Profile Settings.
           </p>
           <input
@@ -131,12 +140,12 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
             value={apiToken}
             onChange={(e) => setApiToken(e.target.value)}
             placeholder="Your Toggl API token"
-            className="block w-full max-w-md rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full max-w-md rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
           />
           <button
             type="submit"
             disabled={validating || !apiToken.trim()}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
           >
             {validating ? 'Validating...' : 'Validate & Connect'}
           </button>
@@ -146,15 +155,16 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
       {/* Step 2: Workspace selection */}
       {step === 'workspace' && (
         <div className="space-y-3">
-          <p className="text-sm text-gray-500">Select a workspace:</p>
+          <p className="text-sm text-slate-500">Select a workspace:</p>
           <div className="space-y-2">
             {workspaces.map((ws) => (
               <button
                 key={ws.id}
                 onClick={() => handleSelectWorkspace(ws)}
-                className="block w-full max-w-md rounded-md border border-gray-300 px-4 py-3 text-left text-sm hover:bg-blue-50 hover:border-blue-300"
+                disabled={selectingWorkspace}
+                className="block w-full max-w-md rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 hover:border-indigo-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {ws.name}
+                {selectingWorkspace && selectedWorkspace?.id === ws.id ? 'Connecting...' : ws.name}
               </button>
             ))}
           </div>
@@ -164,28 +174,29 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
       {/* Step 3: Project mapping */}
       {step === 'mapping' && (
         <div className="space-y-3">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-slate-500">
             Map your Toggl projects to hub projects. Workspace: <strong>{selectedWorkspace?.name}</strong>
           </p>
 
           {togglProjects.length === 0 ? (
-            <p className="text-sm text-gray-400">No projects found in this workspace.</p>
+            <p className="text-sm text-slate-400">No projects found in this workspace.</p>
           ) : (
             <div className="space-y-2">
               {togglProjects.map((tp) => {
                 const existing = mappings.find((m) => m.toggl_project_id === tp.id);
                 return (
-                  <div key={tp.id} className="flex items-center gap-3 rounded border border-gray-200 px-3 py-2">
-                    <span className="min-w-[140px] text-sm font-medium text-gray-800">{tp.name}</span>
-                    <span className="text-gray-400">&rarr;</span>
+                  <div key={tp.id} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
+                    <span className="min-w-[140px] text-sm font-medium text-slate-800">{tp.name}</span>
+                    <span className="text-slate-400">&rarr;</span>
                     {existing ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-green-700">
+                        <span className="text-sm text-emerald-700">
                           {hubProjects.find((hp) => hp.id === existing.project_id)?.name ?? 'Mapped'}
                         </span>
                         <button
                           onClick={() => handleDeleteMapping(existing.id)}
-                          className="text-xs text-gray-400 hover:text-red-500"
+                          aria-label={`Remove mapping for ${tp.name}`}
+                          className="text-xs text-slate-400 hover:text-red-500"
                         >
                           Remove
                         </button>
@@ -196,7 +207,7 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
                         onChange={(e) => {
                           if (e.target.value) handleCreateMapping(tp.id, tp.name, e.target.value);
                         }}
-                        className="rounded border border-gray-300 px-2 py-1 text-sm"
+                        className="rounded-lg border border-slate-200 px-2 py-1 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
                       >
                         <option value="">Select hub project...</option>
                         {hubProjects.map((hp) => (
@@ -212,7 +223,7 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
 
           <button
             onClick={() => setStep('connected')}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
           >
             Done
           </button>
@@ -223,13 +234,13 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
       {step === 'connected' && connection && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <span className="inline-block h-2 w-2 rounded-full bg-green-500" />
-            <span className="text-sm text-gray-700">
+            <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+            <span className="text-sm text-slate-700">
               Connected to workspace: <strong>{connection.workspace_name}</strong>
             </span>
           </div>
           {connection.last_sync_at && (
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-slate-400">
               Last sync: {new Date(connection.last_sync_at).toLocaleString()}
             </p>
           )}
@@ -237,15 +248,16 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
           {/* Show existing mappings */}
           {mappings.length > 0 && (
             <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-600">Project mappings:</p>
+              <p className="text-sm font-medium text-slate-500">Project mappings:</p>
               {mappings.map((m) => (
-                <div key={m.id} className="flex items-center gap-2 text-sm text-gray-600">
+                <div key={m.id} className="flex items-center gap-2 text-sm text-slate-500">
                   <span>{m.toggl_project_name}</span>
-                  <span className="text-gray-400">&rarr;</span>
+                  <span className="text-slate-400">&rarr;</span>
                   <span>{hubProjects.find((hp) => hp.id === m.project_id)?.name ?? m.project_id}</span>
                   <button
                     onClick={() => handleDeleteMapping(m.id)}
-                    className="text-xs text-gray-400 hover:text-red-500"
+                    aria-label={`Remove mapping for ${m.toggl_project_name}`}
+                    className="text-xs text-slate-400 hover:text-red-500"
                   >
                     x
                   </button>
@@ -257,13 +269,13 @@ export function TogglSetup({ hubProjects }: TogglSetupProps) {
           <div className="flex gap-2">
             <button
               onClick={() => setStep('mapping')}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
             >
               Edit Mappings
             </button>
             <button
               onClick={handleDisconnect}
-              className="rounded-md border border-red-200 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
+              className="rounded-lg border border-red-200 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
             >
               Disconnect
             </button>

@@ -99,7 +99,7 @@ export function PlanningTableView({ projectId, clientId }: PlanningTableViewProp
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
         <p className="text-sm text-red-700">{error}</p>
       </div>
     );
@@ -107,11 +107,11 @@ export function PlanningTableView({ projectId, clientId }: PlanningTableViewProp
 
   if (tree.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center">
-        <p className="text-sm text-gray-500">No planning rows yet.</p>
+      <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center">
+        <p className="text-sm text-slate-500">No planning rows yet.</p>
         <button
           onClick={() => handleAddChild(null, 1)}
-          className="mt-3 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          className="mt-3 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
         >
           + Add first phase
         </button>
@@ -123,7 +123,7 @@ export function PlanningTableView({ projectId, clientId }: PlanningTableViewProp
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
+          <tr className="border-b border-slate-200 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
             <th className="py-2 pr-2">Name</th>
             <th className="py-2 px-2">Content</th>
             <th className="py-2 px-2">Start</th>
@@ -153,7 +153,7 @@ export function PlanningTableView({ projectId, clientId }: PlanningTableViewProp
       <div className="mt-3 flex gap-2">
         <button
           onClick={() => handleAddChild(null, 1)}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
+          className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-50"
         >
           + Add phase
         </button>

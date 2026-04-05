@@ -22,7 +22,7 @@ const TYPE_LABELS: Record<string, string> = {
   hour_bank: 'Hour Bank',
 };
 
-const CURRENCY_SYMBOLS: Record<string, string> = { ILS: '₪', USD: '$', EUR: '€' };
+const CURRENCY_SYMBOLS: Record<string, string> = { ILS: '\u20AA', USD: '$', EUR: '\u20AC' };
 
 export default function ProjectPage({ params }: { params: Promise<{ id: string; projectId: string }> }) {
   const { id: clientId, projectId } = use(params);
@@ -50,14 +50,14 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-64 w-full rounded-xl" />
       </div>
     );
   }
 
   if (error || !project) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
         <p className="text-sm text-red-700">{error ?? 'Project not found'}</p>
         <button onClick={() => router.back()} className="mt-2 text-sm font-medium text-red-600 hover:text-red-800">
           Go back
@@ -76,39 +76,42 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
     <div>
       <button
         onClick={() => router.push(`/client/${clientId}`)}
-        className="mb-2 text-sm text-gray-500 hover:text-gray-700"
+        className="mb-3 flex items-center gap-1 text-sm text-slate-400 transition-colors hover:text-slate-700"
       >
-        &larr; Back to client
+        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Back to client
       </button>
 
-      <div className="mb-6">
+      <div className="mb-8">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
-          <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{project.name}</h1>
+          <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600">
             {TYPE_LABELS[project.type]}
           </span>
         </div>
 
         {/* Project summary */}
-        <div className="mt-3 grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-4 text-sm sm:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-4 rounded-xl border border-slate-200 bg-white p-5 text-sm sm:grid-cols-4">
           {project.type === 'project' && (
             <>
               <div>
-                <span className="text-gray-500">Fee</span>
-                <p className="font-semibold">{formatMoney(project.total_fee, project.total_fee_currency)}</p>
+                <span className="text-xs text-slate-400">Fee</span>
+                <p className="font-semibold text-slate-900">{formatMoney(project.total_fee, project.total_fee_currency)}</p>
               </div>
               <div>
-                <span className="text-gray-500">Scoped Hours</span>
-                <p className="font-semibold">{project.total_scoped_hours ?? '-'}h</p>
+                <span className="text-xs text-slate-400">Scoped Hours</span>
+                <p className="font-semibold text-slate-900">{project.total_scoped_hours ?? '-'}h</p>
               </div>
               <div>
-                <span className="text-gray-500">Rate</span>
-                <p className="font-semibold">{formatMoney(project.rate_per_hour, project.rate_currency)}/h</p>
+                <span className="text-xs text-slate-400">Rate</span>
+                <p className="font-semibold text-slate-900">{formatMoney(project.rate_per_hour, project.rate_currency)}/h</p>
               </div>
               {project.deadline && (
                 <div>
-                  <span className="text-gray-500">Deadline</span>
-                  <p className="font-semibold">{new Date(project.deadline).toLocaleDateString()}</p>
+                  <span className="text-xs text-slate-400">Deadline</span>
+                  <p className="font-semibold text-slate-900">{new Date(project.deadline).toLocaleDateString()}</p>
                 </div>
               )}
             </>
@@ -116,17 +119,17 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
           {project.type === 'retainer' && (
             <>
               <div>
-                <span className="text-gray-500">Periodic Fee</span>
-                <p className="font-semibold">{formatMoney(project.retainer_fee, project.retainer_fee_currency)}</p>
+                <span className="text-xs text-slate-400">Periodic Fee</span>
+                <p className="font-semibold text-slate-900">{formatMoney(project.retainer_fee, project.retainer_fee_currency)}</p>
               </div>
               <div>
-                <span className="text-gray-500">Billing Period</span>
-                <p className="font-semibold capitalize">{project.billing_period}</p>
+                <span className="text-xs text-slate-400">Billing Period</span>
+                <p className="font-semibold capitalize text-slate-900">{project.billing_period}</p>
               </div>
               {project.start_date && (
                 <div>
-                  <span className="text-gray-500">Start Date</span>
-                  <p className="font-semibold">{new Date(project.start_date).toLocaleDateString()}</p>
+                  <span className="text-xs text-slate-400">Start Date</span>
+                  <p className="font-semibold text-slate-900">{new Date(project.start_date).toLocaleDateString()}</p>
                 </div>
               )}
             </>
@@ -134,16 +137,16 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
           {project.type === 'hour_bank' && (
             <>
               <div>
-                <span className="text-gray-500">Bank Hours</span>
-                <p className="font-semibold">{project.total_scoped_hours ?? '-'}h</p>
+                <span className="text-xs text-slate-400">Bank Hours</span>
+                <p className="font-semibold text-slate-900">{project.total_scoped_hours ?? '-'}h</p>
               </div>
               <div>
-                <span className="text-gray-500">Total Cost</span>
-                <p className="font-semibold">{formatMoney(project.total_fee, project.total_fee_currency)}</p>
+                <span className="text-xs text-slate-400">Total Cost</span>
+                <p className="font-semibold text-slate-900">{formatMoney(project.total_fee, project.total_fee_currency)}</p>
               </div>
               <div>
-                <span className="text-gray-500">Rate</span>
-                <p className="font-semibold">{formatMoney(project.rate_per_hour, project.rate_currency)}/h</p>
+                <span className="text-xs text-slate-400">Rate</span>
+                <p className="font-semibold text-slate-900">{formatMoney(project.rate_per_hour, project.rate_currency)}/h</p>
               </div>
             </>
           )}
@@ -151,66 +154,72 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
       </div>
 
       {/* Profitability */}
-      <div className="mb-6">
+      <div className="mb-8">
         <ProfitabilityWithData project={project} />
       </div>
 
       {/* Sub-projects for hour banks */}
       {project.type === 'hour_bank' && (
-        <div className="mb-6">
+        <div className="mb-8">
           <SubProjectList projectId={project.id} totalBankHours={project.total_scoped_hours} />
         </div>
       )}
 
       {/* Planning board (M1 — budget/internal tiles) */}
-      <div className="mb-6">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">Planning</h2>
+      <div className="mb-8">
+        <SectionHeader title="Planning" />
         <PlanningBoard projectId={project.id} />
       </div>
 
       {/* Budget vs Plan vs Actual comparison (M2) */}
-      <div className="mb-6">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">Budget vs Plan vs Actual</h2>
+      <div className="mb-8">
+        <SectionHeader title="Budget vs Plan vs Actual" />
         <ComparisonWithData projectId={project.id} />
       </div>
 
       {/* Internal planning table (M2 — hierarchical project plan) */}
-      <div className="mb-6">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">Project Plan</h2>
+      <div className="mb-8">
+        <SectionHeader title="Project Plan" />
         <PlanningTableView projectId={project.id} clientId={clientId} />
       </div>
 
       {/* Toggl sync preview (M2) */}
-      <div className="mb-6">
+      <div className="mb-8">
         <SyncPreviewWithPhases projectId={project.id} />
       </div>
 
       {/* Time entries */}
-      <div className="mb-6">
+      <div className="mb-8">
         <TimeEntryList projectId={project.id} />
       </div>
 
       {/* Phase keyword mapping */}
-      <div className="mb-6">
+      <div className="mb-8">
         <PhaseMapperWithPhases projectId={project.id} />
       </div>
 
       {/* Dynamic report */}
-      <div className="mb-6">
+      <div className="mb-8">
         <ReportWithPhases projectId={project.id} />
       </div>
 
       {/* Expenses */}
-      <div className="mb-6">
+      <div className="mb-8">
         <ExpenseListWithPhases projectId={project.id} />
       </div>
 
       {/* Project-level notes */}
-      <div className="mb-6">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">Notes</h2>
+      <div className="mb-8">
+        <SectionHeader title="Notes" />
         <NoteList parentType="project" parentId={project.id} />
       </div>
     </div>
+  );
+}
+
+function SectionHeader({ title }: { title: string }) {
+  return (
+    <h2 className="mb-4 text-base font-semibold text-slate-900">{title}</h2>
   );
 }
 

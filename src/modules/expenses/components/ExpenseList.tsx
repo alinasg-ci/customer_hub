@@ -58,14 +58,14 @@ export function ExpenseList({ projectId, phases }: ExpenseListProps) {
     <div>
       <div className="flex items-center justify-between mb-3">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Expenses</h3>
-          <p className="text-sm text-gray-500">
+          <h3 className="text-lg font-semibold text-slate-900">Expenses</h3>
+          <p className="text-sm text-slate-500">
             Total: ₪{totalIls.toLocaleString('en-IL', { minimumFractionDigits: 2 })}
           </p>
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+          className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
         >
           + Add Expense
         </button>
@@ -77,7 +77,7 @@ export function ExpenseList({ projectId, phases }: ExpenseListProps) {
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="rounded-md border border-gray-300 px-2 py-1 text-xs"
+            className="rounded-lg border border-slate-200 px-2 py-1 text-xs focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
           >
             <option value="">All categories</option>
             {Object.entries(CATEGORY_LABELS).map(([val, label]) => (
@@ -87,7 +87,7 @@ export function ExpenseList({ projectId, phases }: ExpenseListProps) {
           <select
             value={filterPhase}
             onChange={(e) => setFilterPhase(e.target.value)}
-            className="rounded-md border border-gray-300 px-2 py-1 text-xs"
+            className="rounded-lg border border-slate-200 px-2 py-1 text-xs focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
           >
             <option value="">All phases</option>
             <option value="__general">General (no phase)</option>
@@ -101,36 +101,36 @@ export function ExpenseList({ projectId, phases }: ExpenseListProps) {
       {error ? (
         <p className="text-sm text-red-600">{error}</p>
       ) : filtered.length === 0 ? (
-        <p className="py-4 text-center text-sm text-gray-400">
+        <p className="py-4 text-center text-sm text-slate-400">
           {expenses.length === 0 ? 'No expenses yet.' : 'No expenses match the filters.'}
         </p>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-gray-200">
+        <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50">
-                <th className="px-3 py-2 text-left font-medium text-gray-600">Date</th>
-                <th className="px-3 py-2 text-left font-medium text-gray-600">Description</th>
-                <th className="px-3 py-2 text-left font-medium text-gray-600">Category</th>
-                <th className="px-3 py-2 text-left font-medium text-gray-600">Phase</th>
-                <th className="px-3 py-2 text-right font-medium text-gray-600">Amount</th>
+              <tr className="bg-slate-50">
+                <th className="px-3 py-2 text-left font-medium text-slate-500">Date</th>
+                <th className="px-3 py-2 text-left font-medium text-slate-500">Description</th>
+                <th className="px-3 py-2 text-left font-medium text-slate-500">Category</th>
+                <th className="px-3 py-2 text-left font-medium text-slate-500">Phase</th>
+                <th className="px-3 py-2 text-right font-medium text-slate-500">Amount</th>
                 <th className="px-3 py-2 w-8"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-100">
               {filtered.map((expense) => (
                 <tr key={expense.id} className="group">
-                  <td className="px-3 py-2 text-gray-600">{new Date(expense.date).toLocaleDateString()}</td>
-                  <td className="px-3 py-2 font-medium text-gray-900">{expense.description}</td>
-                  <td className="px-3 py-2 text-gray-600">{CATEGORY_LABELS[expense.category]}</td>
-                  <td className="px-3 py-2 text-gray-600">{getPhaseName(expense.phase_id)}</td>
-                  <td className="px-3 py-2 text-right font-medium text-gray-900">
+                  <td className="px-3 py-2 text-slate-500">{new Date(expense.date).toLocaleDateString()}</td>
+                  <td className="px-3 py-2 font-medium text-slate-900">{expense.description}</td>
+                  <td className="px-3 py-2 text-slate-500">{CATEGORY_LABELS[expense.category]}</td>
+                  <td className="px-3 py-2 text-slate-500">{getPhaseName(expense.phase_id)}</td>
+                  <td className="px-3 py-2 text-right font-medium text-slate-900">
                     {expense.currency === 'ILS' ? (
                       formatMoney(expense)
                     ) : (
                       <span title={`${formatMoney(expense)} at ${expense.exchange_rate_used} on ${expense.exchange_rate_date}`}>
                         ₪{expense.amount_ils.toLocaleString('en-IL', { minimumFractionDigits: 2 })}
-                        <span className="ml-1 text-xs font-normal text-gray-400">
+                        <span className="ml-1 text-xs font-normal text-slate-400">
                           ({formatMoney(expense)})
                         </span>
                       </span>
@@ -139,7 +139,7 @@ export function ExpenseList({ projectId, phases }: ExpenseListProps) {
                   <td className="px-3 py-2">
                     <button
                       onClick={() => remove(expense.id)}
-                      className="rounded p-1.5 text-gray-300 opacity-0 hover:text-red-500 group-hover:opacity-100"
+                      className="rounded-lg p-1.5 text-slate-300 opacity-0 hover:text-red-500 group-hover:opacity-100"
                       aria-label="Delete expense"
                     >
                       x

@@ -35,7 +35,7 @@ export function SubProjectList({ projectId, totalBankHours }: SubProjectListProp
   }
 
   if (loading) {
-    return <Skeleton className="h-24 w-full" />;
+    return <Skeleton className="h-24 w-full rounded-xl" />;
   }
 
   if (error) {
@@ -44,34 +44,34 @@ export function SubProjectList({ projectId, totalBankHours }: SubProjectListProp
 
   return (
     <div className="mt-4">
-      <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-semibold text-gray-700">Sub-projects</h4>
-        <span className={cn('text-xs', overAllocated ? 'text-red-600 font-medium' : 'text-gray-500')}>
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="text-sm font-semibold text-slate-900">Sub-projects</h4>
+        <span className={cn('text-xs', overAllocated ? 'text-red-600 font-medium' : 'text-slate-500')}>
           {totalAllocated} / {totalBankHours ?? '?'} hrs allocated
           {overAllocated && ' (exceeds bank total)'}
         </span>
       </div>
 
       {subProjects.length === 0 && !showAddForm && (
-        <p className="text-sm text-gray-400 mb-2">No sub-projects yet.</p>
+        <p className="text-sm text-slate-400 mb-2">No sub-projects yet.</p>
       )}
 
       <div className="space-y-2">
         {subProjects.map((sp) => (
-          <div key={sp.id} className="flex items-center justify-between rounded border border-gray-200 px-3 py-2 text-sm">
+          <div key={sp.id} className="flex items-center justify-between rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm">
             <div>
-              <span className="font-medium text-gray-800">{sp.name}</span>
+              <span className="font-medium text-slate-800">{sp.name}</span>
               {sp.description && (
-                <span className="ml-2 text-gray-400">{sp.description}</span>
+                <span className="ml-2 text-slate-400">{sp.description}</span>
               )}
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-gray-500">
+              <span className="text-slate-500">
                 {sp.allocated_hours ?? '-'} hrs
               </span>
               <button
                 onClick={() => remove(sp.id)}
-                className="text-gray-400 hover:text-red-500"
+                className="text-slate-400 transition-colors hover:text-red-500"
                 aria-label={`Remove ${sp.name}`}
               >
                 x
@@ -82,13 +82,13 @@ export function SubProjectList({ projectId, totalBankHours }: SubProjectListProp
       </div>
 
       {showAddForm ? (
-        <form onSubmit={handleAdd} className="mt-2 flex gap-2">
+        <form onSubmit={handleAdd} className="mt-3 flex gap-2">
           <input
             type="text"
             placeholder="Sub-project name"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
             autoFocus
           />
           <input
@@ -97,19 +97,19 @@ export function SubProjectList({ projectId, totalBankHours }: SubProjectListProp
             step="0.5"
             value={newHours}
             onChange={(e) => setNewHours(e.target.value)}
-            className="w-20 rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-20 rounded-lg border border-slate-200 px-3 py-1.5 text-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
           />
-          <button type="submit" className="rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">
+          <button type="submit" className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700">
             Add
           </button>
-          <button type="button" onClick={() => setShowAddForm(false)} className="px-2 text-sm text-gray-500 hover:text-gray-700">
+          <button type="button" onClick={() => setShowAddForm(false)} className="px-2 text-sm text-slate-500 transition-colors hover:text-slate-700">
             Cancel
           </button>
         </form>
       ) : (
         <button
           onClick={() => setShowAddForm(true)}
-          className="mt-2 text-sm text-blue-600 hover:text-blue-800"
+          className="mt-3 text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800"
         >
           + Add sub-project
         </button>
@@ -117,4 +117,3 @@ export function SubProjectList({ projectId, totalBankHours }: SubProjectListProp
     </div>
   );
 }
-

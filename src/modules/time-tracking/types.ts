@@ -66,6 +66,7 @@ export type TimeEntry = {
   readonly source: 'toggl' | 'manual';
   readonly projectId: string | null;
   readonly phaseId: string | null;
+  readonly subProjectId?: string | null;
   readonly description: string | null;
   readonly date: string;
   readonly durationHours: number;

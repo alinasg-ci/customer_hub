@@ -61,30 +61,30 @@ export function ExpenseForm({ projectId, phases, onSubmit, onCancel }: ExpenseFo
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 overflow-y-auto py-8">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Add Expense</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm overflow-y-auto py-8">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+        <h2 className="mb-4 text-lg font-semibold text-slate-900">Add Expense</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="exp-desc" className="block text-sm font-medium text-gray-700">Description *</label>
+            <label htmlFor="exp-desc" className="block text-sm font-medium text-slate-400">Description *</label>
             <input
               id="exp-desc"
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
               autoFocus
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="exp-amount" className="block text-sm font-medium text-gray-700">Amount *</label>
+              <label htmlFor="exp-amount" className="block text-sm font-medium text-slate-400">Amount *</label>
               <div className="mt-1 flex">
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as Currency)}
-                  className="rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-2 text-sm"
+                  className="rounded-l-lg border border-r-0 border-slate-200 bg-slate-50 px-2 text-sm"
                 >
                   {CURRENCIES.map((c) => (
                     <option key={c} value={c}>{CURRENCY_SYMBOLS[c]}</option>
@@ -96,30 +96,30 @@ export function ExpenseForm({ projectId, phases, onSubmit, onCancel }: ExpenseFo
                   step="0.01"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="block w-full rounded-r-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="block w-full rounded-r-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
                 />
               </div>
             </div>
             <div>
-              <label htmlFor="exp-date" className="block text-sm font-medium text-gray-700">Date *</label>
+              <label htmlFor="exp-date" className="block text-sm font-medium text-slate-400">Date *</label>
               <input
                 id="exp-date"
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="exp-cat" className="block text-sm font-medium text-gray-700">Category</label>
+              <label htmlFor="exp-cat" className="block text-sm font-medium text-slate-400">Category</label>
               <select
                 id="exp-cat"
                 value={category}
                 onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
               >
                 {CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>{c.label}</option>
@@ -127,12 +127,12 @@ export function ExpenseForm({ projectId, phases, onSubmit, onCancel }: ExpenseFo
               </select>
             </div>
             <div>
-              <label htmlFor="exp-phase" className="block text-sm font-medium text-gray-700">Phase</label>
+              <label htmlFor="exp-phase" className="block text-sm font-medium text-slate-400">Phase</label>
               <select
                 id="exp-phase"
                 value={phaseId}
                 onChange={(e) => setPhaseId(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
               >
                 <option value="">General (no phase)</option>
                 {phases.map((p) => (
@@ -143,27 +143,27 @@ export function ExpenseForm({ projectId, phases, onSubmit, onCancel }: ExpenseFo
           </div>
 
           <div>
-            <label htmlFor="exp-link" className="block text-sm font-medium text-gray-700">Attachment Link</label>
+            <label htmlFor="exp-link" className="block text-sm font-medium text-slate-400">Attachment Link</label>
             <input
               id="exp-link"
               type="url"
               value={attachmentLink}
               onChange={(e) => setAttachmentLink(e.target.value)}
               placeholder="https://..."
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
             />
           </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={onCancel} className="rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
+            <button type="button" onClick={onCancel} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
             >
               {submitting ? 'Adding...' : 'Add Expense'}
             </button>

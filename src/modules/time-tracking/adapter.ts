@@ -43,6 +43,7 @@ export async function getTimeEntries(projectId: string): Promise<TimeEntry[]> {
     id: string;
     project_id: string;
     phase_id: string | null;
+    sub_project_id: string | null;
     date: string;
     hours: number;
     description: string | null;
@@ -52,6 +53,7 @@ export async function getTimeEntries(projectId: string): Promise<TimeEntry[]> {
     source: 'manual' as const,
     projectId: entry.project_id,
     phaseId: entry.phase_id,
+    subProjectId: entry.sub_project_id,
     description: entry.description,
     date: entry.date,
     durationHours: entry.hours,
@@ -103,9 +105,9 @@ export async function syncTime(): Promise<{ synced: number; total: number }> {
   const mappings = await fetchTogglMappings();
   const mappingLookup = new Map(mappings.map((m) => [m.toggl_project_id, m.project_id]));
 
-  // Bulk upsert — build rows, then batch insert/update
+  // Build rows and separate into new vs existing for batch operations
   const newRows: Record<string, unknown>[] = [];
-  const existingIds = new Set<number>();
+  const updateRows: Record<string, unknown>[] = [];
 
   // Fetch all existing toggl_entry_ids in one query
   const entryIds = togglEntries.map((e) => e.id);
@@ -140,22 +142,27 @@ export async function syncTime(): Promise<{ synced: number; total: number }> {
     };
 
     if (existing) {
-      existingIds.add(entry.id);
-      // Batch update — preserve manual phase assignments
-      await supabase
-        .from('toggl_cached_entries')
-        .update({
-          ...row,
-          phase_id: existing.phase_id,
-          phase_assignment_type: existing.phase_assignment_type,
-        })
-        .eq('id', existing.id);
+      // Preserve manual phase assignments during update
+      updateRows.push({
+        ...row,
+        id: existing.id,
+        phase_id: existing.phase_id,
+        phase_assignment_type: existing.phase_assignment_type,
+      });
     } else {
       newRows.push({
         ...row,
         phase_assignment_type: 'unassigned',
       });
     }
+  }
+
+  // Batch upsert existing entries (uses id as conflict key)
+  if (updateRows.length > 0) {
+    const { error: updateError } = await supabase
+      .from('toggl_cached_entries')
+      .upsert(updateRows, { onConflict: 'id' });
+    if (updateError) throw updateError;
   }
 
   // Bulk insert new entries

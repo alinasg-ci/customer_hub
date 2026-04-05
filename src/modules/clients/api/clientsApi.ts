@@ -124,12 +124,17 @@ export async function deleteClient(id: string): Promise<void> {
   if (error) throw error;
 }
 
+function escapeIlikePattern(input: string): string {
+  return input.replace(/[%_\\]/g, (ch) => `\\${ch}`);
+}
+
 export async function searchClients(query: string, status: 'active' | 'archived' = 'active'): Promise<Client[]> {
+  const escaped = escapeIlikePattern(query);
   const { data, error } = await supabase
     .from('clients')
     .select('*')
     .eq('status', status)
-    .ilike('name', `%${query}%`)
+    .ilike('name', `%${escaped}%`)
     .order('created_at', { ascending: false });
 
   if (error) throw error;

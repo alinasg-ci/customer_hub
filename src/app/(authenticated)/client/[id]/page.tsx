@@ -64,14 +64,14 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
       <div className="space-y-4">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-32" />
-        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-32 w-full rounded-xl" />
       </div>
     );
   }
 
   if (clientError || !client) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
         <p className="text-sm text-red-700">{clientError ?? 'Client not found'}</p>
         <button onClick={() => router.push('/')} className="mt-2 text-sm font-medium text-red-600 hover:text-red-800">
           Back to clients
@@ -86,53 +86,68 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
 
   return (
     <div>
-      <div className="mb-6">
+      <div className="mb-8">
         <button
           onClick={() => router.push('/')}
-          className="mb-2 text-sm text-gray-500 hover:text-gray-700"
+          className="mb-3 flex items-center gap-1 text-sm text-slate-400 transition-colors hover:text-slate-700"
         >
-          &larr; Back to clients
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Back to clients
         </button>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{client.name}</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{client.name}</h1>
             {client.company && (
-              <p className="text-sm text-gray-500">{client.company}</p>
+              <p className="mt-0.5 text-sm text-slate-500">{client.company}</p>
             )}
           </div>
           <button
             onClick={() => setShowProjectForm(true)}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
           >
-            + New Project
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            New Project
           </button>
         </div>
       </div>
 
       {projectsLoading ? (
         <div className="space-y-3">
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-28 w-full rounded-xl" />
+          <Skeleton className="h-28 w-full rounded-xl" />
         </div>
       ) : projectsError ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
           <p className="text-sm text-red-700">{projectsError}</p>
         </div>
       ) : projects.length === 0 ? (
-        <div className="py-12 text-center">
-          <p className="text-gray-500">No projects yet.</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 py-16">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50">
+            <svg className="h-7 w-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+            </svg>
+          </div>
+          <h3 className="text-base font-semibold text-slate-900">No projects yet</h3>
+          <p className="mt-1 text-sm text-slate-500">Create your first project to start tracking.</p>
           <button
             onClick={() => setShowProjectForm(true)}
-            className="mt-2 text-sm font-medium text-blue-600 hover:text-blue-800"
+            className="mt-5 flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
           >
-            Create your first project
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Create project
           </button>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {activeProjects.length > 0 && (
             <section>
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+              <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
                 Active ({activeProjects.length})
               </h2>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -140,10 +155,10 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
                   <div key={project.id}>
                     <ProjectCard project={project} onStatusChange={setStatus} onDelete={handleDeleteClick} onClick={(pid) => router.push(`/client/${id}/project/${pid}`)} />
                     {project.type === 'hour_bank' && (
-                      <div className="mt-1">
+                      <div className="mt-1.5">
                         <button
                           onClick={() => setExpandedHourBank(expandedHourBank === project.id ? null : project.id)}
-                          className="text-xs text-blue-600 hover:text-blue-800"
+                          className="text-xs font-medium text-indigo-600 transition-colors hover:text-indigo-800"
                         >
                           {expandedHourBank === project.id ? 'Hide' : 'Show'} sub-projects
                         </button>
@@ -160,7 +175,7 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
 
           {pendingProjects.length > 0 && (
             <section>
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+              <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
                 Pending ({pendingProjects.length})
               </h2>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -173,7 +188,7 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
 
           {closedProjects.length > 0 && (
             <section>
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+              <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
                 Closed ({closedProjects.length})
               </h2>
               <div className="grid gap-3 sm:grid-cols-2">

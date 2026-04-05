@@ -11,6 +11,9 @@ function getEnvVar(name: string): string {
 const supabaseUrl = getEnvVar('NEXT_PUBLIC_SUPABASE_URL');
 const supabaseServiceKey = getEnvVar('SUPABASE_SERVICE_ROLE_KEY');
 
+// Singleton service client — reused across requests
+const serviceClient = createClient(supabaseUrl, supabaseServiceKey);
+
 /**
  * Verify Supabase session from request headers.
  * Returns the authenticated user or a 401 response.
@@ -29,7 +32,7 @@ export async function authenticateRequest(req: NextRequest): Promise<
   }
 
   const token = authHeader.slice(7);
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const supabase = serviceClient;
 
   const { data: { user }, error } = await supabase.auth.getUser(token);
 
@@ -49,7 +52,7 @@ export async function authenticateRequest(req: NextRequest): Promise<
  * Get the server-side Supabase client (service role).
  */
 export function getServiceClient() {
-  return createClient(supabaseUrl!, supabaseServiceKey!);
+  return serviceClient;
 }
 
 /**

@@ -63,10 +63,10 @@ export function UnassignedQueue({ projectId, phases }: UnassignedQueueProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Phase Mapping</h3>
+        <h3 className="text-lg font-semibold text-slate-900">Phase Mapping</h3>
         <button
           onClick={runAutoAssign}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+          className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
         >
           Run Auto-Assign
         </button>
@@ -78,19 +78,19 @@ export function UnassignedQueue({ projectId, phases }: UnassignedQueueProps) {
 
       {/* Keywords per phase */}
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-gray-600">Keywords by Phase</h4>
+        <h4 className="text-sm font-medium text-slate-500">Keywords by Phase</h4>
         {phases.length === 0 ? (
-          <p className="text-sm text-gray-400">Add phases first to set up keyword mapping.</p>
+          <p className="text-sm text-slate-400">Add phases first to set up keyword mapping.</p>
         ) : (
           phases.map((phase) => {
             const phaseKeywords = keywords.filter((k) => k.phase_id === phase.id);
             return (
-              <div key={phase.id} className="rounded border border-gray-200 px-3 py-2">
+              <div key={phase.id} className="rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-800">{phase.name}</span>
+                  <span className="text-sm font-medium text-slate-800">{phase.name}</span>
                   <button
                     onClick={() => setAddingKeyword(addingKeyword === phase.id ? null : phase.id)}
-                    className="text-xs text-blue-600 hover:text-blue-800"
+                    className="text-xs text-indigo-600 hover:text-indigo-800"
                   >
                     + keyword
                   </button>
@@ -100,12 +100,12 @@ export function UnassignedQueue({ projectId, phases }: UnassignedQueueProps) {
                     {phaseKeywords.map((kw) => (
                       <span
                         key={kw.id}
-                        className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-700"
+                        className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-xs text-indigo-700"
                       >
                         {kw.keyword}
                         <button
                           onClick={() => removeKeyword(kw.id)}
-                          className="rounded p-1 text-blue-400 hover:text-red-500"
+                          className="rounded p-1 text-indigo-400 hover:text-red-500"
                           aria-label={`Remove keyword ${kw.keyword}`}
                         >
                           x
@@ -124,12 +124,12 @@ export function UnassignedQueue({ projectId, phases }: UnassignedQueueProps) {
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') handleAddKeyword(phase.id);
                       }}
-                      className="flex-1 rounded border border-gray-300 px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                      className="flex-1 rounded-lg border border-slate-200 px-2 py-1 text-xs focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
                       autoFocus
                     />
                     <button
                       onClick={() => handleAddKeyword(phase.id)}
-                      className="rounded bg-blue-600 px-2 py-1 text-xs text-white hover:bg-blue-700"
+                      className="rounded-lg bg-indigo-600 px-2 py-1 text-xs text-white hover:bg-indigo-700"
                     >
                       Add
                     </button>
@@ -143,28 +143,28 @@ export function UnassignedQueue({ projectId, phases }: UnassignedQueueProps) {
 
       {/* Unassigned entries queue */}
       <div>
-        <h4 className="mb-2 text-sm font-medium text-gray-600">
+        <h4 className="mb-2 text-sm font-medium text-slate-500">
           Unassigned Entries ({unassignedEntries.length})
         </h4>
         {unassignedEntries.length === 0 ? (
-          <p className="text-sm text-gray-400">All entries are assigned.</p>
+          <p className="text-sm text-slate-400">All entries are assigned.</p>
         ) : (
           <div className="space-y-1">
             {unassignedEntries.slice(0, 20).map((entry) => (
-              <div key={entry.id} className="flex items-center gap-2 rounded border border-gray-200 px-3 py-1.5 text-sm">
-                <span className="text-xs text-gray-400 shrink-0">
+              <div key={entry.id} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-sm shadow-sm">
+                <span className="text-xs text-slate-400 shrink-0">
                   {new Date(entry.start_time).toLocaleDateString()}
                 </span>
-                <span className="flex-1 truncate text-gray-700">
-                  {entry.description || <span className="italic text-gray-400">No description</span>}
+                <span className="flex-1 truncate text-slate-700">
+                  {entry.description || <span className="italic text-slate-400">No description</span>}
                 </span>
-                <span className="shrink-0 text-xs text-gray-500">{entry.duration_hours}h</span>
+                <span className="shrink-0 text-xs text-slate-500">{entry.duration_hours}h</span>
                 <select
                   defaultValue=""
                   onChange={(e) => {
                     if (e.target.value) handleAssign(entry.id, e.target.value, entry.description);
                   }}
-                  className="shrink-0 rounded border border-gray-300 px-1 py-0.5 text-xs"
+                  className="shrink-0 rounded-lg border border-slate-200 px-1 py-0.5 text-xs focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
                 >
                   <option value="">Assign...</option>
                   {phases.map((p) => (
@@ -174,7 +174,7 @@ export function UnassignedQueue({ projectId, phases }: UnassignedQueueProps) {
               </div>
             ))}
             {unassignedEntries.length > 20 && (
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-slate-400">
                 Showing first 20 of {unassignedEntries.length} unassigned entries.
               </p>
             )}
@@ -184,10 +184,10 @@ export function UnassignedQueue({ projectId, phases }: UnassignedQueueProps) {
 
       {/* Learning prompt */}
       {learningEntry && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="mb-2 text-base font-semibold text-gray-900">Learn this keyword?</h3>
-            <p className="mb-3 text-sm text-gray-600">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+            <h3 className="mb-2 text-base font-semibold text-slate-900">Learn this keyword?</h3>
+            <p className="mb-3 text-sm text-slate-500">
               Always assign entries containing this keyword to{' '}
               <strong>{phases.find((p) => p.id === learningEntry.phaseId)?.name}</strong>?
             </p>
@@ -195,18 +195,18 @@ export function UnassignedQueue({ projectId, phases }: UnassignedQueueProps) {
               type="text"
               value={learningKeyword}
               onChange={(e) => setLearningKeyword(e.target.value)}
-              className="mb-3 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mb-3 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
             />
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => { setLearningEntry(null); setLearningKeyword(''); }}
-                className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700"
+                className="rounded-lg px-3 py-1.5 text-sm text-slate-500 hover:text-slate-700 hover:bg-slate-100"
               >
                 Skip
               </button>
               <button
                 onClick={handleConfirmLearn}
-                className="rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700"
+                className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm text-white hover:bg-indigo-700"
               >
                 Save Keyword
               </button>

@@ -24,13 +24,13 @@ export function TimelineBar({ startDate, endDate, color, timelineStart, timeline
   const widthPercent = Math.max(2, Math.min(100 - leftPercent, ((barEnd - barStart) / totalRange) * 100));
 
   return (
-    <div className="relative h-4 w-full rounded bg-gray-100">
+    <div className="relative h-4 w-full rounded-lg bg-slate-100">
       <div
-        className="absolute top-0.5 h-3 rounded"
+        className="absolute top-0.5 h-3 rounded-lg"
         style={{
           left: `${leftPercent}%`,
           width: `${widthPercent}%`,
-          backgroundColor: color ?? '#3B82F6',
+          backgroundColor: color ?? '#6366F1',
           opacity: 0.7,
         }}
       />
