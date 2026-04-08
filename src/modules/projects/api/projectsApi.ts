@@ -1,6 +1,16 @@
 import { supabase } from '@/shared/hooks/useSupabase';
 import type { Project, SubProject, CreateProjectInput, UpdateProjectInput, CreateSubProjectInput, UpdateSubProjectInput } from '../types';
 
+export async function fetchAllProjects(): Promise<Project[]> {
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data as Project[];
+}
+
 export async function fetchProjectsByClient(clientId: string): Promise<Project[]> {
   const { data, error } = await supabase
     .from('projects')

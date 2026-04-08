@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "next-dev",
+      "runtimeExecutable": "/usr/local/bin/node",
+      "runtimeArgs": ["node_modules/.bin/next", "dev"],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "supabase-local",
+      "runtimeExecutable": "./node_modules/.bin/supabase",
+      "runtimeArgs": ["start"],
+      "port": 54321
+    }
+  ]
+}
