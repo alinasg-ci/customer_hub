@@ -2,6 +2,7 @@
 
 import { useSyncPreview } from '../hooks/useSyncPreview';
 import { Skeleton } from '@/shared/ui/Skeleton';
+import { formatHours } from '@/shared/utils/formatHours';
 import type { Phase } from '@/modules/planning/types';
 
 type SyncPreviewProps = {
@@ -114,7 +115,7 @@ export function SyncPreview({ phases, onSyncComplete }: SyncPreviewProps) {
                       {new Date(entry.start_time).toLocaleDateString()}
                     </td>
                     <td className="py-2 px-3 font-medium">
-                      {entry.duration_hours.toFixed(1)}h
+                      {formatHours(entry.duration_hours)}
                     </td>
                     <td className="py-2 px-3 text-slate-900 max-w-xs truncate">
                       {entry.description || '(no description)'}

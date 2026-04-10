@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/shared/hooks/useSupabase';
 import { fetchTogglConnection, fetchTogglMappings } from '../api/toggl';
 import { fetchExcludedEntryIds, createExclusion } from '../api/exclusions';
@@ -11,17 +11,22 @@ export function useSyncPreview() {
   const [loading, setLoading] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [autoSync, setAutoSync] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('toggl_auto_sync') === 'true';
+  const [autoSync, setAutoSync] = useState(false);
+
+  useEffect(() => {
+    try {
+      setAutoSync(localStorage.getItem('toggl_auto_sync') === 'true');
+    } catch {
+      // localStorage unavailable
     }
-    return false;
-  });
+  }, []);
 
   const toggleAutoSync = useCallback((enabled: boolean) => {
     setAutoSync(enabled);
-    if (typeof window !== 'undefined') {
+    try {
       localStorage.setItem('toggl_auto_sync', String(enabled));
+    } catch {
+      // localStorage unavailable
     }
   }, []);
 

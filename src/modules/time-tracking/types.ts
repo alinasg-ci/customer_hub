@@ -63,10 +63,11 @@ export type TogglTimeEntry = {
 
 export type TimeEntry = {
   readonly id: string;
-  readonly source: 'toggl' | 'manual';
+  readonly source: 'toggl' | 'manual' | 'recorded';
   readonly projectId: string | null;
   readonly phaseId: string | null;
   readonly subProjectId?: string | null;
+  readonly taskId?: string | null;
   readonly description: string | null;
   readonly date: string;
   readonly durationHours: number;

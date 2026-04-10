@@ -26,6 +26,37 @@ export type UpdatePhaseInput = {
   readonly display_order?: number;
 };
 
+export type Task = {
+  readonly id: string;
+  readonly phase_id: string;
+  readonly project_id: string;
+  readonly name: string;
+  readonly planned_hours: number;
+  readonly internal_use: boolean;
+  readonly due_date: string | null;
+  readonly display_order: number;
+  readonly created_at: string;
+  readonly user_id: string;
+};
+
+export type CreateTaskInput = {
+  readonly phase_id: string;
+  readonly project_id: string;
+  readonly name: string;
+  readonly planned_hours?: number;
+  readonly internal_use?: boolean;
+  readonly due_date?: string;
+  readonly display_order?: number;
+};
+
+export type UpdateTaskInput = {
+  readonly name?: string;
+  readonly planned_hours?: number;
+  readonly internal_use?: boolean;
+  readonly due_date?: string | null;
+  readonly display_order?: number;
+};
+
 export type PlanningLayer = 'client' | 'internal';
 
 export type ComparisonRow = {

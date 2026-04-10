@@ -3,6 +3,7 @@
 import { useComparison } from '../hooks/useComparison';
 import { SummaryBar } from './SummaryBar';
 import { Skeleton } from '@/shared/ui/Skeleton';
+import { formatHours } from '@/shared/utils/formatHours';
 import type { Phase } from '@/modules/planning/types';
 import type { TimeEntry } from '@/modules/time-tracking/types';
 
@@ -100,10 +101,10 @@ export function ComparisonPanel({ projectId, phases, timeEntries }: ComparisonPa
                   {row.planHours > 0 ? `${row.planHours}h` : '—'}
                 </td>
                 <td className="py-2 px-3 text-right text-slate-900 font-medium">
-                  {row.actualHours > 0 ? `${row.actualHours.toFixed(1)}h` : '0h'}
+                  {row.actualHours > 0 ? formatHours(row.actualHours) : '0h'}
                 </td>
                 <td className={`py-2 px-3 text-right ${row.remaining >= 0 ? 'text-emerald-600' : 'text-red-600 font-medium'}`}>
-                  {row.remaining >= 0 ? `${row.remaining.toFixed(1)}h` : `${row.remaining.toFixed(1)}h`}
+                  {formatHours(row.remaining)}
                   {row.remaining < 0 && ' ⚠'}
                 </td>
                 <td className={`py-2 pl-3 ${STATUS_STYLES[row.status]}`}>
@@ -117,9 +118,9 @@ export function ComparisonPanel({ projectId, phases, timeEntries }: ComparisonPa
               <td className="py-2 pr-4 text-slate-900">TOTAL</td>
               <td className="py-2 px-3 text-right">{summary.totalBudget}h</td>
               <td className="py-2 px-3 text-right">{summary.totalPlan}h</td>
-              <td className="py-2 px-3 text-right">{summary.totalActual.toFixed(1)}h</td>
+              <td className="py-2 px-3 text-right">{formatHours(summary.totalActual)}</td>
               <td className={`py-2 px-3 text-right ${summary.totalPlan - summary.totalActual >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                {(summary.totalPlan - summary.totalActual).toFixed(1)}h
+                {formatHours(summary.totalPlan - summary.totalActual)}
               </td>
               <td></td>
             </tr>

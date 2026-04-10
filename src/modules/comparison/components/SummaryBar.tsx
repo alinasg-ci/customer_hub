@@ -1,6 +1,7 @@
 'use client';
 
 import type { ComparisonSummary } from '../types';
+import { formatHours } from '@/shared/utils/formatHours';
 
 type SummaryBarProps = {
   readonly summary: ComparisonSummary;
@@ -33,7 +34,7 @@ export function SummaryBar({ summary }: SummaryBarProps) {
             Plan: <strong>{totalPlan}h</strong>
           </span>
           <span className="text-slate-500">
-            Actual: <strong>{totalActual.toFixed(1)}h</strong>
+            Actual: <strong>{formatHours(totalActual)}</strong>
           </span>
         </div>
         <span className="font-medium">

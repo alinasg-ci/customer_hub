@@ -10,6 +10,7 @@ import { fetchAllProjects } from '@/modules/projects';
 import { fetchHoursByProject } from '@/modules/time-tracking';
 import type { Client, CreateClientInput, UpdateClientInput } from '../types';
 import type { Project } from '@/modules/projects';
+import { formatHours } from '@/shared/utils/formatHours';
 
 const STATUS_STYLES: Record<string, string> = {
   active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -329,10 +330,10 @@ function ClientSection({
         </td>
         <td className="py-3 px-3"></td>
         <td className="py-3 px-3 text-right text-slate-500 font-medium">
-          {totalEstimated > 0 ? `${totalEstimated.toFixed(0)}h` : ''}
+          {totalEstimated > 0 ? formatHours(totalEstimated) : ''}
         </td>
         <td className="py-3 px-3 text-right text-slate-500 font-medium">
-          {totalActual > 0 ? `${totalActual.toFixed(1)}h` : ''}
+          {totalActual > 0 ? formatHours(totalActual) : ''}
         </td>
         <td className="py-3 px-3"></td>
         <td className="py-3 px-3"></td>
@@ -394,10 +395,10 @@ function ClientSection({
               {formatDate(project.deadline ?? project.start_date)}
             </td>
             <td className="py-2.5 px-3 text-right text-slate-600">
-              {estimated > 0 ? `${estimated.toFixed(0)}h` : '—'}
+              {estimated > 0 ? formatHours(estimated) : '—'}
             </td>
             <td className="py-2.5 px-3 text-right font-medium text-slate-900">
-              {actual > 0 ? `${actual.toFixed(1)}h` : '0h'}
+              {actual > 0 ? formatHours(actual) : '0h'}
             </td>
             <td className="py-2.5 px-3">
               {estimated > 0 ? (

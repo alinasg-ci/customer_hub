@@ -44,16 +44,19 @@ export async function getTimeEntries(projectId: string): Promise<TimeEntry[]> {
     project_id: string;
     phase_id: string | null;
     sub_project_id: string | null;
+    task_id: string | null;
     date: string;
     hours: number;
     description: string | null;
     billable: boolean;
+    start_time: string | null;
   }) => ({
     id: entry.id,
-    source: 'manual' as const,
+    source: (entry.start_time ? 'recorded' : 'manual') as 'recorded' | 'manual',
     projectId: entry.project_id,
     phaseId: entry.phase_id,
     subProjectId: entry.sub_project_id,
+    taskId: entry.task_id,
     description: entry.description,
     date: entry.date,
     durationHours: entry.hours,

@@ -2,10 +2,11 @@
 
 import { useState, useMemo, type FormEvent } from 'react';
 import type { ProjectType, Currency, BillingPeriod } from '@/shared/types';
-import type { CreateProjectInput } from '../types';
+import type { Project, CreateProjectInput } from '../types';
 
 type ProjectFormProps = {
   readonly clientId: string;
+  readonly project?: Project;
   readonly onSubmit: (data: CreateProjectInput) => Promise<void>;
   readonly onCancel: () => void;
 };
@@ -13,17 +14,18 @@ type ProjectFormProps = {
 const CURRENCIES: readonly Currency[] = ['ILS', 'USD', 'EUR'];
 const CURRENCY_SYMBOLS: Record<Currency, string> = { ILS: '\u20AA', USD: '$', EUR: '\u20AC' };
 
-export function ProjectForm({ clientId, onSubmit, onCancel }: ProjectFormProps) {
-  const [name, setName] = useState('');
-  const [type, setType] = useState<ProjectType>('project');
-  const [rateCurrency, setRateCurrency] = useState<Currency>('ILS');
-  const [ratePerHour, setRatePerHour] = useState('');
-  const [totalScopedHours, setTotalScopedHours] = useState('');
-  const [deadline, setDeadline] = useState('');
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
-  const [retainerFee, setRetainerFee] = useState('');
-  const [retainerFeeCurrency, setRetainerFeeCurrency] = useState<Currency>('ILS');
-  const [startDate, setStartDate] = useState('');
+export function ProjectForm({ clientId, project, onSubmit, onCancel }: ProjectFormProps) {
+  const isEdit = Boolean(project);
+  const [name, setName] = useState(project?.name ?? '');
+  const [type, setType] = useState<ProjectType>(project?.type ?? 'project');
+  const [rateCurrency, setRateCurrency] = useState<Currency>(project?.rate_currency ?? 'ILS');
+  const [ratePerHour, setRatePerHour] = useState(project?.rate_per_hour?.toString() ?? '');
+  const [totalScopedHours, setTotalScopedHours] = useState(project?.total_scoped_hours?.toString() ?? '');
+  const [deadline, setDeadline] = useState(project?.deadline ?? '');
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>(project?.billing_period ?? 'monthly');
+  const [retainerFee, setRetainerFee] = useState(project?.retainer_fee?.toString() ?? '');
+  const [retainerFeeCurrency, setRetainerFeeCurrency] = useState<Currency>(project?.retainer_fee_currency ?? 'ILS');
+  const [startDate, setStartDate] = useState(project?.start_date ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,7 +84,7 @@ export function ProjectForm({ clientId, onSubmit, onCancel }: ProjectFormProps) 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/60 py-8 backdrop-blur-sm">
       <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
-        <h2 className="mb-5 text-lg font-semibold text-slate-900">New Project</h2>
+        <h2 className="mb-5 text-lg font-semibold text-slate-900">{isEdit ? 'Edit Project' : 'New Project'}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="project-name" className={labelClass}>
@@ -105,8 +107,9 @@ export function ProjectForm({ clientId, onSubmit, onCancel }: ProjectFormProps) 
                 <button
                   key={t}
                   type="button"
-                  onClick={() => setType(t)}
-                  className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                  onClick={() => !isEdit && setType(t)}
+                  disabled={isEdit}
+                  className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
                     type === t
                       ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
                       : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
@@ -250,7 +253,7 @@ export function ProjectForm({ clientId, onSubmit, onCancel }: ProjectFormProps) 
               disabled={loading}
               className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:opacity-50"
             >
-              {loading ? 'Creating...' : 'Create Project'}
+              {loading ? (isEdit ? 'Saving...' : 'Creating...') : (isEdit ? 'Save Changes' : 'Create Project')}
             </button>
           </div>
         </form>

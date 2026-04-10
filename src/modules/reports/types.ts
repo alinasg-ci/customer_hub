@@ -37,6 +37,9 @@ export type ManualTimeEntry = {
   readonly description: string | null;
   readonly billable: boolean;
   readonly note: string | null;
+  readonly start_time: string | null;
+  readonly end_time: string | null;
+  readonly task_id: string | null;
   readonly created_at: string;
   readonly user_id: string;
 };
@@ -49,4 +52,16 @@ export type CreateManualEntryInput = {
   readonly description?: string;
   readonly billable?: boolean;
   readonly note?: string;
+  readonly start_time?: string;
+  readonly end_time?: string;
+  readonly task_id?: string;
+};
+
+export type UpdateManualEntryInput = {
+  readonly phase_id?: string | null;
+  readonly date?: string;
+  readonly hours?: number;
+  readonly description?: string | null;
+  readonly billable?: boolean;
+  readonly note?: string | null;
 };

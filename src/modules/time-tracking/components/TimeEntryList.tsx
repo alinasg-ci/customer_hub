@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useTimeEntries } from '../hooks/useTimeEntries';
 import { Skeleton } from '@/shared/ui/Skeleton';
+import { formatHours } from '@/shared/utils/formatHours';
 
 type TimeEntryListProps = {
   readonly projectId: string;
@@ -36,9 +37,9 @@ export function TimeEntryList({ projectId }: TimeEntryListProps) {
         <div>
           <h3 className="text-lg font-semibold text-slate-900">Time Entries</h3>
           <div className="flex gap-4 text-sm text-slate-500">
-            <span>Total: <strong className="text-slate-900">{totalHours.toFixed(1)}h</strong></span>
-            <span>Billable: <strong className="text-emerald-700">{billableHours.toFixed(1)}h</strong></span>
-            <span>Non-billable: <strong className="text-slate-500">{nonBillableHours.toFixed(1)}h</strong></span>
+            <span>Total: <strong className="text-slate-900">{formatHours(totalHours)}</strong></span>
+            <span>Billable: <strong className="text-emerald-700">{formatHours(billableHours)}</strong></span>
+            <span>Non-billable: <strong className="text-slate-500">{formatHours(nonBillableHours)}</strong></span>
           </div>
         </div>
         <button

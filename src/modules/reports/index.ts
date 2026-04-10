@@ -2,4 +2,5 @@
 export { ReportTable } from './components/ReportTable';
 export { ManualEntryForm } from './components/ManualEntryForm';
 export { useReport } from './hooks/useReport';
-export type { ReportEntry, GroupBy, SortBy, ReportFilter, ManualTimeEntry } from './types';
+export { updateManualEntry } from './api/reportsApi';
+export type { ReportEntry, GroupBy, SortBy, ReportFilter, ManualTimeEntry, CreateManualEntryInput, UpdateManualEntryInput } from './types';

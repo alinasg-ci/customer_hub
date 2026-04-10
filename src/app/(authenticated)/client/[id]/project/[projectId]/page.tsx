@@ -1,20 +1,14 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchProjectById } from '@/modules/projects';
-import { PlanningBoard, usePlanning } from '@/modules/planning';
-import { SubProjectList } from '@/modules/projects';
-import { NoteList } from '@/modules/notes';
-import { ExpenseList } from '@/modules/expenses';
-import { TimeEntryList, UnassignedQueue, SyncPreview, useTimeEntries } from '@/modules/time-tracking';
-import { ProfitabilityCard } from '@/modules/profitability';
-import { useExpenses } from '@/modules/expenses';
-import { ReportTable } from '@/modules/reports';
-import { PlanningTableView } from '@/modules/planning-table';
-import { ComparisonPanel } from '@/modules/comparison';
+import { fetchProjectById, updateProject, ProjectForm } from '@/modules/projects';
+import { usePlanning, useTasks, MyPlanningView, CustomerPlanningView, ProgressTree } from '@/modules/planning';
+import { useTimeEntries } from '@/modules/time-tracking';
+import { RecordButton } from '@/modules/recording';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import type { Project } from '@/modules/projects';
+import { cn } from '@/shared/utils/cn';
+import type { Project, CreateProjectInput, UpdateProjectInput } from '@/modules/projects';
 
 const TYPE_LABELS: Record<string, string> = {
   project: 'Project',
@@ -24,33 +18,57 @@ const TYPE_LABELS: Record<string, string> = {
 
 const CURRENCY_SYMBOLS: Record<string, string> = { ILS: '\u20AA', USD: '$', EUR: '\u20AC' };
 
+type Tab = 'planner' | 'time' | 'finances' | 'emails' | 'comments';
+type PlannerSubTab = 'my-planning' | 'customer-planning';
+
+const TABS: { id: Tab; label: string; icon: string }[] = [
+  { id: 'planner', label: 'Planner', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
+{ id: 'time', label: 'Time Logged', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+  { id: 'finances', label: 'Finances', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+  { id: 'emails', label: 'Emails', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+  { id: 'comments', label: 'Comments', icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' },
+];
+
 export default function ProjectPage({ params }: { params: Promise<{ id: string; projectId: string }> }) {
   const { id: clientId, projectId } = use(params);
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<Tab>('planner');
+  const [plannerSubTab, setPlannerSubTab] = useState<PlannerSubTab>('my-planning');
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const router = useRouter();
 
-  useEffect(() => {
-    async function loadProject() {
-      try {
-        const data = await fetchProjectById(projectId);
-        setProject(data);
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Failed to load project';
-        setError(message);
-      } finally {
-        setLoading(false);
-      }
+  const loadProject = useCallback(async () => {
+    try {
+      const data = await fetchProjectById(projectId);
+      setProject(data);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to load project';
+      setError(message);
+    } finally {
+      setLoading(false);
     }
-    loadProject();
   }, [projectId]);
+
+  useEffect(() => {
+    loadProject();
+  }, [loadProject]);
+
+  const handleEditSubmit = useCallback(async (data: CreateProjectInput) => {
+    const { client_id: _, type: __, ...fields } = data;
+    await updateProject(projectId, fields as UpdateProjectInput);
+    await loadProject();
+    setShowEditForm(false);
+  }, [projectId, loadProject]);
 
   if (loading) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-64 w-full rounded-xl" />
+        <Skeleton className="h-48 w-full rounded-xl" />
+        <Skeleton className="h-10 w-full rounded-xl" />
       </div>
     );
   }
@@ -66,14 +84,9 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
     );
   }
 
-  function formatMoney(amount: number | null, currency: string): string {
-    if (amount === null) return '-';
-    const symbol = CURRENCY_SYMBOLS[currency] ?? '';
-    return `${symbol}${amount.toLocaleString('en-IL', { minimumFractionDigits: 2 })}`;
-  }
-
   return (
     <div>
+      {/* Back button */}
       <button
         onClick={() => router.push(`/client/${clientId}`)}
         className="mb-3 flex items-center gap-1 text-sm text-slate-400 transition-colors hover:text-slate-700"
@@ -84,180 +97,185 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
         Back to client
       </button>
 
-      <div className="mb-8">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{project.name}</h1>
-          <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600">
-            {TYPE_LABELS[project.type]}
-          </span>
-        </div>
+      {/* Project header card */}
+      <ProjectHeaderCard
+        project={project}
+        clientId={clientId}
+        refreshKey={refreshKey}
+        onEdit={() => setShowEditForm(true)}
+        onRecordingSaved={() => setRefreshKey((k) => k + 1)}
+      />
 
-        {/* Project summary */}
-        <div className="mt-4 grid grid-cols-2 gap-4 rounded-xl border border-slate-200 bg-white p-5 text-sm sm:grid-cols-4">
-          {project.type === 'project' && (
-            <>
-              <div>
-                <span className="text-xs text-slate-400">Fee</span>
-                <p className="font-semibold text-slate-900">{formatMoney(project.total_fee, project.total_fee_currency)}</p>
-              </div>
-              <div>
-                <span className="text-xs text-slate-400">Scoped Hours</span>
-                <p className="font-semibold text-slate-900">{project.total_scoped_hours ?? '-'}h</p>
-              </div>
-              <div>
-                <span className="text-xs text-slate-400">Rate</span>
-                <p className="font-semibold text-slate-900">{formatMoney(project.rate_per_hour, project.rate_currency)}/h</p>
-              </div>
-              {project.deadline && (
-                <div>
-                  <span className="text-xs text-slate-400">Deadline</span>
-                  <p className="font-semibold text-slate-900">{new Date(project.deadline).toLocaleDateString()}</p>
-                </div>
+      {/* Tab navigation */}
+      <div className="border-b border-slate-200">
+        <nav className="flex gap-1">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                'flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors',
+                activeTab === tab.id
+                  ? 'border-indigo-600 text-indigo-600'
+                  : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
               )}
-            </>
-          )}
-          {project.type === 'retainer' && (
-            <>
-              <div>
-                <span className="text-xs text-slate-400">Periodic Fee</span>
-                <p className="font-semibold text-slate-900">{formatMoney(project.retainer_fee, project.retainer_fee_currency)}</p>
-              </div>
-              <div>
-                <span className="text-xs text-slate-400">Billing Period</span>
-                <p className="font-semibold capitalize text-slate-900">{project.billing_period}</p>
-              </div>
-              {project.start_date && (
-                <div>
-                  <span className="text-xs text-slate-400">Start Date</span>
-                  <p className="font-semibold text-slate-900">{new Date(project.start_date).toLocaleDateString()}</p>
-                </div>
-              )}
-            </>
-          )}
-          {project.type === 'hour_bank' && (
-            <>
-              <div>
-                <span className="text-xs text-slate-400">Bank Hours</span>
-                <p className="font-semibold text-slate-900">{project.total_scoped_hours ?? '-'}h</p>
-              </div>
-              <div>
-                <span className="text-xs text-slate-400">Total Cost</span>
-                <p className="font-semibold text-slate-900">{formatMoney(project.total_fee, project.total_fee_currency)}</p>
-              </div>
-              <div>
-                <span className="text-xs text-slate-400">Rate</span>
-                <p className="font-semibold text-slate-900">{formatMoney(project.rate_per_hour, project.rate_currency)}/h</p>
-              </div>
-            </>
-          )}
-        </div>
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d={tab.icon} />
+              </svg>
+              {tab.label}
+            </button>
+          ))}
+        </nav>
       </div>
 
-      {/* Profitability */}
-      <div className="mb-8">
-        <ProfitabilityWithData project={project} />
+      {/* Tab content */}
+      <div className="mt-6">
+        {activeTab === 'planner' && (
+          <PlannerTab projectId={project.id} projectName={project.name} activeSubTab={plannerSubTab} onSubTabChange={setPlannerSubTab} />
+        )}
+{activeTab === 'time' && <EmptyTabPlaceholder icon="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" title="Time Logged" description="Recorded time entries, Toggl imports, and manual entries will appear here." />}
+        {activeTab === 'finances' && <EmptyTabPlaceholder icon="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" title="Finances" description="Profitability, expenses, and budget comparisons will appear here." />}
+        {activeTab === 'emails' && <EmptyTabPlaceholder icon="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" title="Emails" description="Project-related emails and communication will appear here." />}
+        {activeTab === 'comments' && <EmptyTabPlaceholder icon="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" title="Comments" description="Project notes and comments will appear here." />}
       </div>
 
-      {/* Sub-projects for hour banks */}
-      {project.type === 'hour_bank' && (
-        <div className="mb-8">
-          <SubProjectList projectId={project.id} totalBankHours={project.total_scoped_hours} />
-        </div>
+      {/* Edit project form */}
+      {showEditForm && (
+        <ProjectForm
+          clientId={clientId}
+          project={project}
+          onSubmit={handleEditSubmit}
+          onCancel={() => setShowEditForm(false)}
+        />
       )}
-
-      {/* Planning board (M1 — budget/internal tiles) */}
-      <div className="mb-8">
-        <SectionHeader title="Planning" />
-        <PlanningBoard projectId={project.id} />
-      </div>
-
-      {/* Budget vs Plan vs Actual comparison (M2) */}
-      <div className="mb-8">
-        <SectionHeader title="Budget vs Plan vs Actual" />
-        <ComparisonWithData projectId={project.id} />
-      </div>
-
-      {/* Internal planning table (M2 — hierarchical project plan) */}
-      <div className="mb-8">
-        <SectionHeader title="Project Plan" />
-        <PlanningTableView projectId={project.id} clientId={clientId} />
-      </div>
-
-      {/* Toggl sync preview (M2) */}
-      <div className="mb-8">
-        <SyncPreviewWithPhases projectId={project.id} />
-      </div>
-
-      {/* Time entries */}
-      <div className="mb-8">
-        <TimeEntryList projectId={project.id} />
-      </div>
-
-      {/* Phase keyword mapping */}
-      <div className="mb-8">
-        <PhaseMapperWithPhases projectId={project.id} />
-      </div>
-
-      {/* Dynamic report */}
-      <div className="mb-8">
-        <ReportWithPhases projectId={project.id} />
-      </div>
-
-      {/* Expenses */}
-      <div className="mb-8">
-        <ExpenseListWithPhases projectId={project.id} />
-      </div>
-
-      {/* Project-level notes */}
-      <div className="mb-8">
-        <SectionHeader title="Notes" />
-        <NoteList parentType="project" parentId={project.id} />
-      </div>
     </div>
   );
 }
 
-function SectionHeader({ title }: { title: string }) {
+// ─── Project Header Card ──────────────────────────────────────────────────────
+
+function ProjectHeaderCard({ project, clientId, refreshKey, onEdit, onRecordingSaved }: {
+  readonly project: Project;
+  readonly clientId: string;
+  readonly refreshKey: number;
+  readonly onEdit: () => void;
+  readonly onRecordingSaved: () => void;
+}) {
   return (
-    <h2 className="mb-4 text-base font-semibold text-slate-900">{title}</h2>
+    <div className="mb-6 rounded-xl border border-slate-200 bg-white shadow-sm">
+      {/* Top section: name, badges, actions */}
+      <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900">{project.name}</h1>
+          <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+            {TYPE_LABELS[project.type]}
+          </span>
+          <span className={cn(
+            'rounded-md border px-1.5 py-0.5 text-[11px] font-medium',
+            project.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+            project.status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+            'bg-slate-100 text-slate-500 border-slate-200'
+          )}>
+            {project.status}
+          </span>
+          {project.deadline && (
+            <span className="flex items-center gap-1 text-xs text-slate-400">
+              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+              </svg>
+              {new Date(project.deadline).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onEdit}
+            className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-50"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+            </svg>
+            Edit
+          </button>
+          <RecordButtonWithPhases projectId={project.id} projectName={project.name} clientId={clientId} onEntrySaved={onRecordingSaved} />
+        </div>
+      </div>
+
+      {/* Expandable progress tree */}
+      <ProgressTree projectId={project.id} refreshKey={refreshKey} />
+    </div>
   );
 }
 
-// Wrapper to load phases for the expense form's phase dropdown
-function ExpenseListWithPhases({ projectId }: { projectId: string }) {
-  const { phases } = usePlanning(projectId);
-  return <ExpenseList projectId={projectId} phases={phases} />;
+// ─── Tab components ───────────────────────────────────────────────────────────
+
+function PlannerTab({ projectId, projectName, activeSubTab, onSubTabChange }: {
+  readonly projectId: string;
+  readonly projectName: string;
+  readonly activeSubTab: PlannerSubTab;
+  readonly onSubTabChange: (tab: PlannerSubTab) => void;
+}) {
+  return (
+    <div>
+      <div className="mb-6 flex gap-1 rounded-lg bg-slate-100 p-1 w-fit">
+        <button
+          onClick={() => onSubTabChange('my-planning')}
+          className={cn(
+            'rounded-md px-4 py-2 text-sm font-medium transition-colors',
+            activeSubTab === 'my-planning' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+          )}
+        >
+          My Planning
+        </button>
+        <button
+          onClick={() => onSubTabChange('customer-planning')}
+          className={cn(
+            'rounded-md px-4 py-2 text-sm font-medium transition-colors',
+            activeSubTab === 'customer-planning' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+          )}
+        >
+          Customer Planning
+        </button>
+      </div>
+
+      {activeSubTab === 'my-planning' && (
+        <MyPlanningView projectId={projectId} />
+      )}
+      {activeSubTab === 'customer-planning' && (
+        <CustomerPlanningView projectId={projectId} projectName={projectName} />
+      )}
+    </div>
+  );
 }
 
-// Wrapper to load phases for the phase mapping UI
-function PhaseMapperWithPhases({ projectId }: { projectId: string }) {
-  const { phases } = usePlanning(projectId);
-  return <UnassignedQueue projectId={projectId} phases={phases} />;
+function EmptyTabPlaceholder({ icon, title, description }: {
+  readonly icon: string;
+  readonly title: string;
+  readonly description: string;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 py-16">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
+        <svg className="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
+        </svg>
+      </div>
+      <h3 className="text-base font-semibold text-slate-900">{title}</h3>
+      <p className="mt-1 max-w-sm text-center text-sm text-slate-500">{description}</p>
+    </div>
+  );
 }
 
-// Wrapper to load actual hours + expenses for profitability
-function ProfitabilityWithData({ project }: { project: Project }) {
-  const { totalHours } = useTimeEntries(project.id);
-  const { totalIls } = useExpenses(project.id);
-  return <ProfitabilityCard project={project} actualHours={totalHours} totalExpensesIls={totalIls} />;
-}
+// ─── Data wrapper components ──────────────────────────────────────────────────
 
-// Wrapper to load phases for the report table
-function ReportWithPhases({ projectId }: { projectId: string }) {
+function RecordButtonWithPhases({ projectId, projectName, clientId, onEntrySaved }: { projectId: string; projectName: string; clientId: string; onEntrySaved?: () => void }) {
   const { phases } = usePlanning(projectId);
-  return <ReportTable projectId={projectId} phases={phases} />;
-}
-
-// Wrapper to load phases + time entries for comparison panel
-function ComparisonWithData({ projectId }: { projectId: string }) {
-  const { phases } = usePlanning(projectId);
-  const { entries } = useTimeEntries(projectId);
-  return <ComparisonPanel projectId={projectId} phases={phases} timeEntries={entries} />;
-}
-
-// Wrapper to load phases for sync preview
-function SyncPreviewWithPhases({ projectId }: { projectId: string }) {
-  const { phases } = usePlanning(projectId);
+  const { tasks } = useTasks(projectId);
   const { reload } = useTimeEntries(projectId);
-  return <SyncPreview phases={phases} onSyncComplete={reload} />;
+  const handleSaved = useCallback(() => {
+    reload();
+    onEntrySaved?.();
+  }, [reload, onEntrySaved]);
+  return <RecordButton projectId={projectId} projectName={projectName} clientId={clientId} phases={phases} tasks={tasks} onEntrySaved={handleSaved} />;
 }

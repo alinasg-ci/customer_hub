@@ -3,6 +3,7 @@
 import { AuthGuard } from '@/shared/ui/AuthGuard';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 import { Sidebar } from '@/shared/ui/Sidebar';
+import { RecordingProvider, GlobalRecordingIndicator } from '@/modules/recording';
 
 export default function AuthenticatedLayout({
   children,
@@ -11,14 +12,17 @@ export default function AuthenticatedLayout({
 }) {
   return (
     <AuthGuard>
-      <div className="flex min-h-screen">
-        <Sidebar />
-        <main className="flex-1 overflow-y-auto bg-slate-50 p-8">
-          <ErrorBoundary>
-            {children}
-          </ErrorBoundary>
-        </main>
-      </div>
+      <RecordingProvider>
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <main className="flex-1 overflow-y-auto bg-slate-50 p-8">
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
+          </main>
+          <GlobalRecordingIndicator />
+        </div>
+      </RecordingProvider>
     </AuthGuard>
   );
 }
