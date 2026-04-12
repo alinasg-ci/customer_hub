@@ -15,9 +15,10 @@ import type { Phase, Task, UpdateTaskInput } from '../types';
 
 type MyPlanningViewProps = {
   readonly projectId: string;
+  readonly onDataChanged?: () => void;
 };
 
-export function MyPlanningView({ projectId }: MyPlanningViewProps) {
+export function MyPlanningView({ projectId, onDataChanged }: MyPlanningViewProps) {
   const {
     phases, loading: phasesLoading, add: addPhase, remove: removePhase,
     debouncedUpdate: updatePhase, reorder: reorderPhases,
@@ -44,22 +45,28 @@ export function MyPlanningView({ projectId }: MyPlanningViewProps) {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
+  const notifyChange = useCallback(() => {
+    onDataChanged?.();
+  }, [onDataChanged]);
+
   const handleDeletePhase = useCallback(async () => {
     if (!deletingPhaseId) return;
     setDeleteLoading(true);
     try {
       await removePhase(deletingPhaseId);
       setDeletingPhaseId(null);
+      notifyChange();
     } catch {
       // handled by hook
     } finally {
       setDeleteLoading(false);
     }
-  }, [deletingPhaseId, removePhase]);
+  }, [deletingPhaseId, removePhase, notifyChange]);
 
   const handleAddPhase = useCallback(async () => {
     await addPhase({ project_id: projectId, name: 'New Phase' });
-  }, [addPhase, projectId]);
+    notifyChange();
+  }, [addPhase, projectId, notifyChange]);
 
   const handlePhaseDragEnd = useCallback((event: { active: { id: string | number }; over: { id: string | number } | null }) => {
     if (event.over && event.active.id !== event.over.id) {
@@ -110,9 +117,9 @@ export function MyPlanningView({ projectId }: MyPlanningViewProps) {
               projectId={projectId}
               onUpdatePhase={updatePhase}
               onDeletePhase={() => setDeletingPhaseId(phase.id)}
-              onAddTask={addTask}
-              onEditTask={editTask}
-              onRemoveTask={removeTask}
+              onAddTask={async (input) => { const t = await addTask(input); notifyChange(); return t; }}
+              onEditTask={async (id, input) => { await editTask(id, input); notifyChange(); }}
+              onRemoveTask={async (id) => { await removeTask(id); notifyChange(); }}
               onReorderTasks={reorderTaskList}
               sensors={sensors}
             />

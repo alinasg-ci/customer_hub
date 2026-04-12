@@ -40,11 +40,14 @@ export function ProgressTree({ projectId, refreshKey }: ProgressTreeProps) {
     }
   }, [refreshKey, reloadEntries, reloadTasks, reloadPhases]);
 
-  // Build hours maps
-  const { hoursByPhase, hoursByTask } = useMemo(() => {
+  // Build hours maps from billable entries only (non-billable excluded from progress)
+  const { hoursByPhase, hoursByTask, billableTotal } = useMemo(() => {
     const byPhase = new Map<string, number>();
     const byTask = new Map<string, number>();
+    let total = 0;
     for (const e of entries) {
+      if (!e.billable) continue;
+      total += e.durationHours;
       if (e.phaseId) {
         byPhase.set(e.phaseId, (byPhase.get(e.phaseId) ?? 0) + e.durationHours);
       }
@@ -52,8 +55,21 @@ export function ProgressTree({ projectId, refreshKey }: ProgressTreeProps) {
         byTask.set(e.taskId, (byTask.get(e.taskId) ?? 0) + e.durationHours);
       }
     }
-    return { hoursByPhase: byPhase, hoursByTask: byTask };
+    return { hoursByPhase: byPhase, hoursByTask: byTask, billableTotal: total };
   }, [entries]);
+
+  // Build planned hours from tasks (not from phase fields — users set hours on tasks)
+  const { plannedByPhase, totalTaskPlanned } = useMemo(() => {
+    const byPhase = new Map<string, number>();
+    let total = 0;
+    for (const phase of phases) {
+      const tasks = tasksByPhase.get(phase.id) ?? [];
+      const phaseTaskPlanned = tasks.reduce((s, t) => s + t.planned_hours, 0);
+      byPhase.set(phase.id, phaseTaskPlanned);
+      total += phaseTaskPlanned;
+    }
+    return { plannedByPhase: byPhase, totalTaskPlanned: total };
+  }, [phases, tasksByPhase]);
 
   const togglePhase = (phaseId: string) => {
     setExpandedPhases((prev) => {
@@ -78,24 +94,24 @@ export function ProgressTree({ projectId, refreshKey }: ProgressTreeProps) {
       {/* Legend */}
       <div className="mb-3 flex gap-5 text-[11px] text-slate-500">
         <span className="flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-indigo-500" />
-          Recorded
+          <span className="inline-block w-4 rounded-sm bg-slate-200" style={{ height: 10 }} />
+          Client
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-sm" style={STRIPE_LEGEND_STYLE} />
+          <span className="inline-block w-4 rounded-sm" style={{ height: 7, ...STRIPE_LEGEND_STYLE }} />
           My plan
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-slate-200" />
-          Client
+          <span className="inline-block w-4 rounded-sm bg-indigo-500" style={{ height: 4 }} />
+          Recorded
         </span>
       </div>
 
       {/* Project total row */}
       <ProgressRow
         label="Project Total"
-        recorded={totalHours}
-        plan={totalInternalHours}
+        recorded={billableTotal}
+        plan={totalTaskPlanned > 0 ? totalTaskPlanned : totalInternalHours}
         client={totalQuotedHours}
         expandable
         expanded={projectExpanded}
@@ -108,6 +124,7 @@ export function ProgressTree({ projectId, refreshKey }: ProgressTreeProps) {
       {projectExpanded && phases.map((phase) => {
         const tasks = tasksByPhase.get(phase.id) ?? [];
         const phaseRecorded = hoursByPhase.get(phase.id) ?? 0;
+        const phasePlanned = plannedByPhase.get(phase.id) ?? 0;
         const hasTasks = tasks.length > 0;
         const isExpanded = expandedPhases.has(phase.id);
 
@@ -116,7 +133,7 @@ export function ProgressTree({ projectId, refreshKey }: ProgressTreeProps) {
             <ProgressRow
               label={phase.name}
               recorded={phaseRecorded}
-              plan={phase.internal_planned_hours}
+              plan={phasePlanned > 0 ? phasePlanned : phase.internal_planned_hours}
               client={phase.quoted_hours}
               expandable={hasTasks}
               expanded={isExpanded}
@@ -161,18 +178,39 @@ function ProgressRow({ label, recorded, plan, client, expandable, expanded, onTo
   readonly depth: 0 | 1 | 2;
   readonly bold?: boolean;
 }) {
-  // Scale based on the largest capacity (plan or client), not recorded.
-  // If recorded exceeds capacity, it caps at 100%.
-  // If no plan/client exists, fall back to recorded as the scale.
   const capacity = Math.max(plan, client);
-  const maxVal = capacity > 0 ? capacity : Math.max(recorded, 0.01);
+  const isOverBudget = capacity > 0 && recorded > capacity;
+
+  // Scale so everything fits within 100% width.
+  // When over budget, scale based on recorded (the largest value).
+  const maxVal = Math.max(recorded, capacity, 0.01);
   const scale = 100 / maxVal;
-  const recordedW = Math.min(100, recorded * scale);
-  const planW = Math.min(100, plan * scale);
-  const clientW = Math.min(100, client * scale);
+
+  let inBudgetW: number;
+  let overBudgetW: number;
+  let planW: number;
+  let clientW: number;
+
+  if (capacity > 0 || recorded > 0) {
+    planW = plan * scale;
+    clientW = client * scale;
+    if (isOverBudget) {
+      // In-budget portion = capacity width, over-budget = the rest
+      inBudgetW = capacity * scale;
+      overBudgetW = (recorded - capacity) * scale;
+    } else {
+      inBudgetW = recorded * scale;
+      overBudgetW = 0;
+    }
+  } else {
+    inBudgetW = 0;
+    overBudgetW = 0;
+    planW = 0;
+    clientW = 0;
+  }
 
   const indent = depth === 0 ? '' : depth === 1 ? 'pl-6' : 'pl-12';
-  const barHeight = depth === 0 ? 'h-3' : depth === 1 ? 'h-2.5' : 'h-2';
+  const totalHeight = depth === 0 ? 20 : depth === 1 ? 16 : 12;
 
   return (
     <div className={cn('py-2', indent, depth > 0 && 'border-t border-slate-50')}>
@@ -202,7 +240,7 @@ function ProgressRow({ label, recorded, plan, client, expandable, expanded, onTo
 
         <div className={cn('flex gap-3', depth === 2 ? 'text-[10px]' : 'text-[11px]', 'text-slate-400')}>
           <span>
-            <span className="font-medium text-indigo-600">{formatHours(recorded)}</span>
+            <span className={cn('font-medium', isOverBudget ? 'text-red-600' : 'text-indigo-600')}>{formatHours(recorded)}</span>
             {' '}rec
           </span>
           {plan > 0 && (
@@ -220,24 +258,50 @@ function ProgressRow({ label, recorded, plan, client, expandable, expanded, onTo
         </div>
       </div>
 
-      {/* 3-layer bar */}
-      <div className={cn('relative w-full rounded-full bg-slate-50 overflow-hidden', barHeight)}>
+      {/* 3-layer bar — stacked by height: client 100%, plan 60%, recorded 30% */}
+      <div className="relative w-full overflow-hidden" style={{ height: totalHeight }}>
+        {/* Client — full height, gray */}
         {client > 0 && (
           <div
-            className="absolute inset-y-0 left-0 rounded-full bg-slate-200"
-            style={{ width: `${clientW}%` }}
+            className="absolute left-0 rounded-md bg-slate-200"
+            style={{ width: `${clientW}%`, height: '100%', top: 0 }}
           />
         )}
+        {/* Plan — 60% height, striped, vertically centered */}
         {plan > 0 && (
           <div
-            className="absolute inset-y-0 left-0 rounded-full"
-            style={{ width: `${planW}%`, ...STRIPE_STYLE }}
+            className="absolute left-0 rounded-md"
+            style={{
+              width: `${planW}%`,
+              height: '60%',
+              top: '20%',
+              ...STRIPE_STYLE,
+            }}
           />
         )}
-        <div
-          className="absolute inset-y-0 left-0 rounded-full bg-indigo-500 transition-all"
-          style={{ width: `${Math.min(100, recordedW)}%` }}
-        />
+        {/* Recorded — 30% height, solid indigo (in-budget portion) */}
+        {inBudgetW > 0 && (
+          <div
+            className="absolute left-0 rounded-sm bg-indigo-500 transition-all"
+            style={{
+              width: `${isOverBudget ? 100 : inBudgetW}%`,
+              height: '30%',
+              top: '35%',
+            }}
+          />
+        )}
+        {/* Over-budget — red portion after the indigo */}
+        {overBudgetW > 0 && (
+          <div
+            className="absolute rounded-sm bg-red-500 transition-all"
+            style={{
+              left: `${inBudgetW}%`,
+              width: `${overBudgetW}%`,
+              height: '30%',
+              top: '35%',
+            }}
+          />
+        )}
       </div>
     </div>
   );

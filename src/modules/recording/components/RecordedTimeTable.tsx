@@ -5,11 +5,12 @@ import { ConfirmDeleteDialog } from '@/shared/ui/ConfirmDeleteDialog';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { formatHours } from '@/shared/utils/formatHours';
 import type { ManualTimeEntry, UpdateManualEntryInput } from '@/modules/reports/types';
-import type { Phase } from '@/modules/planning/types';
+import type { Phase, Task } from '@/modules/planning/types';
 
 type RecordedTimeTableProps = {
   readonly entries: readonly ManualTimeEntry[];
   readonly phases: readonly Phase[];
+  readonly tasks: readonly Task[];
   readonly loading: boolean;
   readonly totalHours: number;
   readonly onEdit: (id: string, input: UpdateManualEntryInput) => Promise<void>;
@@ -27,13 +28,19 @@ function formatDate(dateStr: string): string {
 }
 
 function getPhaseName(phaseId: string | null, phases: readonly Phase[]): string {
-  if (!phaseId) return 'Unassigned';
+  if (!phaseId) return '—';
   return phases.find((p) => p.id === phaseId)?.name ?? 'Unknown';
+}
+
+function getTaskName(taskId: string | null, tasks: readonly Task[]): string {
+  if (!taskId) return '—';
+  return tasks.find((t) => t.id === taskId)?.name ?? 'Unknown';
 }
 
 export function RecordedTimeTable({
   entries,
   phases,
+  tasks,
   loading,
   totalHours,
   onEdit,
@@ -43,7 +50,7 @@ export function RecordedTimeTable({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editDraft, setEditDraft] = useState<Partial<UpdateManualEntryInput>>({});
+  const [editDraft, setEditDraft] = useState<Partial<UpdateManualEntryInput & { task_id?: string | null }>>({});
 
   const handleDeleteConfirm = useCallback(async () => {
     if (!deletingId) return;
@@ -63,6 +70,7 @@ export function RecordedTimeTable({
     setEditDraft({
       description: entry.description,
       phase_id: entry.phase_id,
+      task_id: entry.task_id,
       billable: entry.billable,
       hours: entry.hours,
     });
@@ -79,6 +87,11 @@ export function RecordedTimeTable({
     setEditingId(null);
     setEditDraft({});
   }, []);
+
+  // Tasks filtered by the currently editing phase
+  const editPhaseTasks = editDraft.phase_id
+    ? tasks.filter((t) => t.phase_id === editDraft.phase_id)
+    : [];
 
   if (loading) {
     return (
@@ -120,6 +133,7 @@ export function RecordedTimeTable({
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50/80 text-left text-[11px] font-semibold uppercase tracking-widest text-slate-400">
                 <th className="py-2.5 pl-4 pr-2">Phase</th>
+                <th className="py-2.5 px-3">Task</th>
                 <th className="py-2.5 px-3">Date / Time</th>
                 <th className="py-2.5 px-3 text-right">Duration</th>
                 <th className="py-2.5 px-3">Description</th>
@@ -133,14 +147,15 @@ export function RecordedTimeTable({
 
                 return (
                   <tr key={entry.id} className="group border-b border-slate-50 hover:bg-slate-50">
+                    {/* Phase */}
                     <td className="py-2.5 pl-4 pr-2">
                       {isEditing ? (
                         <select
                           value={editDraft.phase_id ?? ''}
-                          onChange={(e) => setEditDraft((d) => ({ ...d, phase_id: e.target.value || null }))}
+                          onChange={(e) => setEditDraft((d) => ({ ...d, phase_id: e.target.value || null, task_id: null }))}
                           className="rounded-lg border border-slate-200 px-2 py-1 text-xs"
                         >
-                          <option value="">Unassigned</option>
+                          <option value="">Select phase</option>
                           {phases.map((p) => (
                             <option key={p.id} value={p.id}>{p.name}</option>
                           ))}
@@ -149,6 +164,27 @@ export function RecordedTimeTable({
                         <span className="text-slate-700">{getPhaseName(entry.phase_id, phases)}</span>
                       )}
                     </td>
+
+                    {/* Task */}
+                    <td className="py-2.5 px-3">
+                      {isEditing ? (
+                        <select
+                          value={editDraft.task_id ?? ''}
+                          onChange={(e) => setEditDraft((d) => ({ ...d, task_id: e.target.value || null }))}
+                          disabled={editPhaseTasks.length === 0}
+                          className="rounded-lg border border-slate-200 px-2 py-1 text-xs disabled:opacity-50"
+                        >
+                          <option value="">{editPhaseTasks.length === 0 ? 'Select phase first' : 'Select task'}</option>
+                          {editPhaseTasks.map((t) => (
+                            <option key={t.id} value={t.id}>{t.name || 'Untitled'}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <span className="text-slate-600">{getTaskName(entry.task_id, tasks)}</span>
+                      )}
+                    </td>
+
+                    {/* Date / Time */}
                     <td className="py-2.5 px-3 text-slate-500">
                       <div>{formatDate(entry.date)}</div>
                       {entry.start_time && entry.end_time && (
@@ -157,6 +193,8 @@ export function RecordedTimeTable({
                         </div>
                       )}
                     </td>
+
+                    {/* Duration */}
                     <td className="py-2.5 px-3 text-right font-medium text-slate-900">
                       {isEditing ? (
                         <input
@@ -171,6 +209,8 @@ export function RecordedTimeTable({
                         formatHours(entry.hours)
                       )}
                     </td>
+
+                    {/* Description */}
                     <td className="py-2.5 px-3 text-slate-600 max-w-xs">
                       {isEditing ? (
                         <input
@@ -184,6 +224,8 @@ export function RecordedTimeTable({
                         <span className="truncate block">{entry.description || '—'}</span>
                       )}
                     </td>
+
+                    {/* Billable */}
                     <td className="py-2.5 px-3 text-center">
                       {isEditing ? (
                         <input
@@ -202,6 +244,8 @@ export function RecordedTimeTable({
                         </span>
                       )}
                     </td>
+
+                    {/* Actions */}
                     <td className="py-2.5 px-3">
                       {isEditing ? (
                         <div className="flex items-center gap-1">
@@ -241,7 +285,7 @@ export function RecordedTimeTable({
                             aria-label="Delete"
                           >
                             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                           </button>
                         </div>

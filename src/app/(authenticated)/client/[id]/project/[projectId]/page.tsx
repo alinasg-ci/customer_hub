@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { fetchProjectById, updateProject, ProjectForm } from '@/modules/projects';
 import { usePlanning, useTasks, MyPlanningView, CustomerPlanningView, ProgressTree } from '@/modules/planning';
 import { useTimeEntries } from '@/modules/time-tracking';
-import { RecordButton } from '@/modules/recording';
+import { RecordButton, RecordedTimeTable, useRecordedEntries } from '@/modules/recording';
+import { ManualEntryForm } from '@/modules/reports';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { cn } from '@/shared/utils/cn';
 import type { Project, CreateProjectInput, UpdateProjectInput } from '@/modules/projects';
@@ -132,9 +133,11 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
       {/* Tab content */}
       <div className="mt-6">
         {activeTab === 'planner' && (
-          <PlannerTab projectId={project.id} projectName={project.name} activeSubTab={plannerSubTab} onSubTabChange={setPlannerSubTab} />
+          <PlannerTab projectId={project.id} projectName={project.name} activeSubTab={plannerSubTab} onSubTabChange={setPlannerSubTab} onDataChanged={() => setRefreshKey((k) => k + 1)} />
         )}
-{activeTab === 'time' && <EmptyTabPlaceholder icon="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" title="Time Logged" description="Recorded time entries, Toggl imports, and manual entries will appear here." />}
+        {activeTab === 'time' && (
+          <TimeLoggedTab projectId={project.id} onDataChanged={() => setRefreshKey((k) => k + 1)} />
+        )}
         {activeTab === 'finances' && <EmptyTabPlaceholder icon="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" title="Finances" description="Profitability, expenses, and budget comparisons will appear here." />}
         {activeTab === 'emails' && <EmptyTabPlaceholder icon="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" title="Emails" description="Project-related emails and communication will appear here." />}
         {activeTab === 'comments' && <EmptyTabPlaceholder icon="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" title="Comments" description="Project notes and comments will appear here." />}
@@ -210,11 +213,12 @@ function ProjectHeaderCard({ project, clientId, refreshKey, onEdit, onRecordingS
 
 // ─── Tab components ───────────────────────────────────────────────────────────
 
-function PlannerTab({ projectId, projectName, activeSubTab, onSubTabChange }: {
+function PlannerTab({ projectId, projectName, activeSubTab, onSubTabChange, onDataChanged }: {
   readonly projectId: string;
   readonly projectName: string;
   readonly activeSubTab: PlannerSubTab;
   readonly onSubTabChange: (tab: PlannerSubTab) => void;
+  readonly onDataChanged?: () => void;
 }) {
   return (
     <div>
@@ -240,12 +244,59 @@ function PlannerTab({ projectId, projectName, activeSubTab, onSubTabChange }: {
       </div>
 
       {activeSubTab === 'my-planning' && (
-        <MyPlanningView projectId={projectId} />
+        <MyPlanningView projectId={projectId} onDataChanged={onDataChanged} />
       )}
       {activeSubTab === 'customer-planning' && (
         <CustomerPlanningView projectId={projectId} projectName={projectName} />
       )}
     </div>
+  );
+}
+
+function TimeLoggedTab({ projectId, onDataChanged }: { readonly projectId: string; readonly onDataChanged: () => void }) {
+  const { phases } = usePlanning(projectId);
+  const { tasks } = useTasks(projectId);
+  const { entries, loading, totalHours, editEntry, removeEntry, addEntry } = useRecordedEntries(projectId);
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  const handleAdd = async (input: Parameters<typeof addEntry>[0]) => {
+    await addEntry(input);
+    setShowAddForm(false);
+    onDataChanged();
+  };
+
+  const handleEdit = async (id: string, input: Parameters<typeof editEntry>[1]) => {
+    await editEntry(id, input);
+    onDataChanged();
+  };
+
+  const handleDelete = async (id: string) => {
+    await removeEntry(id);
+    onDataChanged();
+  };
+
+  return (
+    <>
+      <RecordedTimeTable
+        entries={entries}
+        phases={phases}
+        tasks={tasks}
+        loading={loading}
+        totalHours={totalHours}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onAdd={() => setShowAddForm(true)}
+      />
+      {showAddForm && (
+        <ManualEntryForm
+          projectId={projectId}
+          phases={phases}
+          tasks={tasks}
+          onSubmit={handleAdd}
+          onCancel={() => setShowAddForm(false)}
+        />
+      )}
+    </>
   );
 }
 

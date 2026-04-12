@@ -49,10 +49,10 @@ export function RecordButton({ projectId, projectName, clientId, phases, tasks, 
     );
   }
 
-  // Recording this project — show timer + panel
+  // Recording this project — show timer button + floating panel overlay
   if (isRecordingThisProject) {
     return (
-      <div>
+      <>
         <button
           onClick={handleStop}
           className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700"
@@ -67,7 +67,7 @@ export function RecordButton({ projectId, projectName, clientId, phases, tasks, 
           </svg>
         </button>
         <RecordingPanel phases={phases} tasks={tasks} onStop={onEntrySaved} />
-      </div>
+      </>
     );
   }
 
