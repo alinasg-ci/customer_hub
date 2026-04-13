@@ -4,8 +4,8 @@ import { useComparison } from '../hooks/useComparison';
 import { SummaryBar } from './SummaryBar';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { formatHours } from '@/shared/utils/formatHours';
-import type { Phase } from '@/modules/planning/types';
-import type { TimeEntry } from '@/modules/time-tracking/types';
+import type { Phase } from '@/modules/planning';
+import type { TimeEntry } from '@/modules/time-tracking';
 
 type ComparisonPanelProps = {
   readonly projectId: string;

@@ -1,4 +1,4 @@
-import type { Phase } from '@/modules/planning/types';
+import type { Phase } from '@/modules/planning';
 
 type AutoMapResult = {
   readonly phaseId: string;

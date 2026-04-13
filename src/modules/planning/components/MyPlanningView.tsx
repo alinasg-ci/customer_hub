@@ -86,17 +86,17 @@ export function MyPlanningView({ projectId, onDataChanged }: MyPlanningViewProps
 
   if (phases.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 py-16">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
-          <svg className="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+      <div className="flex flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-oat-300 py-16">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-[12px] bg-oat-100">
+          <svg className="h-6 w-6 text-oat-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
         </div>
-        <h3 className="text-base font-semibold text-slate-900">No phases yet</h3>
-        <p className="mt-1 text-sm text-slate-500">Create your first phase to start planning tasks.</p>
+        <h3 className="text-base font-semibold text-black">No phases yet</h3>
+        <p className="mt-1 text-sm text-charcoal-500">Create your first phase to start planning tasks.</p>
         <button
           onClick={handleAddPhase}
-          className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          className="mt-4 rounded-lg bg-matcha-600 px-4 py-2 text-sm font-medium text-white hover:bg-matcha-800"
         >
           + Add Phase
         </button>
@@ -129,7 +129,7 @@ export function MyPlanningView({ projectId, onDataChanged }: MyPlanningViewProps
 
       <button
         onClick={handleAddPhase}
-        className="rounded-lg border border-dashed border-slate-300 px-4 py-2.5 text-sm text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-700 w-full"
+        className="rounded-lg border border-dashed border-oat-300 px-4 py-2.5 text-sm text-charcoal-500 transition-colors hover:border-oat-400 hover:text-charcoal-700 w-full"
       >
         + Add Phase
       </button>
@@ -205,18 +205,18 @@ function SortablePhaseTable({ phase, tasks, hoursByTask, projectId, onUpdatePhas
       ref={setNodeRef}
       style={style}
       className={cn(
-        'rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden',
+        'rounded-[12px] border border-oat-300 bg-white shadow-[var(--shadow-clay)] overflow-hidden',
         isDragging && 'opacity-50'
       )}
     >
       {/* Phase header */}
-      <div className="group flex items-center justify-between border-b border-slate-100 bg-slate-50/80 px-4 py-3">
+      <div className="group flex items-center justify-between border-b border-oat-200 bg-cream-dark px-4 py-3">
         <div className="flex items-center gap-2">
           {/* Drag handle */}
           <button
             {...attributes}
             {...listeners}
-            className="cursor-grab rounded p-1 text-slate-300 opacity-0 transition-opacity hover:text-slate-500 group-hover:opacity-100"
+            className="cursor-grab rounded p-1 text-oat-400 opacity-0 transition-opacity hover:text-charcoal-500 group-hover:opacity-100"
             aria-label="Drag to reorder phase"
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
@@ -232,25 +232,25 @@ function SortablePhaseTable({ phase, tasks, hoursByTask, projectId, onUpdatePhas
               onBlur={handleNameBlur}
               onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLElement).blur(); if (e.key === 'Escape') { setNameValue(phase.name); setEditingName(false); } }}
               autoFocus
-              className="rounded-lg border border-indigo-300 px-2 py-0.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+              className="rounded-lg border border-matcha-500 px-2 py-0.5 text-sm font-semibold text-black focus:outline-none focus:ring-2 focus:ring-matcha-600/20"
             />
           ) : (
             <button
               onClick={() => setEditingName(true)}
-              className="text-sm font-semibold text-slate-900 hover:text-indigo-600"
+              className="text-sm font-semibold text-black hover:text-matcha-600"
             >
               {phase.name}
             </button>
           )}
 
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-oat-500">
             {formatHours(totalPlanned)} planned · {formatHours(totalDone)} done
           </span>
         </div>
 
         <button
           onClick={onDeletePhase}
-          className="rounded-lg p-1.5 text-slate-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
+          className="rounded-lg p-1.5 text-oat-500 opacity-0 transition-opacity hover:bg-pomegranate-400/10 hover:text-pomegranate-600 group-hover:opacity-100"
           aria-label="Delete phase"
         >
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
@@ -262,7 +262,7 @@ function SortablePhaseTable({ phase, tasks, hoursByTask, projectId, onUpdatePhas
       {/* Task table */}
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+          <tr className="border-b border-oat-200 text-[11px] font-semibold uppercase tracking-widest text-oat-500">
             <th className="w-8 py-2 pl-4"></th>
             <th className="py-2 px-3 text-left">Task</th>
             <th className="py-2 px-3 text-right w-28">Planned</th>
@@ -292,7 +292,7 @@ function SortablePhaseTable({ phase, tasks, hoursByTask, projectId, onUpdatePhas
       {/* Add task row */}
       <button
         onClick={handleAddTask}
-        className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600"
+        className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-oat-500 transition-colors hover:bg-cream hover:text-charcoal-500"
       >
         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -335,7 +335,7 @@ function SortableTaskRow({ task, hoursDone, onEdit, onRemove }: {
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group border-b border-slate-50 hover:bg-slate-50',
+        'group border-b border-oat-100 hover:bg-cream',
         isDragging && 'opacity-50'
       )}
     >
@@ -344,7 +344,7 @@ function SortableTaskRow({ task, hoursDone, onEdit, onRemove }: {
         <button
           {...attributes}
           {...listeners}
-          className="cursor-grab rounded p-0.5 text-slate-300 opacity-0 transition-opacity hover:text-slate-500 group-hover:opacity-100"
+          className="cursor-grab rounded p-0.5 text-oat-400 opacity-0 transition-opacity hover:text-charcoal-500 group-hover:opacity-100"
         >
           <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 6h2v2H8V6zm6 0h2v2h-2V6zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zm-6 5h2v2H8v-2zm6 0h2v2h-2v-2z" />
@@ -363,14 +363,14 @@ function SortableTaskRow({ task, hoursDone, onEdit, onRemove }: {
             onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLElement).blur(); }}
             autoFocus
             placeholder="Task name..."
-            className="w-full rounded border border-indigo-300 px-2 py-0.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400/20"
+            className="w-full rounded border border-matcha-500 px-2 py-0.5 text-sm focus:outline-none focus:ring-1 focus:ring-matcha-600/20"
           />
         ) : (
           <button
             onClick={() => setEditingName(true)}
-            className="text-left text-sm text-slate-800 hover:text-indigo-600"
+            className="text-left text-sm text-charcoal-700 hover:text-matcha-600"
           >
-            {task.name || <span className="italic text-slate-400">Untitled</span>}
+            {task.name || <span className="italic text-oat-500">Untitled</span>}
           </button>
         )}
       </td>
@@ -383,7 +383,7 @@ function SortableTaskRow({ task, hoursDone, onEdit, onRemove }: {
           min="0"
           value={task.planned_hours}
           onChange={(e) => onEdit(task.id, { planned_hours: parseFloat(e.target.value) || 0 })}
-          className="w-16 rounded border border-transparent px-1.5 py-0.5 text-right text-sm text-slate-700 hover:border-slate-200 focus:border-indigo-300 focus:outline-none focus:ring-1 focus:ring-indigo-400/20"
+          className="w-16 rounded border border-transparent px-1.5 py-0.5 text-right text-sm text-charcoal-700 hover:border-oat-300 focus:border-matcha-500 focus:outline-none focus:ring-1 focus:ring-matcha-600/20"
         />
       </td>
 
@@ -393,7 +393,7 @@ function SortableTaskRow({ task, hoursDone, onEdit, onRemove }: {
           type="checkbox"
           checked={task.internal_use}
           onChange={(e) => onEdit(task.id, { internal_use: e.target.checked })}
-          className="rounded border-slate-300"
+          className="rounded border-oat-300"
         />
       </td>
 
@@ -401,7 +401,7 @@ function SortableTaskRow({ task, hoursDone, onEdit, onRemove }: {
       <td className="py-2 px-3 text-right">
         <span className={cn(
           'text-sm font-medium',
-          hoursDone > task.planned_hours && task.planned_hours > 0 ? 'text-red-600' : 'text-slate-700'
+          hoursDone > task.planned_hours && task.planned_hours > 0 ? 'text-pomegranate-600' : 'text-charcoal-700'
         )}>
           {hoursDone > 0 ? formatHours(hoursDone) : '—'}
         </span>
@@ -414,8 +414,8 @@ function SortableTaskRow({ task, hoursDone, onEdit, onRemove }: {
           value={task.due_date ?? ''}
           onChange={(e) => onEdit(task.id, { due_date: e.target.value || null })}
           className={cn(
-            'rounded border border-transparent px-1.5 py-0.5 text-xs hover:border-slate-200 focus:border-indigo-300 focus:outline-none focus:ring-1 focus:ring-indigo-400/20',
-            isOverdue ? 'text-red-600 font-medium' : 'text-slate-500'
+            'rounded border border-transparent px-1.5 py-0.5 text-xs hover:border-oat-300 focus:border-matcha-500 focus:outline-none focus:ring-1 focus:ring-matcha-600/20',
+            isOverdue ? 'text-pomegranate-600 font-medium' : 'text-charcoal-500'
           )}
         />
       </td>
@@ -424,7 +424,7 @@ function SortableTaskRow({ task, hoursDone, onEdit, onRemove }: {
       <td className="py-2 pr-4">
         <button
           onClick={() => onRemove(task.id)}
-          className="rounded-lg p-1 text-slate-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
+          className="rounded-lg p-1 text-oat-500 opacity-0 transition-opacity hover:bg-pomegranate-400/10 hover:text-pomegranate-600 group-hover:opacity-100"
           aria-label="Delete task"
         >
           <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>

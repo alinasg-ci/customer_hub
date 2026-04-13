@@ -27,7 +27,7 @@ export function ListView({ entries, clientIds }: ListViewProps) {
 
   if (grouped.length === 0) {
     return (
-      <div className="rounded-xl border-2 border-dashed border-slate-200 py-12 text-center text-sm text-slate-500">
+      <div className="rounded-[12px] border-2 border-dashed border-oat-300 py-12 text-center text-sm text-charcoal-500">
         No time entries yet.
       </div>
     );
@@ -41,16 +41,16 @@ export function ListView({ entries, clientIds }: ListViewProps) {
         const isToday = toDateString(new Date()) === date;
 
         return (
-          <div key={date} className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+          <div key={date} className="rounded-[12px] border border-oat-300 bg-white overflow-hidden">
             {/* Day header */}
             <div className={cn(
-              'flex items-center justify-between px-4 py-2.5 border-b border-slate-100',
-              isToday ? 'bg-indigo-50' : 'bg-slate-50/80'
+              'flex items-center justify-between px-4 py-2.5 border-b border-oat-200',
+              isToday ? 'bg-matcha-50' : 'bg-cream-dark'
             )}>
-              <span className={cn('text-sm font-medium', isToday ? 'text-indigo-700' : 'text-slate-700')}>
+              <span className={cn('text-sm font-medium', isToday ? 'text-matcha-700' : 'text-charcoal-700')}>
                 {dateObj.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
               </span>
-              <span className="text-xs font-semibold text-slate-600">{formatHours(dayTotal)}</span>
+              <span className="text-xs font-semibold text-charcoal-500">{formatHours(dayTotal)}</span>
             </div>
 
             {/* Entries */}
@@ -63,27 +63,27 @@ export function ListView({ entries, clientIds }: ListViewProps) {
                     : '—';
 
                   return (
-                    <tr key={entry.id} className="border-b border-slate-50 last:border-b-0 hover:bg-slate-50">
+                    <tr key={entry.id} className="border-b border-oat-100 last:border-b-0 hover:bg-oat-100">
                       <td className="py-2 pl-4 pr-2 w-4">
                         <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: color }} />
                       </td>
-                      <td className="py-2 px-2 text-slate-500 text-xs w-28">{timeStr}</td>
-                      <td className="py-2 px-2 text-slate-800">
+                      <td className="py-2 px-2 text-charcoal-500 text-xs w-28">{timeStr}</td>
+                      <td className="py-2 px-2 text-charcoal-700">
                         <span className="font-medium">{entry.clientName}</span>
-                        <span className="text-slate-400"> &gt; </span>
+                        <span className="text-oat-500"> &gt; </span>
                         {entry.projectName}
-                        {entry.phaseName && <span className="text-slate-400"> &gt; {entry.phaseName}</span>}
-                        {entry.taskName && <span className="text-slate-400"> &gt; {entry.taskName}</span>}
+                        {entry.phaseName && <span className="text-oat-500"> &gt; {entry.phaseName}</span>}
+                        {entry.taskName && <span className="text-oat-500"> &gt; {entry.taskName}</span>}
                       </td>
-                      <td className="py-2 px-2 text-right font-medium text-slate-700 w-20">
+                      <td className="py-2 px-2 text-right font-medium text-charcoal-700 w-20">
                         {formatHours(entry.durationHours)}
                       </td>
                       <td className="py-2 pr-4 w-20 text-center">
                         <span className={cn(
                           'inline-flex rounded-md border px-1.5 py-0.5 text-[10px] font-medium',
                           entry.billable
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : 'bg-slate-100 text-slate-500 border-slate-200'
+                            ? 'bg-matcha-50 text-matcha-700 border-matcha-200'
+                            : 'bg-oat-100 text-charcoal-500 border-oat-300'
                         )}>
                           {entry.billable ? 'Billable' : 'Non-bill'}
                         </span>

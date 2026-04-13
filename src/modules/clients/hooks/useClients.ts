@@ -28,34 +28,64 @@ export function useClients(status: 'active' | 'archived' = 'active') {
   }, [load]);
 
   const add = useCallback(async (input: CreateClientInput) => {
-    const newClient = await createClient(input);
-    setClients((prev) => [newClient, ...prev]);
-    return newClient;
+    try {
+      const newClient = await createClient(input);
+      setClients((prev) => [newClient, ...prev]);
+      return newClient;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to create client';
+      setError(message);
+      throw err;
+    }
   }, []);
 
   const edit = useCallback(async (id: string, input: UpdateClientInput) => {
-    const updated = await updateClient(id, input);
-    setClients((prev) =>
-      prev.map((c) => (c.id === id ? updated : c))
-    );
-    return updated;
+    try {
+      const updated = await updateClient(id, input);
+      setClients((prev) =>
+        prev.map((c) => (c.id === id ? updated : c))
+      );
+      return updated;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to update client';
+      setError(message);
+      throw err;
+    }
   }, []);
 
   const archive = useCallback(async (id: string) => {
-    const archived = await archiveClient(id);
-    setClients((prev) => prev.filter((c) => c.id !== id));
-    return archived;
+    try {
+      const archived = await archiveClient(id);
+      setClients((prev) => prev.filter((c) => c.id !== id));
+      return archived;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to archive client';
+      setError(message);
+      throw err;
+    }
   }, []);
 
   const reactivate = useCallback(async (id: string) => {
-    const activated = await reactivateClient(id);
-    setClients((prev) => prev.filter((c) => c.id !== id));
-    return activated;
+    try {
+      const activated = await reactivateClient(id);
+      setClients((prev) => prev.filter((c) => c.id !== id));
+      return activated;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to reactivate client';
+      setError(message);
+      throw err;
+    }
   }, []);
 
   const remove = useCallback(async (id: string) => {
-    await deleteClient(id);
-    setClients((prev) => prev.filter((c) => c.id !== id));
+    try {
+      await deleteClient(id);
+      setClients((prev) => prev.filter((c) => c.id !== id));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to delete client';
+      setError(message);
+      throw err;
+    }
   }, []);
 
   const search = useCallback(async (query: string) => {

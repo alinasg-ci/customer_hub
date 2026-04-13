@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { checkThresholds } from '@/modules/notifications/triggers';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { checkThresholds, checkDeadline } from '@/modules/notifications/triggers';
+import type { DeadlineCheck } from '@/modules/notifications/triggers';
 import type { Notification, ThresholdCheck } from '@/modules/notifications/types';
 
 function makeNotification(overrides: Partial<Notification> = {}): Notification {
@@ -203,5 +204,137 @@ describe('checkThresholds', () => {
 
     const results = checkThresholds(check, [], 'client-abc');
     expect(results[0].link).toBe('/client/client-abc/project/proj-1');
+  });
+});
+
+// ─── checkDeadline tests ──────────────────────────────────────────────────
+
+describe('checkDeadline', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-10T12:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  function makeDeadlineCheck(overrides: Partial<DeadlineCheck> = {}): DeadlineCheck {
+    return {
+      projectId: 'proj-1',
+      projectName: 'Website Redesign',
+      deadline: '2026-04-08', // 2 days ago by default
+      completionPercent: 45,
+      clientId: 'client-1',
+      ...overrides,
+    };
+  }
+
+  it('should fire deadline_overdue when project is past deadline', () => {
+    const check = makeDeadlineCheck({ deadline: '2026-04-08' }); // 2 days ago
+    const results = checkDeadline(check, []);
+    expect(results).toHaveLength(1);
+    expect(results[0].type).toBe('deadline_overdue');
+    expect(results[0].message).toContain('past its deadline');
+    expect(results[0].project_id).toBe('proj-1');
+  });
+
+  it('should NOT duplicate deadline_overdue when already notified', () => {
+    const check = makeDeadlineCheck({ deadline: '2026-04-08' });
+    const existing: Notification[] = [
+      makeNotification({ project_id: 'proj-1', type: 'deadline_overdue', threshold_percent: 100 }),
+    ];
+    const results = checkDeadline(check, existing);
+    expect(results).toHaveLength(0);
+  });
+
+  it('should fire deadline_approaching within 7 days when below 70% complete', () => {
+    const check = makeDeadlineCheck({
+      deadline: '2026-04-15', // 5 days away
+      completionPercent: 45.5,
+    });
+    const results = checkDeadline(check, []);
+    expect(results).toHaveLength(1);
+    expect(results[0].type).toBe('deadline_approaching');
+    expect(results[0].message).toContain('5 days');
+    expect(results[0].message).toContain('46%'); // rounded
+  });
+
+  it('should fire deadline_approaching within 3 days regardless of completion', () => {
+    const check = makeDeadlineCheck({
+      deadline: '2026-04-12', // 2 days away
+      completionPercent: 95, // even high completion
+    });
+    const results = checkDeadline(check, []);
+    expect(results).toHaveLength(1);
+    expect(results[0].type).toBe('deadline_approaching');
+  });
+
+  it('should NOT fire within 7 days when 70%+ complete and more than 3 days away', () => {
+    const check = makeDeadlineCheck({
+      deadline: '2026-04-16', // 6 days away
+      completionPercent: 75,
+    });
+    const results = checkDeadline(check, []);
+    expect(results).toHaveLength(0);
+  });
+
+  it('should NOT fire when more than 7 days away', () => {
+    const check = makeDeadlineCheck({
+      deadline: '2026-04-25', // 15 days away
+      completionPercent: 30,
+    });
+    const results = checkDeadline(check, []);
+    expect(results).toHaveLength(0);
+  });
+
+  it('should NOT duplicate deadline_approaching when already notified', () => {
+    const check = makeDeadlineCheck({
+      deadline: '2026-04-12',
+      completionPercent: 50,
+    });
+    const existing: Notification[] = [
+      makeNotification({ project_id: 'proj-1', type: 'deadline_approaching', threshold_percent: 80 }),
+    ];
+    const results = checkDeadline(check, existing);
+    expect(results).toHaveLength(0);
+  });
+
+  it('should handle boundary: exactly day 7 with low completion', () => {
+    const check = makeDeadlineCheck({
+      deadline: '2026-04-17', // exactly 7 days
+      completionPercent: 50,
+    });
+    const results = checkDeadline(check, []);
+    expect(results).toHaveLength(1);
+    expect(results[0].type).toBe('deadline_approaching');
+  });
+
+  it('should handle boundary: exactly day 3 with high completion', () => {
+    const check = makeDeadlineCheck({
+      deadline: '2026-04-13', // exactly 3 days
+      completionPercent: 90,
+    });
+    const results = checkDeadline(check, []);
+    expect(results).toHaveLength(1);
+    expect(results[0].type).toBe('deadline_approaching');
+    expect(results[0].message).toContain('3 days');
+  });
+
+  it('should use singular "day" for 1 day remaining', () => {
+    const check = makeDeadlineCheck({
+      deadline: '2026-04-11', // 1 day away
+      completionPercent: 50,
+    });
+    const results = checkDeadline(check, []);
+    expect(results).toHaveLength(1);
+    expect(results[0].message).toContain('1 day');
+    expect(results[0].message).not.toContain('1 days');
+  });
+
+  it('should include link to project view', () => {
+    const check = makeDeadlineCheck({ deadline: '2026-04-08' });
+    const results = checkDeadline(check, []);
+    expect(results[0].link).toBe('/client/client-1/project/proj-1');
   });
 });

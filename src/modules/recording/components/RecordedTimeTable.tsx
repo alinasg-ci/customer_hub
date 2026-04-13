@@ -4,8 +4,8 @@ import { useState, useCallback } from 'react';
 import { ConfirmDeleteDialog } from '@/shared/ui/ConfirmDeleteDialog';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { formatHours } from '@/shared/utils/formatHours';
-import type { ManualTimeEntry, UpdateManualEntryInput } from '@/modules/reports/types';
-import type { Phase, Task } from '@/modules/planning/types';
+import type { ManualTimeEntry, UpdateManualEntryInput } from '@/modules/reports';
+import type { Phase, Task } from '@/modules/planning';
 
 type RecordedTimeTableProps = {
   readonly entries: readonly ManualTimeEntry[];
@@ -108,13 +108,13 @@ export function RecordedTimeTable({
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-baseline gap-3">
-          <span className="text-sm text-slate-500">
-            Total: <strong className="text-slate-900">{formatHours(totalHours)}</strong>
+          <span className="text-sm text-charcoal-500">
+            Total: <strong className="text-black">{formatHours(totalHours)}</strong>
           </span>
         </div>
         <button
           onClick={onAdd}
-          className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50"
+          className="flex items-center gap-1.5 rounded-lg border border-oat-300 px-3 py-1.5 text-sm text-charcoal-500 hover:bg-oat-100"
         >
           <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -124,14 +124,14 @@ export function RecordedTimeTable({
       </div>
 
       {entries.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center">
-          <p className="text-sm text-slate-500">No time entries yet. Use the Record button above or add entries manually.</p>
+        <div className="rounded-[12px] border border-dashed border-oat-300 p-8 text-center">
+          <p className="text-sm text-charcoal-500">No time entries yet. Use the Record button above or add entries manually.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+        <div className="overflow-x-auto rounded-[12px] border border-oat-300 shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/80 text-left text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+              <tr className="border-b border-oat-300 bg-cream/80 text-left text-[11px] font-semibold uppercase tracking-widest text-oat-500">
                 <th className="py-2.5 pl-4 pr-2">Phase</th>
                 <th className="py-2.5 px-3">Task</th>
                 <th className="py-2.5 px-3">Date / Time</th>
@@ -146,14 +146,14 @@ export function RecordedTimeTable({
                 const isEditing = editingId === entry.id;
 
                 return (
-                  <tr key={entry.id} className="group border-b border-slate-50 hover:bg-slate-50">
+                  <tr key={entry.id} className="group border-b border-oat-100 hover:bg-oat-100">
                     {/* Phase */}
                     <td className="py-2.5 pl-4 pr-2">
                       {isEditing ? (
                         <select
                           value={editDraft.phase_id ?? ''}
                           onChange={(e) => setEditDraft((d) => ({ ...d, phase_id: e.target.value || null, task_id: null }))}
-                          className="rounded-lg border border-slate-200 px-2 py-1 text-xs"
+                          className="clay-input text-xs px-2 py-1"
                         >
                           <option value="">Select phase</option>
                           {phases.map((p) => (
@@ -161,7 +161,7 @@ export function RecordedTimeTable({
                           ))}
                         </select>
                       ) : (
-                        <span className="text-slate-700">{getPhaseName(entry.phase_id, phases)}</span>
+                        <span className="text-charcoal-700">{getPhaseName(entry.phase_id, phases)}</span>
                       )}
                     </td>
 
@@ -172,7 +172,7 @@ export function RecordedTimeTable({
                           value={editDraft.task_id ?? ''}
                           onChange={(e) => setEditDraft((d) => ({ ...d, task_id: e.target.value || null }))}
                           disabled={editPhaseTasks.length === 0}
-                          className="rounded-lg border border-slate-200 px-2 py-1 text-xs disabled:opacity-50"
+                          className="clay-input text-xs px-2 py-1 disabled:opacity-50"
                         >
                           <option value="">{editPhaseTasks.length === 0 ? 'Select phase first' : 'Select task'}</option>
                           {editPhaseTasks.map((t) => (
@@ -180,22 +180,22 @@ export function RecordedTimeTable({
                           ))}
                         </select>
                       ) : (
-                        <span className="text-slate-600">{getTaskName(entry.task_id, tasks)}</span>
+                        <span className="text-charcoal-500">{getTaskName(entry.task_id, tasks)}</span>
                       )}
                     </td>
 
                     {/* Date / Time */}
-                    <td className="py-2.5 px-3 text-slate-500">
+                    <td className="py-2.5 px-3 text-charcoal-500">
                       <div>{formatDate(entry.date)}</div>
                       {entry.start_time && entry.end_time && (
-                        <div className="text-xs text-slate-400">
+                        <div className="text-xs text-oat-500">
                           {formatTime(entry.start_time)} → {formatTime(entry.end_time)}
                         </div>
                       )}
                     </td>
 
                     {/* Duration */}
-                    <td className="py-2.5 px-3 text-right font-medium text-slate-900">
+                    <td className="py-2.5 px-3 text-right font-medium text-black">
                       {isEditing ? (
                         <input
                           type="number"
@@ -203,7 +203,7 @@ export function RecordedTimeTable({
                           min="0"
                           value={editDraft.hours ?? entry.hours}
                           onChange={(e) => setEditDraft((d) => ({ ...d, hours: parseFloat(e.target.value) || 0 }))}
-                          className="w-16 rounded-lg border border-slate-200 px-2 py-1 text-right text-xs"
+                          className="clay-input w-16 text-right text-xs px-2 py-1"
                         />
                       ) : (
                         formatHours(entry.hours)
@@ -211,13 +211,13 @@ export function RecordedTimeTable({
                     </td>
 
                     {/* Description */}
-                    <td className="py-2.5 px-3 text-slate-600 max-w-xs">
+                    <td className="py-2.5 px-3 text-charcoal-500 max-w-xs">
                       {isEditing ? (
                         <input
                           type="text"
                           value={editDraft.description ?? entry.description ?? ''}
                           onChange={(e) => setEditDraft((d) => ({ ...d, description: e.target.value || null }))}
-                          className="w-full rounded-lg border border-slate-200 px-2 py-1 text-xs"
+                          className="clay-input w-full text-xs px-2 py-1"
                           placeholder="Description..."
                         />
                       ) : (
@@ -232,13 +232,13 @@ export function RecordedTimeTable({
                           type="checkbox"
                           checked={editDraft.billable ?? entry.billable}
                           onChange={(e) => setEditDraft((d) => ({ ...d, billable: e.target.checked }))}
-                          className="rounded border-slate-300"
+                          className="rounded border-oat-300"
                         />
                       ) : (
                         <span className={`inline-flex rounded-md border px-1.5 py-0.5 text-[11px] font-medium ${
                           entry.billable
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : 'bg-slate-100 text-slate-500 border-slate-200'
+                            ? 'bg-matcha-300/20 text-matcha-800 border-emerald-200'
+                            : 'bg-oat-100 text-charcoal-500 border-oat-300'
                         }`}>
                           {entry.billable ? 'Billable' : 'Non-billable'}
                         </span>
@@ -251,7 +251,7 @@ export function RecordedTimeTable({
                         <div className="flex items-center gap-1">
                           <button
                             onClick={saveEdit}
-                            className="rounded-lg p-1.5 text-emerald-600 hover:bg-emerald-50"
+                            className="rounded-lg p-1.5 text-matcha-600 hover:bg-matcha-300/20"
                             aria-label="Save"
                           >
                             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -260,7 +260,7 @@ export function RecordedTimeTable({
                           </button>
                           <button
                             onClick={cancelEdit}
-                            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+                            className="rounded-lg p-1.5 text-oat-500 hover:bg-oat-100"
                             aria-label="Cancel"
                           >
                             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -272,7 +272,7 @@ export function RecordedTimeTable({
                         <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
                           <button
                             onClick={() => startEditing(entry)}
-                            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                            className="rounded-lg p-1.5 text-oat-500 hover:bg-oat-100 hover:text-charcoal-500"
                             aria-label="Edit"
                           >
                             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
@@ -281,7 +281,7 @@ export function RecordedTimeTable({
                           </button>
                           <button
                             onClick={() => setDeletingId(entry.id)}
-                            className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600"
+                            className="rounded-lg p-1.5 text-oat-500 hover:bg-red-50 hover:text-pomegranate-600"
                             aria-label="Delete"
                           >
                             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>

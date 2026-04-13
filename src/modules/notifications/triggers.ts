@@ -110,6 +110,76 @@ function hasExistingNotification(
   });
 }
 
+// ─── Deadline proximity checks ──────────────────────────────────────────────
+
+export type DeadlineCheck = {
+  readonly projectId: string;
+  readonly projectName: string;
+  readonly deadline: string;
+  readonly completionPercent: number;
+  readonly clientId: string;
+};
+
+/**
+ * Check deadline proximity and return notifications to create.
+ * - Overdue → always fire
+ * - Within 7 days + <70% complete → fire warning
+ * - Within 3 days at any completion → fire warning
+ */
+export function checkDeadline(
+  check: DeadlineCheck,
+  existingNotifications: readonly Notification[]
+): readonly CreateNotificationInput[] {
+  const results: CreateNotificationInput[] = [];
+  const link = `/client/${check.clientId}/project/${check.projectId}`;
+  const daysUntil = Math.ceil(
+    (new Date(check.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+  );
+
+  // Overdue
+  if (daysUntil < 0) {
+    const alreadyNotified = existingNotifications.some(
+      (n) => n.project_id === check.projectId && n.type === 'deadline_overdue'
+    );
+    if (!alreadyNotified) {
+      results.push({
+        type: 'deadline_overdue',
+        project_id: check.projectId,
+        message: `${check.projectName} is past its deadline (${formatDeadline(check.deadline)}).`,
+        threshold_percent: 100,
+        link,
+      });
+    }
+    return results;
+  }
+
+  // Approaching: within 7 days and <70% done, OR within 3 days at any %
+  const shouldWarn =
+    (daysUntil <= 7 && check.completionPercent < 70) ||
+    daysUntil <= 3;
+
+  if (shouldWarn) {
+    const alreadyNotified = existingNotifications.some(
+      (n) => n.project_id === check.projectId && n.type === 'deadline_approaching'
+    );
+    if (!alreadyNotified) {
+      results.push({
+        type: 'deadline_approaching',
+        project_id: check.projectId,
+        message: `${check.projectName} deadline is in ${daysUntil} day${daysUntil === 1 ? '' : 's'} (${formatDeadline(check.deadline)}) — ${check.completionPercent.toFixed(0)}% complete.`,
+        threshold_percent: 80,
+        link,
+      });
+    }
+  }
+
+  return results;
+}
+
+function formatDeadline(date: string): string {
+  return new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
+}
+
 function buildMessage(label: string, threshold: number, actual: number): string {
   if (threshold === 80) {
     return `${label} has reached ${actual.toFixed(0)}% of budget (warning at 80%).`;

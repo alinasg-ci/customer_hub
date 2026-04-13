@@ -32,29 +32,29 @@ export function ConfirmDeleteDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div
-        className="mx-4 w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl"
+        className="clay-card mx-4 w-full max-w-md p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50">
-            <svg className="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-pomegranate-400/10">
+            <svg className="h-5 w-5 text-pomegranate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+          <h3 className="text-lg font-semibold text-black">{title}</h3>
         </div>
 
-        <p className="mb-4 text-sm leading-relaxed text-slate-600">{message}</p>
+        <p className="mb-4 text-sm leading-relaxed text-charcoal-500">{message}</p>
 
         <label className="mb-5 block">
-          <span className="text-sm text-slate-600">
-            Type <strong className="text-slate-900">DELETE</strong> to confirm:
+          <span className="text-sm text-charcoal-500">
+            Type <strong className="text-black">DELETE</strong> to confirm:
           </span>
           <input
             type="text"
-            className="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm transition-colors focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400/20"
+            className="clay-input mt-1.5 w-full text-sm"
             onChange={(e) => setConfirmed(e.target.value === 'DELETE')}
             placeholder="DELETE"
           />
@@ -64,7 +64,7 @@ export function ConfirmDeleteDialog({
           <button
             ref={cancelRef}
             onClick={onCancel}
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+            className="clay-btn clay-btn-secondary text-sm"
             disabled={loading}
           >
             Cancel
@@ -72,7 +72,7 @@ export function ConfirmDeleteDialog({
           <button
             onClick={onConfirm}
             disabled={!confirmed || loading}
-            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="clay-btn clay-btn-danger text-sm disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? 'Deleting...' : 'Delete permanently'}
           </button>

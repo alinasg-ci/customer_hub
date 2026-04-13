@@ -65,24 +65,24 @@ export function ManualEntryForm({ projectId, phases, tasks = [], onSubmit, onCan
     }
   }
 
-  const inputClass = "mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20";
+  const inputClass = "clay-input w-full text-sm mt-1";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">Add Time Entry</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl border border-oat-300 bg-white p-6 shadow-2xl">
+        <h2 className="mb-4 text-lg font-semibold text-black">Add Time Entry</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Phase + Task (required) */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="me-phase" className="block text-sm font-medium text-slate-700">Phase <span className="text-red-400">*</span></label>
+              <label htmlFor="me-phase" className="block text-sm font-medium text-charcoal-700">Phase <span className="text-pomegranate-400">*</span></label>
               <select id="me-phase" value={phaseId} onChange={(e) => handlePhaseChange(e.target.value)} className={inputClass}>
                 <option value="">Select phase</option>
                 {phases.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
             </div>
             <div>
-              <label htmlFor="me-task" className="block text-sm font-medium text-slate-700">Task {phaseTasks.length > 0 && <span className="text-red-400">*</span>}</label>
+              <label htmlFor="me-task" className="block text-sm font-medium text-charcoal-700">Task {phaseTasks.length > 0 && <span className="text-pomegranate-400">*</span>}</label>
               <select
                 id="me-task"
                 value={taskId}
@@ -101,42 +101,42 @@ export function ManualEntryForm({ projectId, phases, tasks = [], onSubmit, onCan
           {/* Date + Hours */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="me-date" className="block text-sm font-medium text-slate-700">Date <span className="text-red-400">*</span></label>
+              <label htmlFor="me-date" className="block text-sm font-medium text-charcoal-700">Date <span className="text-pomegranate-400">*</span></label>
               <input id="me-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label htmlFor="me-hours" className="block text-sm font-medium text-slate-700">Hours <span className="text-red-400">*</span></label>
+              <label htmlFor="me-hours" className="block text-sm font-medium text-charcoal-700">Hours <span className="text-pomegranate-400">*</span></label>
               <input id="me-hours" type="number" step="0.25" value={hours} onChange={(e) => setHours(e.target.value)} className={inputClass} autoFocus />
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="me-desc" className="block text-sm font-medium text-slate-700">Description</label>
+            <label htmlFor="me-desc" className="block text-sm font-medium text-charcoal-700">Description</label>
             <input id="me-desc" type="text" value={description} onChange={(e) => setDescription(e.target.value)} className={inputClass} />
           </div>
 
           {/* Billable + Note */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-end pb-1">
-              <label className="flex items-center gap-2 text-sm text-slate-700">
-                <input type="checkbox" checked={billable} onChange={(e) => setBillable(e.target.checked)} className="rounded border-slate-300" />
+              <label className="flex items-center gap-2 text-sm text-charcoal-700">
+                <input type="checkbox" checked={billable} onChange={(e) => setBillable(e.target.checked)} className="rounded border-oat-300" />
                 Billable
               </label>
             </div>
           </div>
 
           <div>
-            <label htmlFor="me-note" className="block text-sm font-medium text-slate-700">Note</label>
+            <label htmlFor="me-note" className="block text-sm font-medium text-charcoal-700">Note</label>
             <textarea id="me-note" rows={2} value={note} onChange={(e) => setNote(e.target.value)} className={inputClass} />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-pomegranate-600">{error}</p>}
 
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={onCancel} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>
+            <button type="button" onClick={onCancel} className="rounded-lg border border-oat-300 px-4 py-2 text-sm font-medium text-charcoal-700 hover:bg-oat-100">Cancel</button>
             <button type="submit" disabled={submitting}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50">
+              className="clay-btn clay-btn-primary text-sm disabled:opacity-50">
               {submitting ? 'Adding...' : 'Add Entry'}
             </button>
           </div>

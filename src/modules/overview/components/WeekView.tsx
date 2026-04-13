@@ -28,13 +28,13 @@ export function WeekView({ entries, currentDate, clientIds, hourHeight }: WeekVi
   }, [entries, weekDates]);
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white overflow-hidden flex flex-col" style={{ maxHeight: '75vh' }}>
+    <div className="rounded-[12px] border border-oat-300 bg-white overflow-hidden flex flex-col" style={{ maxHeight: '75vh' }}>
       {/* Fixed header — always visible */}
-      <div className="flex border-b border-slate-200 bg-slate-50 shrink-0">
+      <div className="flex border-b border-oat-300 bg-cream shrink-0">
         {/* Week total in time-axis corner */}
-        <div className="shrink-0 w-14 border-r border-slate-200 flex flex-col items-center justify-center py-2">
-          <span className="text-[10px] font-medium text-slate-400">Week</span>
-          <span className="text-xs font-semibold text-slate-700">{formatHours(weekTotal)}</span>
+        <div className="shrink-0 w-14 border-r border-oat-300 flex flex-col items-center justify-center py-2">
+          <span className="text-[10px] font-medium text-oat-500">Week</span>
+          <span className="text-xs font-semibold text-charcoal-700">{formatHours(weekTotal)}</span>
         </div>
 
         {/* Day headers */}
@@ -48,24 +48,24 @@ export function WeekView({ entries, currentDate, clientIds, hourHeight }: WeekVi
             <div
               key={dateStr}
               className={cn(
-                'flex-1 min-w-0 border-r border-slate-200 last:border-r-0 px-2 py-2 flex items-center gap-2',
-                isToday && 'bg-indigo-50'
+                'flex-1 min-w-0 border-r border-oat-300 last:border-r-0 px-2 py-2 flex items-center gap-2',
+                isToday && 'bg-matcha-50'
               )}
             >
               <span className={cn(
                 'text-xl font-semibold leading-none',
-                isToday ? 'flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-white text-sm' : 'text-slate-800'
+                isToday ? 'flex h-8 w-8 items-center justify-center rounded-full bg-matcha-600 text-white text-sm' : 'text-charcoal-700'
               )}>
                 {date.getDate()}
               </span>
               <div className="min-w-0">
                 <div className={cn(
                   'text-[11px] font-semibold tracking-wide',
-                  isToday ? 'text-indigo-600' : 'text-slate-400'
+                  isToday ? 'text-matcha-600' : 'text-oat-500'
                 )}>
                   {WEEKDAY_SHORT[i]}
                 </div>
-                <div className={cn('text-[11px]', dayTotal > 0 ? 'text-slate-600 font-medium' : 'text-slate-400')}>
+                <div className={cn('text-[11px]', dayTotal > 0 ? 'text-charcoal-500 font-medium' : 'text-oat-500')}>
                   {formatHours(dayTotal)}
                 </div>
               </div>
@@ -77,7 +77,7 @@ export function WeekView({ entries, currentDate, clientIds, hourHeight }: WeekVi
       {/* Scrollable time grid */}
       <div className="flex overflow-y-auto flex-1">
         {/* Time axis */}
-        <div className="relative shrink-0 w-14 border-r border-slate-100" style={{ height: totalHeight }}>
+        <div className="relative shrink-0 w-14 border-r border-oat-200" style={{ height: totalHeight }}>
           <TimeAxis hourHeight={hourHeight} />
         </div>
 
@@ -91,15 +91,15 @@ export function WeekView({ entries, currentDate, clientIds, hourHeight }: WeekVi
             <div
               key={dateStr}
               className={cn(
-                'relative flex-1 min-w-0 border-r border-slate-100 last:border-r-0',
-                isToday && 'bg-indigo-50/30'
+                'relative flex-1 min-w-0 border-r border-oat-200 last:border-r-0',
+                isToday && 'bg-matcha-50/30'
               )}
               style={{ height: totalHeight }}
             >
               {Array.from({ length: 24 }, (_, i) => (
                 <div
                   key={i}
-                  className="absolute left-0 right-0 border-t border-slate-50"
+                  className="absolute left-0 right-0 border-t border-oat-100"
                   style={{ top: i * hourHeight }}
                 />
               ))}

@@ -15,7 +15,7 @@ export default function AuthenticatedLayout({
       <RecordingProvider>
         <div className="flex min-h-screen">
           <Sidebar />
-          <main className="flex-1 overflow-y-auto bg-slate-50 p-8">
+          <main className="flex-1 overflow-y-auto bg-cream p-8">
             <ErrorBoundary>
               {children}
             </ErrorBoundary>

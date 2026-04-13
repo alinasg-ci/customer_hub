@@ -7,7 +7,7 @@ type TimeAxisProps = {
 
 export function TimeAxis({ hourHeight, hours = 24 }: TimeAxisProps) {
   return (
-    <div className="relative w-14 shrink-0 text-right pr-2 text-[11px] text-slate-400 select-none">
+    <div className="relative w-14 shrink-0 text-right pr-2 text-[11px] text-oat-500 select-none">
       {Array.from({ length: hours }, (_, i) => (
         <div
           key={i}

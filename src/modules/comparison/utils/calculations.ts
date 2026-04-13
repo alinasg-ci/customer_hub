@@ -1,4 +1,4 @@
-import type { Phase } from '@/modules/planning/types';
+import type { Phase } from '@/modules/planning';
 import type { PhaseLink, ComparisonRowData, ComparisonSummary } from '../types';
 
 /**

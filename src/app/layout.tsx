@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -13,7 +14,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-slate-50 text-slate-900 antialiased" style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
+      <body className="min-h-screen bg-cream text-black antialiased">
+        {process.env.NODE_ENV === 'development' ? (
+          <Script
+            src="https://mcp.figma.com/mcp/html-to-design/capture.js"
+            strategy="afterInteractive"
+          />
+        ) : null}
         {children}
       </body>
     </html>

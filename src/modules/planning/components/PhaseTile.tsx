@@ -78,16 +78,16 @@ export function PhaseTile({ phase, layer, onUpdate, onDelete }: PhaseTileProps) 
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5',
+        'group flex items-center gap-3 rounded-[12px] border border-oat-300 bg-white px-3 py-2.5 shadow-[var(--shadow-clay)] transition-all hover:shadow-md hover:-translate-y-0.5',
         isDragging && 'opacity-50 shadow-lg',
-        overBudget && 'border-red-300 bg-red-50'
+        overBudget && 'border-pomegranate-300 bg-pomegranate-400/10'
       )}
     >
       {/* Drag handle */}
       <button
         {...attributes}
         {...listeners}
-        className="cursor-grab touch-none text-slate-300 hover:text-slate-500 active:cursor-grabbing"
+        className="cursor-grab touch-none text-oat-400 hover:text-charcoal-500 active:cursor-grabbing"
         aria-label="Drag to reorder"
       >
         <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
@@ -111,12 +111,12 @@ export function PhaseTile({ phase, layer, onUpdate, onDelete }: PhaseTileProps) 
                 setEditingName(false);
               }
             }}
-            className="w-full rounded-lg border border-indigo-300 px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+            className="w-full rounded-lg border border-matcha-500 px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-matcha-600/20"
           />
         ) : (
           <button
             onClick={() => setEditingName(true)}
-            className="w-full truncate text-left text-sm font-medium text-slate-900 hover:text-indigo-600"
+            className="w-full truncate text-left text-sm font-medium text-black hover:text-matcha-600"
           >
             {phase.name}
           </button>
@@ -137,7 +137,7 @@ export function PhaseTile({ phase, layer, onUpdate, onDelete }: PhaseTileProps) 
               if (e.key === 'Enter') handleHoursSave();
               if (e.key === 'Escape') setEditingHours(false);
             }}
-            className="w-16 rounded-lg border border-indigo-300 px-2 py-0.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+            className="w-16 rounded-lg border border-matcha-500 px-2 py-0.5 text-right text-sm focus:outline-none focus:ring-2 focus:ring-matcha-600/20"
           />
         ) : (
           <button
@@ -146,8 +146,8 @@ export function PhaseTile({ phase, layer, onUpdate, onDelete }: PhaseTileProps) 
               setEditingHours(true);
             }}
             className={cn(
-              'min-w-[3rem] rounded-lg px-2 py-0.5 text-right text-sm font-medium hover:bg-slate-100',
-              overBudget ? 'text-red-700' : 'text-slate-700'
+              'min-w-[3rem] rounded-lg px-2 py-0.5 text-right text-sm font-medium hover:bg-oat-100',
+              overBudget ? 'text-pomegranate-600' : 'text-charcoal-700'
             )}
           >
             {hours}h
@@ -155,7 +155,7 @@ export function PhaseTile({ phase, layer, onUpdate, onDelete }: PhaseTileProps) 
         )}
 
         {overBudget && (
-          <span className="text-xs text-red-500" title="Exceeds quoted hours">
+          <span className="text-xs text-pomegranate-400" title="Exceeds quoted hours">
             !
           </span>
         )}
@@ -163,7 +163,7 @@ export function PhaseTile({ phase, layer, onUpdate, onDelete }: PhaseTileProps) 
         {/* Delete */}
         <button
           onClick={() => onDelete(phase.id)}
-          className="ml-1 rounded-lg p-2 text-slate-300 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+          className="ml-1 rounded-lg p-2 text-oat-400 opacity-0 transition-opacity hover:bg-pomegranate-400/10 hover:text-pomegranate-400 group-hover:opacity-100"
           aria-label={`Delete ${phase.name}`}
         >
           <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

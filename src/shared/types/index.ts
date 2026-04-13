@@ -14,6 +14,6 @@ export type ClientStatus = 'active' | 'archived';
 export type BillingPeriod = 'monthly' | 'quarterly';
 export type ExpenseCategory = 'software' | 'outsourcing' | 'travel' | 'other';
 export type PhaseAssignmentType = 'auto_keyword' | 'manual' | 'unassigned';
-export type NotificationType = 'over_budget_warning' | 'over_budget_exceeded' | 'bank_depleting' | 'bank_depleted';
+export type NotificationType = 'over_budget_warning' | 'over_budget_exceeded' | 'bank_depleting' | 'bank_depleted' | 'deadline_approaching' | 'deadline_overdue';
 export type NoteParentType = 'phase' | 'time_entry' | 'expense' | 'project' | 'sub_project';
 export type KeywordSource = 'user_entered' | 'learned_from_correction';

@@ -3,7 +3,7 @@
 import { useSyncPreview } from '../hooks/useSyncPreview';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { formatHours } from '@/shared/utils/formatHours';
-import type { Phase } from '@/modules/planning/types';
+import type { Phase } from '@/modules/planning';
 
 type SyncPreviewProps = {
   readonly phases: readonly Phase[];

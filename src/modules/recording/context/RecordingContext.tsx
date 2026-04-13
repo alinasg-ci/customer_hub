@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { createManualEntry } from '@/modules/reports/api/reportsApi';
+import { createManualEntry } from '@/modules/reports';
 import { calculateDurationHours, getElapsedSeconds } from '../calculations';
 import {
   saveRecordingState,
@@ -107,6 +107,7 @@ export function RecordingProvider({ children }: { readonly children: React.React
     const endTime = new Date().toISOString();
     const durationHours = calculateDurationHours(recording.startedAt, endTime);
 
+    // Save entry first — only clear state on success to prevent data loss
     await createManualEntry({
       project_id: recording.projectId,
       phase_id: recording.phaseId ?? undefined,
@@ -119,6 +120,7 @@ export function RecordingProvider({ children }: { readonly children: React.React
       end_time: endTime,
     });
 
+    // Only clear after successful save
     clearRecordingState();
     setRecording(null);
   }, [recording]);

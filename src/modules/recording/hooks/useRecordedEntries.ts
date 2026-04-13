@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { fetchManualEntries, createManualEntry, updateManualEntry, deleteManualEntry } from '@/modules/reports/api/reportsApi';
-import type { ManualTimeEntry, CreateManualEntryInput, UpdateManualEntryInput } from '@/modules/reports/types';
+import { fetchManualEntries, createManualEntry, updateManualEntry, deleteManualEntry } from '@/modules/reports';
+import type { ManualTimeEntry, CreateManualEntryInput, UpdateManualEntryInput } from '@/modules/reports';
 
 export function useRecordedEntries(projectId: string) {
   const [entries, setEntries] = useState<readonly ManualTimeEntry[]>([]);

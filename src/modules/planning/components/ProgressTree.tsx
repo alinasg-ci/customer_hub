@@ -14,13 +14,13 @@ type ProgressTreeProps = {
 };
 
 const STRIPE_STYLE = {
-  backgroundImage: 'repeating-linear-gradient(135deg, transparent, transparent 3px, rgba(99,102,241,0.25) 3px, rgba(99,102,241,0.25) 6px)',
-  backgroundColor: 'rgba(99,102,241,0.15)',
+  backgroundImage: 'repeating-linear-gradient(135deg, transparent, transparent 3px, rgba(7,138,82,0.25) 3px, rgba(7,138,82,0.25) 6px)',
+  backgroundColor: 'rgba(7,138,82,0.15)',
 };
 
 const STRIPE_LEGEND_STYLE = {
-  backgroundImage: 'repeating-linear-gradient(135deg, transparent, transparent 2px, rgba(99,102,241,0.4) 2px, rgba(99,102,241,0.4) 4px)',
-  backgroundColor: 'rgba(99,102,241,0.15)',
+  backgroundImage: 'repeating-linear-gradient(135deg, transparent, transparent 2px, rgba(7,138,82,0.4) 2px, rgba(7,138,82,0.4) 4px)',
+  backgroundColor: 'rgba(7,138,82,0.15)',
 };
 
 export function ProgressTree({ projectId, refreshKey }: ProgressTreeProps) {
@@ -92,9 +92,9 @@ export function ProgressTree({ projectId, refreshKey }: ProgressTreeProps) {
   return (
     <div className="px-6 py-4">
       {/* Legend */}
-      <div className="mb-3 flex gap-5 text-[11px] text-slate-500">
+      <div className="mb-3 flex gap-5 text-[11px] text-charcoal-500">
         <span className="flex items-center gap-1.5">
-          <span className="inline-block w-4 rounded-sm bg-slate-200" style={{ height: 10 }} />
+          <span className="inline-block w-4 rounded-sm bg-oat-200" style={{ height: 10 }} />
           Client
         </span>
         <span className="flex items-center gap-1.5">
@@ -102,7 +102,7 @@ export function ProgressTree({ projectId, refreshKey }: ProgressTreeProps) {
           My plan
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block w-4 rounded-sm bg-indigo-500" style={{ height: 4 }} />
+          <span className="inline-block w-4 rounded-sm bg-matcha-500" style={{ height: 4 }} />
           Recorded
         </span>
       </div>
@@ -213,12 +213,12 @@ function ProgressRow({ label, recorded, plan, client, expandable, expanded, onTo
   const totalHeight = depth === 0 ? 20 : depth === 1 ? 16 : 12;
 
   return (
-    <div className={cn('py-2', indent, depth > 0 && 'border-t border-slate-50')}>
+    <div className={cn('py-2', indent, depth > 0 && 'border-t border-oat-100')}>
       {/* Header line */}
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-1.5">
           {expandable ? (
-            <button onClick={onToggle} className="rounded p-0.5 text-slate-400 hover:text-slate-600">
+            <button onClick={onToggle} className="rounded p-0.5 text-oat-500 hover:text-charcoal-500">
               <svg
                 className={cn('h-3.5 w-3.5 transition-transform', expanded && 'rotate-90')}
                 fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}
@@ -230,28 +230,28 @@ function ProgressRow({ label, recorded, plan, client, expandable, expanded, onTo
             <span className="w-4" />
           )}
           <span className={cn(
-            'text-sm text-slate-800',
+            'text-sm text-charcoal-700',
             bold && 'font-semibold',
-            depth === 2 && 'text-xs text-slate-600'
+            depth === 2 && 'text-xs text-charcoal-500'
           )}>
             {label}
           </span>
         </div>
 
-        <div className={cn('flex gap-3', depth === 2 ? 'text-[10px]' : 'text-[11px]', 'text-slate-400')}>
+        <div className={cn('flex gap-3', depth === 2 ? 'text-[10px]' : 'text-[11px]', 'text-oat-500')}>
           <span>
-            <span className={cn('font-medium', isOverBudget ? 'text-red-600' : 'text-indigo-600')}>{formatHours(recorded)}</span>
+            <span className={cn('font-medium', isOverBudget ? 'text-pomegranate-600' : 'text-matcha-600')}>{formatHours(recorded)}</span>
             {' '}rec
           </span>
           {plan > 0 && (
             <span>
-              <span className="font-medium text-slate-600">{formatHours(plan)}</span>
+              <span className="font-medium text-charcoal-500">{formatHours(plan)}</span>
               {' '}plan
             </span>
           )}
           {client > 0 && (
             <span>
-              <span className="font-medium text-slate-500">{formatHours(client)}</span>
+              <span className="font-medium text-charcoal-500">{formatHours(client)}</span>
               {' '}client
             </span>
           )}
@@ -263,7 +263,7 @@ function ProgressRow({ label, recorded, plan, client, expandable, expanded, onTo
         {/* Client — full height, gray */}
         {client > 0 && (
           <div
-            className="absolute left-0 rounded-md bg-slate-200"
+            className="absolute left-0 rounded-md bg-oat-200"
             style={{ width: `${clientW}%`, height: '100%', top: 0 }}
           />
         )}
@@ -282,7 +282,7 @@ function ProgressRow({ label, recorded, plan, client, expandable, expanded, onTo
         {/* Recorded — 30% height, solid indigo (in-budget portion) */}
         {inBudgetW > 0 && (
           <div
-            className="absolute left-0 rounded-sm bg-indigo-500 transition-all"
+            className="absolute left-0 rounded-sm bg-matcha-500 transition-all"
             style={{
               width: `${isOverBudget ? 100 : inBudgetW}%`,
               height: '30%',
@@ -293,7 +293,7 @@ function ProgressRow({ label, recorded, plan, client, expandable, expanded, onTo
         {/* Over-budget — red portion after the indigo */}
         {overBudgetW > 0 && (
           <div
-            className="absolute rounded-sm bg-red-500 transition-all"
+            className="absolute rounded-sm bg-pomegranate-400 transition-all"
             style={{
               left: `${inBudgetW}%`,
               width: `${overBudgetW}%`,

@@ -67,9 +67,13 @@ export async function getTimeEntries(projectId: string): Promise<TimeEntry[]> {
   return [...togglEntries, ...manualEntries];
 }
 
+const SYNC_WINDOW_MS = 90 * 24 * 60 * 60 * 1000;
+const OVERLAP_MS = 24 * 60 * 60 * 1000;
+
 async function getAuthHeader(): Promise<string> {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.access_token) throw new Error('Not authenticated');
+  // Token is verified server-side via authenticateRequest()/getUser()
   return `Bearer ${session.access_token}`;
 }
 
@@ -82,8 +86,8 @@ export async function syncTime(): Promise<{ synced: number; total: number }> {
 
   // Calculate sync window
   const lastSync = connection.last_sync_at
-    ? new Date(new Date(connection.last_sync_at).getTime() - 24 * 60 * 60 * 1000).toISOString()
-    : new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+    ? new Date(new Date(connection.last_sync_at).getTime() - OVERLAP_MS).toISOString()
+    : new Date(Date.now() - SYNC_WINDOW_MS).toISOString();
 
   // Fetch from Toggl via server-side route (token stays server-side)
   const authHeader = await getAuthHeader();

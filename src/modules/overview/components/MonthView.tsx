@@ -31,15 +31,15 @@ export function MonthView({ entries, currentDate, clientIds, onDayClick }: Month
   return (
     <div>
       {/* Month total */}
-      <div className="mb-2 text-right text-xs text-slate-500">
-        Month total: <span className="font-semibold text-slate-700">{formatHours(monthTotal)}</span>
+      <div className="mb-2 text-right text-xs text-charcoal-500">
+        Month total: <span className="font-semibold text-charcoal-700">{formatHours(monthTotal)}</span>
       </div>
 
-    <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+    <div className="rounded-[12px] border border-oat-300 bg-white overflow-hidden">
       {/* Weekday headers */}
-      <div className="grid grid-cols-7 border-b border-slate-100">
+      <div className="grid grid-cols-7 border-b border-oat-200">
         {WEEKDAYS.map((day) => (
-          <div key={day} className="py-2 text-center text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+          <div key={day} className="py-2 text-center text-[11px] font-semibold uppercase tracking-widest text-oat-500">
             {day}
           </div>
         ))}
@@ -66,13 +66,13 @@ export function MonthView({ entries, currentDate, clientIds, onDayClick }: Month
               key={dateStr}
               onClick={() => onDayClick(date)}
               className={cn(
-                'min-h-[80px] border-b border-r border-slate-100 p-1.5 text-left transition-colors hover:bg-slate-50',
+                'min-h-[80px] border-b border-r border-oat-200 p-1.5 text-left transition-colors hover:bg-oat-100',
                 !isCurrentMonth && 'opacity-40'
               )}
             >
               <div className={cn(
                 'text-[11px] font-medium mb-1',
-                isToday ? 'flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-white' : 'text-slate-600'
+                isToday ? 'flex h-5 w-5 items-center justify-center rounded-full bg-matcha-600 text-white' : 'text-charcoal-500'
               )}>
                 {date.getDate()}
               </div>
@@ -94,7 +94,7 @@ export function MonthView({ entries, currentDate, clientIds, onDayClick }: Month
               )}
 
               {dayTotal > 0 && (
-                <div className="mt-1 text-[10px] font-medium text-slate-500">
+                <div className="mt-1 text-[10px] font-medium text-charcoal-500">
                   {formatHours(dayTotal)}
                 </div>
               )}

@@ -39,11 +39,14 @@ export function useSyncPreview() {
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) throw new Error('Not authenticated');
+      // Token is verified server-side via authenticateRequest()/getUser()
 
       // Calculate sync window
+      const OVERLAP_MS = 24 * 60 * 60 * 1000;
+      const SYNC_WINDOW_MS = 90 * 24 * 60 * 60 * 1000;
       const lastSync = connection.last_sync_at
-        ? new Date(new Date(connection.last_sync_at).getTime() - 24 * 60 * 60 * 1000).toISOString()
-        : new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+        ? new Date(new Date(connection.last_sync_at).getTime() - OVERLAP_MS).toISOString()
+        : new Date(Date.now() - SYNC_WINDOW_MS).toISOString();
 
       // Fetch from Toggl
       const response = await fetch('/api/toggl/sync', {
@@ -129,41 +132,59 @@ export function useSyncPreview() {
       const mappings = await fetchTogglMappings();
       const mappingLookup = new Map(mappings.map((m) => [m.toggl_project_id, m.project_id]));
 
+      // Batch operations instead of sequential awaits
+      const exclusionIds: number[] = [];
+      const upsertRows: Record<string, unknown>[] = [];
+
       for (const entry of previewEntries) {
         if (entry.action === 'exclude') {
-          await createExclusion(entry.toggl_entry_id);
+          exclusionIds.push(entry.toggl_entry_id);
           continue;
         }
 
         if (entry.action === 'accept' || entry.action === 'reassign') {
           const phaseId = entry.action === 'reassign' ? entry.reassigned_phase_id : entry.proposed_phase_id;
-
-          // Upsert the entry into toggl_cached_entries
-          const { error: upsertError } = await supabase
-            .from('toggl_cached_entries')
-            .upsert({
-              toggl_entry_id: entry.toggl_entry_id,
-              toggl_project_id: null,
-              project_id: entry.proposed_project_id,
-              phase_id: phaseId,
-              phase_assignment_type: phaseId ? 'manual' : 'unassigned',
-              description: entry.description ?? '',
-              start_time: entry.start_time,
-              stop_time: null,
-              duration_seconds: Math.round(entry.duration_hours * 3600),
-              duration_hours: entry.duration_hours,
-              billable: entry.billable,
-              tags: [],
-              fetched_at: new Date().toISOString(),
-              sync_status: 'accepted',
-              user_id: user.id,
-            }, {
-              onConflict: 'toggl_entry_id',
-            });
-
-          if (upsertError) throw upsertError;
+          upsertRows.push({
+            toggl_entry_id: entry.toggl_entry_id,
+            toggl_project_id: null,
+            project_id: entry.proposed_project_id,
+            phase_id: phaseId,
+            phase_assignment_type: phaseId ? 'manual' : 'unassigned',
+            description: entry.description ?? '',
+            start_time: entry.start_time,
+            stop_time: null,
+            duration_seconds: Math.round(entry.duration_hours * 3600),
+            duration_hours: entry.duration_hours,
+            billable: entry.billable,
+            tags: [],
+            fetched_at: new Date().toISOString(),
+            sync_status: 'accepted',
+            user_id: user.id,
+          });
         }
       }
+
+      // Execute batched operations in parallel
+      const operations: Promise<unknown>[] = [];
+
+      if (exclusionIds.length > 0) {
+        for (const id of exclusionIds) {
+          operations.push(createExclusion(id));
+        }
+      }
+
+      if (upsertRows.length > 0) {
+        operations.push(
+          (async () => {
+            const { error: upsertError } = await supabase
+              .from('toggl_cached_entries')
+              .upsert(upsertRows, { onConflict: 'toggl_entry_id' });
+            if (upsertError) throw upsertError;
+          })()
+        );
+      }
+
+      await Promise.all(operations);
 
       // Update last sync timestamp
       await supabase

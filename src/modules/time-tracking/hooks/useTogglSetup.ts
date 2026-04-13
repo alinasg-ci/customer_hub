@@ -8,6 +8,7 @@ import type { TogglConnection, TogglWorkspace, TogglProject } from '../types';
 async function getAuthHeader(): Promise<string> {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.access_token) throw new Error('Not authenticated');
+  // Note: the token is verified server-side via authenticateRequest()/getUser()
   return `Bearer ${session.access_token}`;
 }
 
@@ -82,7 +83,8 @@ export function useTogglSetup() {
     workspaceId: string,
     workspaceName: string
   ) => {
-    const conn = await saveTogglConnection(apiToken, workspaceId, workspaceName);
+    const authHeader = await getAuthHeader();
+    const conn = await saveTogglConnection(apiToken, workspaceId, workspaceName, authHeader);
     setConnection(conn);
     return conn;
   }, []);

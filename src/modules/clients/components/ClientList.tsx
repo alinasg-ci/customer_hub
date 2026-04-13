@@ -13,9 +13,9 @@ import type { Project } from '@/modules/projects';
 import { formatHours } from '@/shared/utils/formatHours';
 
 const STATUS_STYLES: Record<string, string> = {
-  active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  pending: 'bg-amber-50 text-amber-700 border-amber-200',
-  closed: 'bg-slate-100 text-slate-500 border-slate-200',
+  active: 'bg-matcha-300/20 text-matcha-800 border-matcha-300',
+  pending: 'bg-lemon-400/20 text-lemon-800 border-lemon-400',
+  closed: 'bg-oat-100 text-charcoal-500 border-oat-300',
 };
 
 const TYPE_ICONS: Record<string, string> = {
@@ -133,9 +133,9 @@ export function ClientList() {
 
   if (error) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-        <p className="text-sm text-red-700">{error}</p>
-        <button onClick={reload} className="mt-2 text-sm font-medium text-red-600 hover:text-red-800">
+      <div className="clay-card-sm border-pomegranate-300 bg-pomegranate-300/10 p-4">
+        <p className="text-sm text-pomegranate-600">{error}</p>
+        <button onClick={reload} className="mt-2 text-sm font-medium text-pomegranate-600 hover:text-pomegranate-600/80">
           Try again
         </button>
       </div>
@@ -154,14 +154,14 @@ export function ClientList() {
     <div>
       <div className="mb-8 flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Projects</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-2xl font-semibold tracking-tight text-black">Projects</h1>
+          <p className="mt-1 text-sm text-oat-500">
             {clients.length} {clients.length === 1 ? 'client' : 'clients'} · {projects.length} {projects.length === 1 ? 'project' : 'projects'}
           </p>
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
+          className="clay-btn clay-btn-primary flex items-center gap-2 text-sm"
         >
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -171,19 +171,19 @@ export function ClientList() {
       </div>
 
       {clients.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 py-20">
-          <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50">
-            <svg className="h-8 w-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+        <div className="clay-card-dashed flex flex-col items-center justify-center py-20">
+          <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-[24px] bg-matcha-300/20">
+            <svg className="h-8 w-8 text-matcha-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
             </svg>
           </div>
-          <h2 className="text-lg font-semibold text-slate-900">No clients yet</h2>
-          <p className="mt-1.5 max-w-sm text-center text-sm text-slate-500">
+          <h2 className="text-lg font-semibold text-black">No clients yet</h2>
+          <p className="mt-1.5 max-w-sm text-center text-sm text-charcoal-500">
             Add your first client to start tracking projects, hours, and profitability.
           </p>
           <button
             onClick={() => setShowForm(true)}
-            className="mt-6 flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
+            className="clay-btn clay-btn-primary mt-6 flex items-center gap-2 text-sm"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -192,10 +192,10 @@ export function ClientList() {
           </button>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-x-auto clay-card">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/80 text-left text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+              <tr className="border-b border-oat-200 bg-cream text-left text-[11px] font-semibold uppercase tracking-widest text-oat-500">
                 <th className="py-3 pl-4 pr-2">Project / Client</th>
                 <th className="py-3 px-3 text-center">Due date</th>
                 <th className="py-3 px-3 text-right">Estimated</th>
@@ -297,12 +297,12 @@ function ClientSection({
   return (
     <>
       {/* Client header row */}
-      <tr className="group border-b border-slate-100 bg-slate-50/50">
+      <tr className="group border-b border-oat-200 bg-cream-dark">
         <td className="py-3 pl-4 pr-2">
           <div className="flex items-center gap-2">
             <button
               onClick={onToggle}
-              className="flex h-5 w-5 items-center justify-center rounded text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+              className="flex h-5 w-5 items-center justify-center rounded text-oat-500 hover:bg-oat-200 hover:text-charcoal-700"
             >
               <svg
                 className={`h-3.5 w-3.5 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
@@ -316,23 +316,23 @@ function ClientSection({
             </button>
             <button
               onClick={onClientClick}
-              className="font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
+              className="font-semibold text-matcha-600 hover:text-matcha-800 hover:underline"
             >
               {client.name}
             </button>
             {client.company && (
-              <span className="text-xs text-slate-400">{client.company}</span>
+              <span className="text-xs text-oat-500">{client.company}</span>
             )}
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-oat-500">
               ({projects.length} {projects.length === 1 ? 'project' : 'projects'})
             </span>
           </div>
         </td>
         <td className="py-3 px-3"></td>
-        <td className="py-3 px-3 text-right text-slate-500 font-medium">
+        <td className="py-3 px-3 text-right text-charcoal-500 font-medium">
           {totalEstimated > 0 ? formatHours(totalEstimated) : ''}
         </td>
-        <td className="py-3 px-3 text-right text-slate-500 font-medium">
+        <td className="py-3 px-3 text-right text-charcoal-500 font-medium">
           {totalActual > 0 ? formatHours(totalActual) : ''}
         </td>
         <td className="py-3 px-3"></td>
@@ -342,7 +342,7 @@ function ClientSection({
           <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
             <button
               onClick={onEdit}
-              className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+              className="rounded-[12px] p-1.5 text-oat-500 hover:bg-oat-200 hover:text-charcoal-700"
               aria-label="Edit client"
             >
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
@@ -351,7 +351,7 @@ function ClientSection({
             </button>
             <button
               onClick={onDelete}
-              className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600"
+              className="rounded-[12px] p-1.5 text-oat-500 hover:bg-pomegranate-400/10 hover:text-pomegranate-600"
               aria-label="Delete client"
             >
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
@@ -382,41 +382,42 @@ function ClientSection({
         return (
           <tr
             key={project.id}
-            className="group cursor-pointer border-b border-slate-50 transition-colors hover:bg-slate-50"
+            className="group cursor-pointer border-b border-oat-100 transition-colors hover:bg-oat-100/50"
             onClick={() => onProjectClick(project.id)}
           >
             <td className="py-2.5 pl-12 pr-2">
               <div className="flex items-center gap-2">
+                <HealthDot progressPercent={progressPercent} deadline={project.deadline} />
                 <span className="text-base" title={project.type}>{TYPE_ICONS[project.type]}</span>
-                <span className="font-medium text-slate-900">{project.name}</span>
+                <span className="font-medium text-black">{project.name}</span>
               </div>
             </td>
-            <td className="py-2.5 px-3 text-center text-slate-500">
+            <td className="py-2.5 px-3 text-center text-charcoal-500">
               {formatDate(project.deadline ?? project.start_date)}
             </td>
-            <td className="py-2.5 px-3 text-right text-slate-600">
+            <td className="py-2.5 px-3 text-right text-charcoal-500">
               {estimated > 0 ? formatHours(estimated) : '—'}
             </td>
-            <td className="py-2.5 px-3 text-right font-medium text-slate-900">
+            <td className="py-2.5 px-3 text-right font-medium text-black">
               {actual > 0 ? formatHours(actual) : '0h'}
             </td>
             <td className="py-2.5 px-3">
               {estimated > 0 ? (
                 <div className="flex items-center gap-2">
-                  <div className="h-1.5 flex-1 rounded-full bg-slate-100">
+                  <div className="h-1.5 flex-1 rounded-full bg-oat-200">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        isOverBudget ? 'bg-red-500' : progressPercent >= 80 ? 'bg-amber-500' : 'bg-indigo-500'
+                        isOverBudget ? 'bg-pomegranate-400' : progressPercent >= 80 ? 'bg-lemon-500' : 'bg-matcha-500'
                       }`}
                       style={{ width: `${Math.min(100, progressPercent)}%` }}
                     />
                   </div>
-                  <span className={`text-xs font-medium ${isOverBudget ? 'text-red-600' : 'text-slate-500'}`}>
+                  <span className={`text-xs font-medium ${isOverBudget ? 'text-pomegranate-600' : 'text-charcoal-500'}`}>
                     {progressPercent.toFixed(0)}%
                   </span>
                 </div>
               ) : (
-                <span className="text-xs text-slate-400">—</span>
+                <span className="text-xs text-oat-500">—</span>
               )}
             </td>
             <td className="py-2.5 px-3 text-right">
@@ -446,7 +447,7 @@ function ClientSection({
       {/* No projects */}
       {isExpanded && !projectsLoading && projects.length === 0 && (
         <tr>
-          <td colSpan={8} className="py-3 pl-12 text-sm text-slate-400 italic">
+          <td colSpan={8} className="py-3 pl-12 text-sm text-oat-500 italic">
             No projects yet
           </td>
         </tr>
@@ -455,28 +456,57 @@ function ClientSection({
   );
 }
 
+function getHealthLevel(progressPercent: number, deadline: string | null): 'green' | 'amber' | 'red' {
+  if (progressPercent >= 90) return 'red';
+  if (progressPercent >= 70) return 'amber';
+
+  if (deadline) {
+    const daysUntil = Math.ceil((new Date(deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    if (daysUntil < 0) return 'red';
+    if (daysUntil <= 7 && progressPercent < 70) return 'amber';
+  }
+
+  return 'green';
+}
+
+const HEALTH_COLORS = {
+  green: 'bg-matcha-500',
+  amber: 'bg-lemon-500',
+  red: 'bg-pomegranate-400',
+} as const;
+
+function HealthDot({ progressPercent, deadline }: { readonly progressPercent: number; readonly deadline: string | null }) {
+  const level = getHealthLevel(progressPercent, deadline);
+  return (
+    <span
+      className={`inline-block h-2 w-2 flex-shrink-0 rounded-full ${HEALTH_COLORS[level]}`}
+      title={level === 'red' ? 'Over budget or overdue' : level === 'amber' ? 'Approaching budget or deadline' : 'On track'}
+    />
+  );
+}
+
 function getProfitDisplay(project: Project, actualHours: number, fee: number | null): { text: string; color: string } {
-  if (!fee || fee === 0) return { text: '—', color: 'text-slate-400' };
+  if (!fee || fee === 0) return { text: '—', color: 'text-oat-500' };
 
   if (project.type === 'retainer') {
-    return { text: formatMoney(fee, project.retainer_fee_currency), color: 'text-slate-700' };
+    return { text: formatMoney(fee, project.retainer_fee_currency), color: 'text-charcoal-700' };
   }
 
   if (project.type === 'project' || project.type === 'hour_bank') {
     const scopedHours = project.total_scoped_hours ?? 0;
-    if (scopedHours === 0) return { text: formatMoney(fee, project.total_fee_currency), color: 'text-slate-700' };
+    if (scopedHours === 0) return { text: formatMoney(fee, project.total_fee_currency), color: 'text-charcoal-700' };
 
     const consumedPercent = scopedHours > 0 ? (actualHours / scopedHours) * 100 : 0;
     const feeText = formatMoney(fee, project.total_fee_currency);
 
     if (consumedPercent > 100) {
-      return { text: `${feeText} (${consumedPercent.toFixed(0)}%)`, color: 'text-red-600' };
+      return { text: `${feeText} (${consumedPercent.toFixed(0)}%)`, color: 'text-pomegranate-600' };
     }
     if (consumedPercent >= 80) {
-      return { text: `${feeText} (${consumedPercent.toFixed(0)}%)`, color: 'text-amber-600' };
+      return { text: `${feeText} (${consumedPercent.toFixed(0)}%)`, color: 'text-lemon-700' };
     }
-    return { text: `${feeText} (${consumedPercent.toFixed(0)}%)`, color: 'text-emerald-600' };
+    return { text: `${feeText} (${consumedPercent.toFixed(0)}%)`, color: 'text-matcha-600' };
   }
 
-  return { text: '—', color: 'text-slate-400' };
+  return { text: '—', color: 'text-oat-500' };
 }

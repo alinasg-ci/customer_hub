@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { fetchAllManualEntries } from '@/modules/time-tracking/api/allEntries';
-import { fetchClients } from '@/modules/clients/api/clientsApi';
-import { fetchAllProjects } from '@/modules/projects/api/projectsApi';
+import { fetchAllManualEntries } from '@/modules/time-tracking';
+import { fetchClients } from '@/modules/clients';
+import { fetchAllProjects } from '@/modules/projects';
 import type { CalendarEntry } from '../types';
 
 export function useCalendarEntries() {

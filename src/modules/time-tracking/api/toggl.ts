@@ -17,32 +17,22 @@ export async function fetchTogglConnection(): Promise<TogglConnection | null> {
 export async function saveTogglConnection(
   apiToken: string,
   workspaceId: string,
-  workspaceName: string
+  workspaceName: string,
+  authHeader: string
 ): Promise<TogglConnection> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
+  // Send token to server-side route for encryption before storage
+  const response = await fetch('/api/toggl/connect', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': authHeader,
+    },
+    body: JSON.stringify({ apiToken, workspaceId, workspaceName }),
+  });
 
-  // Deactivate any existing connection
-  await supabase
-    .from('toggl_connections')
-    .update({ status: 'disconnected' })
-    .eq('user_id', user.id)
-    .eq('status', 'active');
-
-  const { data, error } = await supabase
-    .from('toggl_connections')
-    .insert({
-      api_token_encrypted: apiToken, // In production, encrypt with AES-256
-      workspace_id: workspaceId,
-      workspace_name: workspaceName,
-      status: 'active',
-      user_id: user.id,
-    })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data as TogglConnection;
+  const result = await response.json();
+  if (result.error) throw new Error(result.error.message);
+  return result.data as TogglConnection;
 }
 
 export async function disconnectToggl(): Promise<void> {

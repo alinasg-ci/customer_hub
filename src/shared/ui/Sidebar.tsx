@@ -67,14 +67,14 @@ export function Sidebar() {
 
   return (
     <>
-      <aside className="flex h-screen w-[240px] flex-col bg-slate-900">
+      <aside className="flex h-screen w-[240px] flex-col border-r border-oat-300 bg-white">
         {/* Brand */}
         <div className="flex h-14 items-center justify-between px-5">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600">
+            <div className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-matcha-600">
               <span className="text-xs font-bold text-white">C</span>
             </div>
-            <span className="text-[15px] font-semibold tracking-tight text-white">Client Hub</span>
+            <span className="text-[15px] font-semibold tracking-tight text-black">Client Hub</span>
           </div>
           <NotificationBadge
             count={unreadCount}
@@ -83,11 +83,11 @@ export function Sidebar() {
         </div>
 
         {/* Divider */}
-        <div className="mx-4 border-t border-slate-800" />
+        <div className="mx-4 border-t border-oat-200" />
 
         {/* Main nav */}
         <nav className="flex-1 space-y-0.5 px-3 pt-4">
-          <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
+          <p className="clay-label mb-2 px-3">
             Workspace
           </p>
           {navItems.map((item) => (
@@ -95,10 +95,10 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors',
+                'flex items-center gap-3 rounded-[12px] px-3 py-2 text-[13px] font-medium transition-colors',
                 isActive(item.href)
-                  ? 'bg-indigo-500/15 text-indigo-400'
-                  : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  ? 'bg-matcha-600/10 text-matcha-600'
+                  : 'text-charcoal-500 hover:bg-oat-100 hover:text-charcoal-900'
               )}
             >
               {item.icon}
@@ -109,16 +109,16 @@ export function Sidebar() {
 
         {/* Bottom nav */}
         <div className="space-y-0.5 px-3 pb-4">
-          <div className="mx-1 mb-3 border-t border-slate-800" />
+          <div className="mx-1 mb-3 border-t border-oat-200" />
           {bottomNavItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors',
+                'flex items-center gap-3 rounded-[12px] px-3 py-2 text-[13px] font-medium transition-colors',
                 isActive(item.href)
-                  ? 'bg-indigo-500/15 text-indigo-400'
-                  : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  ? 'bg-matcha-600/10 text-matcha-600'
+                  : 'text-charcoal-500 hover:bg-oat-100 hover:text-charcoal-900'
               )}
             >
               {item.icon}

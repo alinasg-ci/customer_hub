@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 import { findMatchingPhase } from '../utils/autoMapPhases';
-import type { Phase } from '@/modules/planning/types';
+import type { Phase } from '@/modules/planning';
 
 type UsePhaseAutoLinkOptions = {
   readonly phases: readonly Phase[];

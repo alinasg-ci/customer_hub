@@ -7,6 +7,8 @@ import { usePlanning, useTasks, MyPlanningView, CustomerPlanningView, ProgressTr
 import { useTimeEntries } from '@/modules/time-tracking';
 import { RecordButton, RecordedTimeTable, useRecordedEntries } from '@/modules/recording';
 import { ManualEntryForm } from '@/modules/reports';
+import { ProfitabilityCard } from '@/modules/profitability';
+import { ExpenseList, useExpenses } from '@/modules/expenses';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { cn } from '@/shared/utils/cn';
 import type { Project, CreateProjectInput, UpdateProjectInput } from '@/modules/projects';
@@ -76,9 +78,9 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
 
   if (error || !project) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-        <p className="text-sm text-red-700">{error ?? 'Project not found'}</p>
-        <button onClick={() => router.back()} className="mt-2 text-sm font-medium text-red-600 hover:text-red-800">
+      <div className="rounded-[12px] border border-pomegranate-200 bg-pomegranate-50 p-4">
+        <p className="text-sm text-pomegranate-700">{error ?? 'Project not found'}</p>
+        <button onClick={() => router.back()} className="mt-2 text-sm font-medium text-pomegranate-600 hover:text-pomegranate-800">
           Go back
         </button>
       </div>
@@ -90,7 +92,7 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
       {/* Back button */}
       <button
         onClick={() => router.push(`/client/${clientId}`)}
-        className="mb-3 flex items-center gap-1 text-sm text-slate-400 transition-colors hover:text-slate-700"
+        className="mb-3 flex items-center gap-1 text-sm text-oat-500 transition-colors hover:text-charcoal-700"
       >
         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -108,7 +110,7 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
       />
 
       {/* Tab navigation */}
-      <div className="border-b border-slate-200">
+      <div className="border-b border-oat-300">
         <nav className="flex gap-1">
           {TABS.map((tab) => (
             <button
@@ -117,8 +119,8 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
               className={cn(
                 'flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors',
                 activeTab === tab.id
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+                  ? 'border-matcha-600 text-matcha-600'
+                  : 'border-transparent text-charcoal-500 hover:border-oat-300 hover:text-charcoal-700'
               )}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
@@ -138,7 +140,9 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
         {activeTab === 'time' && (
           <TimeLoggedTab projectId={project.id} onDataChanged={() => setRefreshKey((k) => k + 1)} />
         )}
-        {activeTab === 'finances' && <EmptyTabPlaceholder icon="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" title="Finances" description="Profitability, expenses, and budget comparisons will appear here." />}
+        {activeTab === 'finances' && (
+          <FinancesTab project={project} projectId={project.id} />
+        )}
         {activeTab === 'emails' && <EmptyTabPlaceholder icon="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" title="Emails" description="Project-related emails and communication will appear here." />}
         {activeTab === 'comments' && <EmptyTabPlaceholder icon="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" title="Comments" description="Project notes and comments will appear here." />}
       </div>
@@ -166,24 +170,24 @@ function ProjectHeaderCard({ project, clientId, refreshKey, onEdit, onRecordingS
   readonly onRecordingSaved: () => void;
 }) {
   return (
-    <div className="mb-6 rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="mb-6 rounded-[12px] border border-oat-300 bg-white shadow-[var(--shadow-clay)]">
       {/* Top section: name, badges, actions */}
-      <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+      <div className="flex items-center justify-between border-b border-oat-200 px-6 py-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-xl font-semibold tracking-tight text-slate-900">{project.name}</h1>
-          <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+          <h1 className="text-xl font-semibold tracking-tight text-black">{project.name}</h1>
+          <span className="rounded-md border border-oat-300 bg-cream px-2 py-0.5 text-[11px] font-medium text-charcoal-500">
             {TYPE_LABELS[project.type]}
           </span>
           <span className={cn(
             'rounded-md border px-1.5 py-0.5 text-[11px] font-medium',
-            project.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-            project.status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-            'bg-slate-100 text-slate-500 border-slate-200'
+            project.status === 'active' ? 'bg-matcha-50 text-matcha-700 border-matcha-200' :
+            project.status === 'pending' ? 'bg-lemon-50 text-lemon-700 border-lemon-200' :
+            'bg-oat-100 text-charcoal-500 border-oat-300'
           )}>
             {project.status}
           </span>
           {project.deadline && (
-            <span className="flex items-center gap-1 text-xs text-slate-400">
+            <span className="flex items-center gap-1 text-xs text-oat-500">
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
               </svg>
@@ -194,7 +198,7 @@ function ProjectHeaderCard({ project, clientId, refreshKey, onEdit, onRecordingS
         <div className="flex items-center gap-2">
           <button
             onClick={onEdit}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-50"
+            className="flex items-center gap-1.5 rounded-lg border border-oat-300 px-3 py-1.5 text-sm text-charcoal-500 transition-colors hover:bg-oat-100"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
@@ -222,12 +226,12 @@ function PlannerTab({ projectId, projectName, activeSubTab, onSubTabChange, onDa
 }) {
   return (
     <div>
-      <div className="mb-6 flex gap-1 rounded-lg bg-slate-100 p-1 w-fit">
+      <div className="mb-6 flex gap-1 rounded-lg bg-oat-100 p-1 w-fit">
         <button
           onClick={() => onSubTabChange('my-planning')}
           className={cn(
             'rounded-md px-4 py-2 text-sm font-medium transition-colors',
-            activeSubTab === 'my-planning' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+            activeSubTab === 'my-planning' ? 'bg-white text-black shadow-sm' : 'text-charcoal-500 hover:text-charcoal-700'
           )}
         >
           My Planning
@@ -236,7 +240,7 @@ function PlannerTab({ projectId, projectName, activeSubTab, onSubTabChange, onDa
           onClick={() => onSubTabChange('customer-planning')}
           className={cn(
             'rounded-md px-4 py-2 text-sm font-medium transition-colors',
-            activeSubTab === 'customer-planning' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+            activeSubTab === 'customer-planning' ? 'bg-white text-black shadow-sm' : 'text-charcoal-500 hover:text-charcoal-700'
           )}
         >
           Customer Planning
@@ -300,20 +304,33 @@ function TimeLoggedTab({ projectId, onDataChanged }: { readonly projectId: strin
   );
 }
 
+function FinancesTab({ project, projectId }: { readonly project: Project; readonly projectId: string }) {
+  const { phases } = usePlanning(projectId);
+  const { totalHours } = useTimeEntries(projectId);
+  const { totalIls } = useExpenses(projectId);
+
+  return (
+    <div className="space-y-6">
+      <ProfitabilityCard project={project} actualHours={totalHours} totalExpensesIls={totalIls} />
+      <ExpenseList projectId={projectId} phases={phases} />
+    </div>
+  );
+}
+
 function EmptyTabPlaceholder({ icon, title, description }: {
   readonly icon: string;
   readonly title: string;
   readonly description: string;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 py-16">
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
-        <svg className="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+    <div className="flex flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-oat-300 py-16">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-[12px] bg-oat-100">
+        <svg className="h-6 w-6 text-oat-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
         </svg>
       </div>
-      <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-      <p className="mt-1 max-w-sm text-center text-sm text-slate-500">{description}</p>
+      <h3 className="text-base font-semibold text-black">{title}</h3>
+      <p className="mt-1 max-w-sm text-center text-sm text-charcoal-500">{description}</p>
     </div>
   );
 }

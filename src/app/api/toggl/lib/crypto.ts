@@ -9,6 +9,9 @@ function getEncryptionKey(): Buffer {
   if (!key) {
     throw new Error('TOGGL_ENCRYPTION_KEY is not configured');
   }
+  if (key.length !== 64) {
+    throw new Error('TOGGL_ENCRYPTION_KEY must be 64 hex characters (32 bytes for AES-256)');
+  }
   return Buffer.from(key, 'hex');
 }
 

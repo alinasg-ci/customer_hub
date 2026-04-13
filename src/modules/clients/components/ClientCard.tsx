@@ -22,14 +22,14 @@ function getInitials(name: string): string {
 }
 
 const AVATAR_COLORS = [
-  'bg-indigo-500',
-  'bg-violet-500',
-  'bg-blue-500',
-  'bg-emerald-500',
-  'bg-amber-500',
-  'bg-rose-500',
-  'bg-cyan-500',
-  'bg-fuchsia-500',
+  'bg-matcha-600',
+  'bg-ube-800',
+  'bg-slushie-800',
+  'bg-lemon-700',
+  'bg-pomegranate-400',
+  'bg-blueberry-800',
+  'bg-dragonfruit-500',
+  'bg-charcoal-500',
 ] as const;
 
 function getAvatarColor(name: string): string {
@@ -46,7 +46,7 @@ export function ClientCard({ client, onEdit, onArchive, onReactivate, onDelete, 
   return (
     <div
       className={cn(
-        'group relative rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer',
+        'clay-card-sm group relative p-4 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-clay-lg)] cursor-pointer',
         isArchived && 'opacity-60'
       )}
       onClick={() => onClick(client.id)}
@@ -61,17 +61,17 @@ export function ClientCard({ client, onEdit, onArchive, onReactivate, onDelete, 
     >
       <div className="flex items-center gap-3">
         <div className={cn(
-          'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl text-sm font-semibold text-white',
+          'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[12px] text-sm font-semibold text-white',
           getAvatarColor(client.name)
         )}>
           {getInitials(client.name)}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-[15px] font-semibold text-slate-900">
+          <h3 className="truncate text-[15px] font-semibold text-black">
             {client.name}
           </h3>
           {client.company && (
-            <p className="mt-0.5 truncate text-sm text-slate-500">
+            <p className="mt-0.5 truncate text-sm text-charcoal-500">
               {client.company}
             </p>
           )}
@@ -82,7 +82,7 @@ export function ClientCard({ client, onEdit, onArchive, onReactivate, onDelete, 
         >
           <button
             onClick={() => onEdit(client)}
-            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-[12px] p-2 text-oat-500 transition-colors hover:bg-oat-100 hover:text-charcoal-700"
             aria-label={`Edit ${client.name}`}
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
@@ -92,7 +92,7 @@ export function ClientCard({ client, onEdit, onArchive, onReactivate, onDelete, 
           {isArchived && onReactivate ? (
             <button
               onClick={() => onReactivate(client.id)}
-              className="rounded-lg p-2 text-emerald-500 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+              className="rounded-[12px] p-2 text-matcha-500 transition-colors hover:bg-matcha-300/20 hover:text-matcha-800"
               aria-label={`Reactivate ${client.name}`}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
@@ -102,7 +102,7 @@ export function ClientCard({ client, onEdit, onArchive, onReactivate, onDelete, 
           ) : (
             <button
               onClick={() => onArchive(client.id)}
-              className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-amber-50 hover:text-amber-600"
+              className="rounded-[12px] p-2 text-oat-500 transition-colors hover:bg-lemon-400/20 hover:text-lemon-800"
               aria-label={`Archive ${client.name}`}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
@@ -113,7 +113,7 @@ export function ClientCard({ client, onEdit, onArchive, onReactivate, onDelete, 
           {onDelete && (
             <button
               onClick={() => onDelete(client.id)}
-              className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+              className="rounded-[12px] p-2 text-oat-500 transition-colors hover:bg-pomegranate-400/10 hover:text-pomegranate-600"
               aria-label={`Delete ${client.name}`}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>

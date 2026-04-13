@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRecording } from '../context/RecordingContext';
 import { formatElapsedTime } from '../calculations';
-import type { Phase, Task } from '@/modules/planning/types';
+import type { Phase, Task } from '@/modules/planning';
 
 type RecordingPanelProps = {
   readonly phases: readonly Phase[];
@@ -44,8 +44,13 @@ export function RecordingPanel({ phases, tasks, onStop }: RecordingPanelProps) {
   };
 
   const handleStop = async () => {
-    await stopRecording();
-    onStop();
+    try {
+      await stopRecording();
+      onStop();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to save recording';
+      alert(message);
+    }
   };
 
   if (!recording) return null;
@@ -55,15 +60,15 @@ export function RecordingPanel({ phases, tasks, onStop }: RecordingPanelProps) {
     : [];
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 border-b border-red-200 bg-white shadow-lg">
+    <div className="fixed top-0 left-0 right-0 z-50 border-b border-pomegranate-300 bg-white shadow-lg">
       <div className="mx-auto flex max-w-screen-xl items-center gap-4 px-6 py-3">
         {/* Timer */}
         <div className="flex items-center gap-2 shrink-0">
           <span className="relative flex h-2.5 w-2.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pomegranate-400 opacity-75" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-pomegranate-400" />
           </span>
-          <span className="font-mono text-lg font-semibold text-slate-900">
+          <span className="font-mono text-lg font-semibold text-black">
             {formatElapsedTime(elapsedSeconds)}
           </span>
         </div>
@@ -72,7 +77,7 @@ export function RecordingPanel({ phases, tasks, onStop }: RecordingPanelProps) {
         <select
           value={recording.phaseId ?? ''}
           onChange={(e) => handlePhaseChange(e.target.value || null)}
-          className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 w-36"
+          className="clay-input w-36 text-sm px-2.5 py-1.5"
         >
           <option value="">Phase...</option>
           {phases.map((p) => (
@@ -85,7 +90,7 @@ export function RecordingPanel({ phases, tasks, onStop }: RecordingPanelProps) {
           value={recording.taskId ?? ''}
           onChange={(e) => handleTaskChange(e.target.value || null)}
           disabled={!recording.phaseId}
-          className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 disabled:opacity-50 w-36"
+          className="clay-input w-36 text-sm px-2.5 py-1.5 disabled:opacity-50"
         >
           <option value="">
             {!recording.phaseId ? 'Select phase first' : phaseTasks.length === 0 ? 'No tasks' : 'Task...'}
@@ -101,16 +106,16 @@ export function RecordingPanel({ phases, tasks, onStop }: RecordingPanelProps) {
           value={description}
           onChange={(e) => handleDescriptionChange(e.target.value)}
           placeholder="What are you working on?"
-          className="flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+          className="clay-input flex-1 text-sm px-3 py-1.5"
         />
 
         {/* Billable */}
-        <label className="flex items-center gap-1.5 text-sm text-slate-600 shrink-0">
+        <label className="flex items-center gap-1.5 text-sm text-charcoal-500 shrink-0">
           <input
             type="checkbox"
             checked={recording.billable}
             onChange={(e) => updateRecording({ billable: e.target.checked })}
-            className="rounded border-slate-300"
+            className="rounded border-oat-300"
           />
           Billable
         </label>
@@ -118,7 +123,7 @@ export function RecordingPanel({ phases, tasks, onStop }: RecordingPanelProps) {
         {/* Stop */}
         <button
           onClick={handleStop}
-          className="flex items-center gap-1.5 rounded-lg bg-red-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-red-700 shrink-0"
+          className="flex items-center gap-1.5 rounded-lg bg-pomegranate-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-pomegranate-600/80 shrink-0"
         >
           <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
             <rect x="6" y="6" width="12" height="12" rx="1" />

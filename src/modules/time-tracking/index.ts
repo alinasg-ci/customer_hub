@@ -10,5 +10,6 @@ export { fetchCachedEntries, updateEntryPhase } from './api/toggl';
 export { matchEntryToPhase, matchAllUnassigned } from './matching';
 export { SyncPreview } from './components/SyncPreview';
 export { fetchHoursByProject } from './api/hours';
+export { fetchAllManualEntries } from './api/allEntries';
 export { useSyncPreview } from './hooks/useSyncPreview';
 export type { TimeEntry, CachedTimeEntry, TogglConnection, TogglMapping, SyncPreviewEntry, TogglExclusion } from './types';

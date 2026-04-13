@@ -30,8 +30,8 @@ export function OverviewCalendar() {
 
   if (error) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-        <p className="text-sm text-red-700">{error}</p>
+      <div className="rounded-[12px] border border-pomegranate-200 bg-pomegranate-50 p-4">
+        <p className="text-sm text-pomegranate-700">{error}</p>
       </div>
     );
   }
@@ -44,7 +44,7 @@ export function OverviewCalendar() {
         <div className="flex items-center gap-2">
           <button
             onClick={goBack}
-            className="rounded-lg border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50"
+            className="rounded-lg border border-oat-300 p-1.5 text-charcoal-500 hover:bg-oat-100"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -52,19 +52,19 @@ export function OverviewCalendar() {
           </button>
           <button
             onClick={goToToday}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+            className="rounded-lg border border-oat-300 px-3 py-1.5 text-xs font-medium text-charcoal-500 hover:bg-oat-100"
           >
             Today
           </button>
           <button
             onClick={goForward}
-            className="rounded-lg border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50"
+            className="rounded-lg border border-oat-300 p-1.5 text-charcoal-500 hover:bg-oat-100"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
-          <span className="ml-2 text-sm font-semibold text-slate-800">
+          <span className="ml-2 text-sm font-semibold text-charcoal-700">
             {formatMonthHeader(currentDate)}
           </span>
         </div>
@@ -76,7 +76,7 @@ export function OverviewCalendar() {
             <div className="flex items-center gap-1">
               <button
                 onClick={zoomOut}
-                className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                className="rounded p-1 text-oat-500 hover:bg-oat-100 hover:text-charcoal-500"
                 title="Zoom out"
               >
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -85,7 +85,7 @@ export function OverviewCalendar() {
               </button>
               <button
                 onClick={zoomIn}
-                className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                className="rounded p-1 text-oat-500 hover:bg-oat-100 hover:text-charcoal-500"
                 title="Zoom in"
               >
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -96,12 +96,12 @@ export function OverviewCalendar() {
           )}
 
           {/* Calendar / List toggle */}
-          <div className="flex rounded-lg bg-slate-100 p-0.5">
+          <div className="flex rounded-lg bg-oat-100 p-0.5">
             <button
               onClick={() => setDisplayMode('calendar')}
               className={cn(
                 'rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
-                displayMode === 'calendar' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'
+                displayMode === 'calendar' ? 'bg-white text-black shadow-sm' : 'text-charcoal-500'
               )}
             >
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
@@ -112,7 +112,7 @@ export function OverviewCalendar() {
               onClick={() => setDisplayMode('list')}
               className={cn(
                 'rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
-                displayMode === 'list' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'
+                displayMode === 'list' ? 'bg-white text-black shadow-sm' : 'text-charcoal-500'
               )}
             >
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
@@ -122,14 +122,14 @@ export function OverviewCalendar() {
           </div>
 
           {/* View mode toggle */}
-          <div className="flex rounded-lg bg-slate-100 p-0.5">
+          <div className="flex rounded-lg bg-oat-100 p-0.5">
             {(['day', 'week', 'month'] as const).map((mode) => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
                 className={cn(
                   'rounded-md px-3 py-1 text-xs font-medium transition-colors capitalize',
-                  viewMode === mode ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'
+                  viewMode === mode ? 'bg-white text-black shadow-sm' : 'text-charcoal-500'
                 )}
               >
                 {mode}

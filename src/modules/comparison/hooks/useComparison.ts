@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { fetchPhaseLinks, createPhaseLink, updatePhaseLink, deletePhaseLink } from '../api/phase-links';
 import { buildComparisonRows, buildComparisonSummary, autoGeneratePhaseLinks } from '../utils/calculations';
 import type { PhaseLink, ComparisonRowData, ComparisonSummary, CreatePhaseLinkInput, UpdatePhaseLinkInput } from '../types';
-import type { Phase } from '@/modules/planning/types';
-import type { TimeEntry } from '@/modules/time-tracking/types';
+import type { Phase } from '@/modules/planning';
+import type { TimeEntry } from '@/modules/time-tracking';
 
 export function useComparison(
   projectId: string,
