@@ -4,7 +4,7 @@ const isDev = process.env.NODE_ENV === "development";
 
 const csp = isDev
   ? "default-src 'self'; connect-src 'self' https://*.supabase.co https://mcp.figma.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://mcp.figma.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'"
-  : "default-src 'self'; connect-src 'self' https://*.supabase.co; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'";
+  : "default-src 'self'; connect-src 'self' https://*.supabase.co; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
