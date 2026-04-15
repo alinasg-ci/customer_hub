@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createMiddlewareClient } from '@/shared/hooks/useSupabaseServer';
 
 const PUBLIC_PATHS = ['/login', '/api/'];
 
@@ -11,42 +11,24 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for Supabase auth cookie/token
+  const res = NextResponse.next();
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    return NextResponse.next();
+    return res;
   }
 
-  // Extract access token from cookies (Supabase stores as sb-<ref>-auth-token)
-  const authCookie = req.cookies.getAll().find((c) => c.name.includes('auth-token'));
+  const supabase = createMiddlewareClient(req, res);
 
-  if (!authCookie?.value) {
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  try {
-    // Parse the cookie value — Supabase stores JSON with access_token
-    const parsed = JSON.parse(authCookie.value);
-    const accessToken = parsed?.access_token ?? parsed?.[0]?.access_token;
-
-    if (!accessToken) {
-      return NextResponse.redirect(new URL('/login', req.url));
-    }
-
-    // Verify token server-side
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-    const { data: { user }, error } = await supabase.auth.getUser(accessToken);
-
-    if (error || !user) {
-      return NextResponse.redirect(new URL('/login', req.url));
-    }
-
-    return NextResponse.next();
-  } catch {
-    return NextResponse.redirect(new URL('/login', req.url));
-  }
+  return res;
 }
 
 export const config = {
