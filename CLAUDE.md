@@ -87,6 +87,12 @@ Client Management Hub — a single-user web application for managing freelance c
 - **Never use raw SQL strings in application code.** Use the Supabase client library's query builder. Parameterized queries only.
 - **Money fields are `decimal(12,2)`.** Always store ILS-converted amounts alongside originals. See PRD section 1.6 and 4.6 for currency handling.
 
+## Supabase client rules (CRITICAL — see docs/AUTH_COOKIE_FIX.md)
+
+- **Client-side code** must use `createBrowserClient` from `@supabase/ssr` (via `src/shared/hooks/useSupabase.ts`). **Never** use `createClient` from `@supabase/supabase-js` in browser code — it stores auth in localStorage which the middleware cannot read, causing a login redirect loop.
+- **Middleware** must use `createServerClient` from `@supabase/ssr` (via `src/shared/hooks/useSupabaseServer.ts`).
+- **API routes** (server-side only) may use `createClient` from `@supabase/supabase-js` with the service role key.
+
 ## API conventions
 
 - **All API routes require authentication.** Check Supabase session at the start of every serverless function. Return 401 if no valid session.
