@@ -33,8 +33,11 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Brand */}
         <div className="mb-8 flex flex-col items-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-[24px] bg-matcha-600 shadow-lg shadow-matcha-600/25">
-            <span className="text-lg font-bold text-white">C</span>
+          <div
+            className="mb-4 flex h-12 w-12 items-center justify-center rounded-[12px] bg-black text-lg font-bold text-white"
+            style={{ transform: 'rotate(-5deg)', boxShadow: '-4px 4px 0 rgba(255,255,255,0.3)' }}
+          >
+            CH
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-white">
             Client Hub
@@ -42,7 +45,7 @@ export default function LoginPage() {
           <p className="mt-1 text-sm text-matcha-300">Sign in to your workspace</p>
         </div>
 
-        <div className="clay-card p-8">
+        <div className="clay-card-static p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-charcoal-700">

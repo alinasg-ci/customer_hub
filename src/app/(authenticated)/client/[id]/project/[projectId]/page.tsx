@@ -170,7 +170,7 @@ function ProjectHeaderCard({ project, clientId, refreshKey, onEdit, onRecordingS
   readonly onRecordingSaved: () => void;
 }) {
   return (
-    <div className="mb-6 rounded-[12px] border border-oat-300 bg-white shadow-[var(--shadow-clay)]">
+    <div className="clay-card-static mb-6">
       {/* Top section: name, badges, actions */}
       <div className="flex items-center justify-between border-b border-oat-200 px-6 py-4">
         <div className="flex items-center gap-3">

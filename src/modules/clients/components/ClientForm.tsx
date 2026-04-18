@@ -43,7 +43,7 @@ export function ClientForm({ client, onSubmit, onCancel }: ClientFormProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="clay-card w-full max-w-md p-6">
+      <div className="clay-card-static w-full max-w-md p-6">
         <h2 className="mb-5 text-lg font-semibold text-black">
           {isEdit ? 'Edit Client' : 'New Client'}
         </h2>

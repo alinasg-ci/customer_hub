@@ -34,7 +34,7 @@ export function ConfirmDeleteDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div
-        className="clay-card mx-4 w-full max-w-md p-6"
+        className="clay-card-static mx-4 w-full max-w-md p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center gap-3">
