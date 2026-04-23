@@ -4,22 +4,33 @@ import { useState, type FormEvent } from 'react';
 import type { CreateManualEntryInput } from '../types';
 import type { Phase, Task } from '@/modules/planning';
 
+export type ManualEntryDefaults = {
+  readonly date?: string;
+  readonly hours?: number;
+  readonly description?: string;
+  readonly phaseId?: string;
+  readonly taskId?: string;
+  readonly note?: string;
+  readonly billable?: boolean;
+};
+
 type ManualEntryFormProps = {
   readonly projectId: string;
   readonly phases: readonly Phase[];
   readonly tasks?: readonly Task[];
+  readonly defaults?: ManualEntryDefaults;
   readonly onSubmit: (input: CreateManualEntryInput) => Promise<void>;
   readonly onCancel: () => void;
 };
 
-export function ManualEntryForm({ projectId, phases, tasks = [], onSubmit, onCancel }: ManualEntryFormProps) {
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [hours, setHours] = useState('');
-  const [description, setDescription] = useState('');
-  const [billable, setBillable] = useState(true);
-  const [phaseId, setPhaseId] = useState('');
-  const [taskId, setTaskId] = useState('');
-  const [note, setNote] = useState('');
+export function ManualEntryForm({ projectId, phases, tasks = [], defaults, onSubmit, onCancel }: ManualEntryFormProps) {
+  const [date, setDate] = useState(defaults?.date ?? new Date().toISOString().split('T')[0]);
+  const [hours, setHours] = useState(defaults?.hours !== undefined ? String(defaults.hours) : '');
+  const [description, setDescription] = useState(defaults?.description ?? '');
+  const [billable, setBillable] = useState(defaults?.billable ?? true);
+  const [phaseId, setPhaseId] = useState(defaults?.phaseId ?? '');
+  const [taskId, setTaskId] = useState(defaults?.taskId ?? '');
+  const [note, setNote] = useState(defaults?.note ?? '');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

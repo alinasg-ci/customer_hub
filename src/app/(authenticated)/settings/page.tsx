@@ -1,13 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/shared/hooks/useAuth';
 import { TogglSetup } from '@/modules/time-tracking';
+import { GmailSetup } from '@/modules/email';
 import { supabase } from '@/shared/hooks/useSupabase';
 import type { Project } from '@/modules/projects';
 
 export default function SettingsPage() {
   const { signOut } = useAuth();
+  const searchParams = useSearchParams();
+  const gmailFlag = searchParams.get('gmail');
   const [allProjects, setAllProjects] = useState<readonly Project[]>([]);
 
   useEffect(() => {
@@ -43,6 +47,12 @@ export default function SettingsPage() {
       </section>
 
       <div className="space-y-6">
+        <section className="clay-card-static overflow-hidden">
+          <div className="h-[6px] bg-slushie-500" />
+          <div className="p-5">
+            <GmailSetup statusFlag={gmailFlag} />
+          </div>
+        </section>
         <section className="clay-card-static overflow-hidden">
           <div className="h-[6px] bg-matcha-500" />
           <div className="p-5">

@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/shared/utils/cn';
-import { NotificationBadge, NotificationCenter, useNotifications } from '@/modules/notifications';
+import { NotificationBadge, useNotifications } from '@/modules/notifications';
 
 type NavItem = {
   readonly label: string;
@@ -25,8 +24,8 @@ const bottomNavItems: readonly NavItem[] = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { unreadCount } = useNotifications();
-  const [showNotifications, setShowNotifications] = useState(false);
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -49,7 +48,7 @@ export function Sidebar() {
           </div>
           <NotificationBadge
             count={unreadCount}
-            onClick={() => setShowNotifications(true)}
+            onClick={() => router.push('/notifications')}
           />
         </div>
 
@@ -98,10 +97,6 @@ export function Sidebar() {
           ))}
         </div>
       </aside>
-
-      {showNotifications && (
-        <NotificationCenter onClose={() => setShowNotifications(false)} />
-      )}
     </>
   );
 }

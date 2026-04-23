@@ -32,6 +32,8 @@ export async function createClient(input: CreateClientInput): Promise<Client> {
     .insert({
       name: input.name,
       company: input.company ?? null,
+      email_domains: input.email_domains ?? [],
+      contact_emails: input.contact_emails ?? [],
       user_id: user.id,
     })
     .select()

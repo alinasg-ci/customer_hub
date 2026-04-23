@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchClientById } from '@/modules/clients';
 import { ProjectCard, ProjectForm, SubProjectList, useProjects } from '@/modules/projects';
+import { EmailsTab } from '@/modules/email';
 import { ConfirmDeleteDialog } from '@/shared/ui/ConfirmDeleteDialog';
 import { Skeleton } from '@/shared/ui/Skeleton';
+import { cn } from '@/shared/utils/cn';
 import type { Client } from '@/modules/clients';
 import type { CreateProjectInput, Project } from '@/modules/projects';
 
@@ -16,6 +18,7 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
   const [clientError, setClientError] = useState<string | null>(null);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [expandedHourBank, setExpandedHourBank] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'projects' | 'emails'>('projects');
   const { projects, loading: projectsLoading, error: projectsError, add, setStatus, remove } = useProjects(id);
   const [deletingProject, setDeletingProject] = useState<Project | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -126,8 +129,54 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
         )}
       </section>
 
-      {/* Actions */}
-      <div className="mb-6 flex items-center justify-end">
+      {/* Tab bar */}
+      <div className="mb-6 flex items-center justify-between">
+        <div className="inline-flex gap-1 rounded-[12px] border border-oat-300 bg-cream-dark p-1">
+          <button
+            type="button"
+            onClick={() => setActiveTab('projects')}
+            className={cn(
+              'flex items-center gap-2 rounded-[10px] px-3 py-2 text-sm font-medium transition-all',
+              activeTab === 'projects'
+                ? 'bg-black text-white shadow-[var(--shadow-hard-sm)]'
+                : 'text-charcoal-500 hover:bg-white hover:text-black'
+            )}
+          >
+            Projects
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('emails')}
+            className={cn(
+              'flex items-center gap-2 rounded-[10px] px-3 py-2 text-sm font-medium transition-all',
+              activeTab === 'emails'
+                ? 'bg-black text-white shadow-[var(--shadow-hard-sm)]'
+                : 'text-charcoal-500 hover:bg-white hover:text-black'
+            )}
+          >
+            Emails
+          </button>
+        </div>
+
+        {activeTab === 'projects' && (
+          <button
+            onClick={() => setShowProjectForm(true)}
+            className="clay-btn clay-btn-primary flex items-center gap-2 text-sm"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            New Project
+          </button>
+        )}
+      </div>
+
+      {activeTab === 'emails' ? (
+        <EmailsTab clientId={id} />
+      ) : (
+      <>
+      {/* Legacy actions rail (hidden when Emails tab active) */}
+      <div className="hidden">
         <button
           onClick={() => setShowProjectForm(true)}
           className="clay-btn clay-btn-primary flex items-center gap-2 text-sm"
@@ -227,6 +276,8 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
             </section>
           )}
         </div>
+      )}
+      </>
       )}
 
       {showProjectForm && (

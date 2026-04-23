@@ -149,6 +149,12 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 TOGGL_ENCRYPTION_KEY=           # AES-256 key for encrypting Toggl API tokens
+EMAIL_ENCRYPTION_KEY=           # AES-256 key for encrypting Gmail refresh tokens + email bodies
+ANTHROPIC_API_KEY=              # Claude API key for email classification + hours extraction
+GOOGLE_CLIENT_ID=               # Google OAuth client ID (Gmail integration)
+GOOGLE_CLIENT_SECRET=           # Google OAuth client secret
+GOOGLE_OAUTH_REDIRECT_URI=      # e.g. https://<host>/api/gmail/oauth/callback
+CRON_SECRET=                    # Shared secret for Vercel cron auth (gmail sync)
 ```
 
 - `NEXT_PUBLIC_` prefix = exposed to browser (only Supabase URL and anon key).
@@ -157,13 +163,23 @@ TOGGL_ENCRYPTION_KEY=           # AES-256 key for encrypting Toggl API tokens
 
 ## What NOT to build in M1
 
-- No AI/LLM integration (M2)
 - No Google Drive connection (M2)
 - No Google Calendar (M3)
-- No Gmail (M3)
 - No Slack or WhatsApp (M5)
 - No task management (M6)
 - No native time tracking (M7)
 - No push notifications
 
-If you find yourself importing from `@anthropic-ai/sdk` or `googleapis` — stop. Those belong in future milestones.
+## Milestone gates intentionally crossed
+
+The following features have been pulled forward and are now allowed:
+
+- **Gmail integration (was M3)** — `googleapis` is permitted. Scope is read-only (`gmail.readonly`); no compose/reply/label/send. Polled every 5 min via Vercel cron. See the `email` module and `docs/PRD.md` §8.
+- **Claude LLM (was M2)** — `@anthropic-ai/sdk` is permitted. Used only server-side, only for email classification + hours extraction. Never expose the key to the browser. Use `claude-haiku-4-5-20251001` as default; upgrade to Sonnet on low confidence.
+
+Security rules around these features are in `DESIGN.md` and the `email` module README:
+- Email bodies stored AES-256 encrypted in `emails.body_encrypted` (`EMAIL_ENCRYPTION_KEY`).
+- Google refresh tokens stored AES-256 encrypted in `gmail_connections.refresh_token_encrypted`.
+- Never log email content — only UUIDs, sender domain, routing decision path, confidence.
+- Sanitize HTML/tracking pixels before sending to Claude; truncate body to 4000 chars.
+- Per-user LLM rate limit; refuse beyond quota.

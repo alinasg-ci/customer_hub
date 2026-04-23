@@ -3,11 +3,12 @@ import type { NotificationType } from '@/shared/types';
 export type Notification = {
   readonly id: string;
   readonly type: NotificationType;
-  readonly project_id: string;
+  readonly project_id: string | null;
   readonly phase_id: string | null;
   readonly sub_project_id: string | null;
+  readonly email_id?: string | null;
   readonly message: string;
-  readonly threshold_percent: number;
+  readonly threshold_percent: number | null;
   readonly link: string;
   readonly is_read: boolean;
   readonly created_at: string;

@@ -947,8 +947,16 @@ M1  MVP: Hours management, planning, Toggl         ← THIS DOCUMENT
 M2  Google Drive + AI extraction from documents
  │  (Claude reads proposals, auto-fills project fields)
  ▼
-M3  Google Calendar + Gmail + communication summary
+M3  Google Calendar + Gmail + communication summary    ← IN PROGRESS (Gmail slice)
  │  (reserved hours, email scanning, AI summaries)
+ │
+ │  Gmail slice (shipping ahead of the full M3):
+ │    - Read-only Gmail (polled every 5 min via Vercel cron)
+ │    - Auto-routing: domain → contact → learned rule → LLM fallback
+ │    - Per-client + per-project Emails tab; thread grouping
+ │    - LLM hours extraction → notification → prefilled ManualEntryForm
+ │    - Learned routing rules (mirrors phase_keywords pattern)
+ │    - Security: AES-256 email bodies + refresh tokens; sanitized LLM input; no email content in logs
  ▼
 M4  Contacts management
  │  (primary + secondary contacts, auto-suggest from email)
