@@ -1,304 +1,306 @@
-# Design System Inspired by Clay
+# Design System — Warm Clay (Client Hub)
 
-## 1. Visual Theme & Atmosphere
+**Single source of truth for the app's visual language.**
 
-Clay's website is a warm, playful celebration of color that treats B2B data enrichment like a craft rather than an enterprise chore. The design language is built on a foundation of warm cream backgrounds (`#faf9f7`) and oat-toned borders (`#dad4c8`, `#eee9df`) that give every surface the tactile quality of handmade paper. Against this artisanal canvas, a vivid swatch palette explodes with personality — Matcha green, Slushie cyan, Lemon gold, Ube purple, Pomegranate pink, Blueberry navy, and Dragonfruit magenta — each named like flavors at a juice bar, not colors in an enterprise UI kit.
+Every page, component, and future fix MUST follow this document. Global style changes happen in exactly one place: `src/app/globals.css` (`@theme` block + `@layer utilities` block). Never hard-code colors, shadows, or radii in component files — only reference the tokens and utility classes defined here.
 
-The typography is anchored by Roobert, a geometric sans-serif with character, loaded with an extensive set of OpenType stylistic sets (`"ss01"`, `"ss03"`, `"ss10"`, `"ss11"`, `"ss12"`) that give the text a distinctive, slightly quirky personality. At display scale (80px, weight 600), Roobert uses aggressive negative letter-spacing (-3.2px) that compresses headlines into punchy, billboard-like statements. Space Mono serves as the monospace companion for code and technical labels, completing the craft-meets-tech duality.
+The reference page for "what the app should look like" is `/overview` (`src/app/(authenticated)/overview/page.tsx` + `src/modules/overview/portfolio/**`). When in doubt, open that page and mirror its pattern.
 
-What makes Clay truly distinctive is its hover micro-animations: buttons on hover rotate slightly (`rotateZ(-8deg)`), translate upward (`translateY(-80%)`), change background to a contrasting swatch color, and cast a hard offset shadow (`rgb(0,0,0) -7px 7px`). This playful hover behavior — where a button literally tilts and jumps on interaction — creates a sense of physical delight that's rare in B2B software. Combined with generously rounded containers (24px–40px radius), dashed borders alongside solid ones, and a multi-layer shadow system that includes inset highlights, Clay feels like a design system that was made by people who genuinely enjoy making things.
+---
 
-**Key Characteristics:**
-- Warm cream canvas (`#faf9f7`) with oat-toned borders (`#dad4c8`) — artisanal, not clinical
-- Named swatch palette: Matcha, Slushie, Lemon, Ube, Pomegranate, Blueberry, Dragonfruit
-- Roobert font with 5 OpenType stylistic sets — quirky geometric character
-- Playful hover animations: rotateZ(-8deg) + translateY(-80%) + hard offset shadow
-- Space Mono for code and technical labels
-- Generous border radius: 24px cards, 40px sections, 1584px pills
-- Mixed border styles: solid + dashed in the same interface
-- Multi-layer shadow with inset highlight: `0px 1px 1px` + `-1px inset` + `-0.5px`
+## 1. How to make a global style change
 
-## 2. Color Palette & Roles
+| You want to change… | Edit this file | What to edit |
+|---|---|---|
+| A color value (e.g., make matcha more teal) | `src/app/globals.css` | The `--color-*` variable inside `@theme { }` |
+| Spacing / radius scale | `src/app/globals.css` | `--radius-clay*` variables |
+| Shadow depth / hover lift | `src/app/globals.css` | `--shadow-clay`, `--shadow-hard*` |
+| Typography (font, stylistic sets) | `src/app/globals.css` | `--font-sans`, `--font-mono`, and `body { font-feature-settings }` |
+| Hover tilt angle / animation curve | `src/app/globals.css` | `.clay-card:hover` and `.clay-btn:hover` inside `@layer utilities` |
+| Card chrome (border, padding, stripe) | `src/app/globals.css` | `.clay-card`, `.clay-card-sm`, `.clay-card-static` in `@layer utilities` |
+| Add a new reusable pattern | `src/app/globals.css` | New class under `@layer utilities`, then document it in this file |
 
-### Primary
-- **Clay Black** (`#000000`): Text, headings, pricing card text, `--_theme--pricing-cards---text`
-- **Pure White** (`#ffffff`): Card backgrounds, button backgrounds, inverse text
-- **Warm Cream** (`#faf9f7`): Page background — the warm, paper-like canvas
+**Rule:** If a change is not in `globals.css`, it is not global. Component-level overrides are a smell — they drift over time.
 
-### Swatch Palette — Named Colors
+---
 
-**Matcha (Green)**
-- **Matcha 300** (`#84e7a5`): `--_swatches---color--matcha-300`, light green accent
-- **Matcha 600** (`#078a52`): `--_swatches---color--matcha-600`, mid green
-- **Matcha 800** (`#02492a`): `--_swatches---color--matcha-800`, deep green for dark sections
+## 2. Design tokens (all defined in `globals.css @theme`)
 
-**Slushie (Cyan)**
-- **Slushie 500** (`#3bd3fd`): `--_swatches---color--slushie-500`, bright cyan accent
-- **Slushie 800** (`#0089ad`): `--_swatches---color--slushie-800`, deep teal
+### Canvas
 
-**Lemon (Gold)**
-- **Lemon 400** (`#f8cc65`): `--_swatches---color--lemon-400`, warm pale gold
-- **Lemon 500** (`#fbbd41`): `--_swatches---color--lemon-500`, primary gold
-- **Lemon 700** (`#d08a11`): `--_swatches---color--lemon-700`, deep amber
-- **Lemon 800** (`#9d6a09`): `--_swatches---color--lemon-800`, dark amber
+| Token | Hex | When to use |
+|---|---|---|
+| `cream` | `#faf9f7` | Page background — the warm paper canvas. **Never use pure white (#fff) for page bg.** |
+| `cream-dark` | `#f5f3ef` | Header row inside tables, secondary canvas areas |
 
-**Ube (Purple)**
-- **Ube 300** (`#c1b0ff`): `--_swatches---color--ube-300`, soft lavender
-- **Ube 800** (`#43089f`): `--_swatches---color--ube-800`, deep purple
-- **Ube 900** (`#32037d`): `--_swatches---color--ube-900`, darkest purple
+### Oat (warm neutrals — borders + surfaces)
 
-**Pomegranate (Pink/Red)**
-- **Pomegranate 400** (`#fc7981`): `--_swatches---color--pomegranate-400`, warm coral-pink
+| Token | Hex | Role |
+|---|---|---|
+| `oat-100` | `#f5f0e8` | Subtle background highlights, button ghost hover |
+| `oat-200` | `#eee9df` | Dividers, subtle row separators |
+| `oat-300` | `#dad4c8` | **Primary border** for every card, input, divider |
+| `oat-400` | `#c4bdb0` | Hover-darker border |
+| `oat-500` | `#9f9b93` | Secondary/muted text, `clay-label` color |
 
-**Blueberry (Navy Blue)**
-- **Blueberry 800** (`#01418d`): `--_swatches---color--blueberry-800`, deep navy
+### Charcoal (text hierarchy)
 
-### Neutral Scale (Warm)
-- **Warm Silver** (`#9f9b93`): Secondary/muted text, footer links
-- **Warm Charcoal** (`#55534e`): Tertiary text, dark muted links
-- **Dark Charcoal** (`#333333`): Link text on light backgrounds
+| Token | Hex | Role |
+|---|---|---|
+| `charcoal-300` | `#717989` | Tertiary text, form label |
+| `charcoal-500` | `#55534e` | Secondary/body text |
+| `charcoal-700` | `#333333` | Strong secondary text, link hover |
+| `charcoal-900` | `#1a1a1a` | Darkest near-black (button hover) |
 
-### Surface & Border
-- **Oat Border** (`#dad4c8`): Primary border — warm, cream-toned structural lines
-- **Oat Light** (`#eee9df`): Secondary lighter border
-- **Cool Border** (`#e6e8ec`): Cool-toned border for contrast sections
-- **Dark Border** (`#525a69`): Border on dark sections
-- **Light Frost** (`#eff1f3`): Subtle button background (at 0% opacity on hover)
+**Primary text color is `#000` (Tailwind `text-black`)**, not charcoal. Charcoal is for secondary copy.
 
-### Badges
-- **Badge Blue Bg** (`#f0f8ff`): Blue-tinted badge surface
-- **Badge Blue Text** (`#3859f9`): Vivid blue badge text
-- **Focus Ring** (`rgb(20, 110, 245) solid 2px`): Accessibility focus indicator
+### Swatch palette (semantic colors)
+
+Each swatch has a role. Never use a swatch outside its role.
+
+| Swatch | Shades available | Semantic role |
+|---|---|---|
+| **Matcha** (green) | `300, 500, 600, 700, 800` | Growth, success, on-track, positive delta, default primary accent |
+| **Slushie** (cyan) | `300, 500, 800` | Informational, onboarding, pending, calendar |
+| **Lemon** (gold) | `400, 500, 700, 800` | Warnings, stickers, highlight accents |
+| **Ube** (purple) | `300, 500, 800, 900` | Playful contrast, sticky notes, archive |
+| **Pomegranate** (red) | `300, 400, 600, 700` | Errors, over-cap, negative delta, destructive |
+| **Blueberry** (navy) | `500, 800` | Data accents, avatars |
+| **Dragonfruit** (pink) | `500` | Avatar accent only |
+
+**Alpha modifiers work** — `bg-matcha-300/20`, `border-pomegranate-400/30`, etc. Always prefer a defined shade + alpha over inventing a new shade.
 
 ### Shadows
-- **Clay Shadow** (`rgba(0,0,0,0.1) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px`): Multi-layer with inset highlight — the signature
-- **Hard Offset** (`rgb(0,0,0) -7px 7px`): Hover state — playful hard shadow
 
-## 3. Typography Rules
+| Token | Value | Use |
+|---|---|---|
+| `shadow-clay` | `0 1px 1px rgba(0,0,0,0.1), inset 0 -1px 1px rgba(0,0,0,0.04), 0 -0.5px 1px rgba(0,0,0,0.05)` | Default card shadow — stamped-into-clay feel |
+| `shadow-clay-lg` | larger 3-layer | Floating elements (recording indicator) |
+| `shadow-hard-sm` | `-4px 4px 0 #000` | Small hard offset on hover (buttons, small cards) |
+| `shadow-hard` | `-7px 7px 0 #000` | Large hard offset on hover (feature cards) |
 
-### Font Families
-- **Primary**: `Roobert`, fallback: `Arial`
-- **Monospace**: `Space Mono`
-- **OpenType Features**: `"ss01"`, `"ss03"`, `"ss10"`, `"ss11"`, `"ss12"` on all Roobert text (display uses all 5; body/UI uses `"ss03"`, `"ss10"`, `"ss11"`, `"ss12"`)
+**Never use blurred ambient shadows** (`shadow-xl`, `shadow-lg` from Tailwind default). The signature is hard offset + multi-layer inset.
 
-### Hierarchy
+### Radius
 
-| Role | Font | Size | Weight | Line Height | Letter Spacing | Notes |
-|------|------|------|--------|-------------|----------------|-------|
-| Display Hero | Roobert | 80px (5.00rem) | 600 | 1.00 (tight) | -3.2px | All 5 stylistic sets |
-| Display Secondary | Roobert | 60px (3.75rem) | 600 | 1.00 (tight) | -2.4px | All 5 stylistic sets |
-| Section Heading | Roobert | 44px (2.75rem) | 600 | 1.10 (tight) | -0.88px to -1.32px | All 5 stylistic sets |
-| Card Heading | Roobert | 32px (2.00rem) | 600 | 1.10 (tight) | -0.64px | All 5 stylistic sets |
-| Feature Title | Roobert | 20px (1.25rem) | 600 | 1.40 | -0.4px | All 5 stylistic sets |
-| Sub-heading | Roobert | 20px (1.25rem) | 500 | 1.50 | -0.16px | 4 stylistic sets (no ss01) |
-| Body Large | Roobert | 20px (1.25rem) | 400 | 1.40 | normal | 4 stylistic sets |
-| Body | Roobert | 18px (1.13rem) | 400 | 1.60 (relaxed) | -0.36px | 4 stylistic sets |
-| Body Standard | Roobert | 16px (1.00rem) | 400 | 1.50 | normal | 4 stylistic sets |
-| Body Medium | Roobert | 16px (1.00rem) | 500 | 1.20–1.40 | -0.16px to -0.32px | 4–5 stylistic sets |
-| Button | Roobert | 16px (1.00rem) | 500 | 1.50 | -0.16px | 4 stylistic sets |
-| Button Large | Roobert | 24px (1.50rem) | 400 | 1.50 | normal | 4 stylistic sets |
-| Button Small | Roobert | 12.8px (0.80rem) | 500 | 1.50 | -0.128px | 4 stylistic sets |
-| Nav Link | Roobert | 15px (0.94rem) | 500 | 1.60 (relaxed) | normal | 4 stylistic sets |
-| Caption | Roobert | 14px (0.88rem) | 400 | 1.50–1.60 | -0.14px | 4 stylistic sets |
-| Small | Roobert | 12px (0.75rem) | 400 | 1.50 | normal | 4 stylistic sets |
-| Uppercase Label | Roobert | 12px (0.75rem) | 600 | 1.20 (tight) | 1.08px | `text-transform: uppercase`, 4 sets |
-| Badge | Roobert | 9.6px | 600 | — | — | Pill badges |
+| Token | Value | Use |
+|---|---|---|
+| `clay-sm` | `4px` | Inputs |
+| `clay` | `12px` | Small cards, buttons, chips |
+| `clay-lg` | `24px` | Feature cards |
+| `clay-xl` | `40px` | Section containers |
+| `pill` | `9999px` | Pills, stickers, the recording indicator |
 
-### Principles
-- **Five stylistic sets as identity**: The combination of `"ss01"`, `"ss03"`, `"ss10"`, `"ss11"`, `"ss12"` on Roobert creates a distinctive typographic personality. `ss01` is reserved for headings and emphasis — body text omits it, creating a subtle hierarchy through glyph variation.
-- **Aggressive display compression**: -3.2px at 80px, -2.4px at 60px — the most compressed display tracking alongside the most generous body spacing (1.60 line-height), creating dramatic contrast.
-- **Weight 600 for headings, 500 for UI, 400 for body**: Clean three-tier system where each weight has a strict role.
-- **Uppercase labels with positive tracking**: 12px uppercase at 1.08px letter-spacing creates the systematic wayfinding pattern.
+### Typography
 
-## 4. Component Stylings
+| Family | Token | Role |
+|---|---|---|
+| **DM Sans** | `--font-sans` | Default body, headings — with `ss01` + `ss03` stylistic sets enabled globally on `body` |
+| **Space Mono** | `--font-mono` | Timestamps, IDs, numeric metadata, `clay-label`, `clay-mono` |
 
-### Buttons
+**Hero scale:** `clamp(44px, 6vw, 72px)` with `letter-spacing: -0.03em`, `line-height: 0.98`, weight 600.
+**Section heading:** 20–24px weight 600.
+**Body:** 15px regular in `charcoal-500`.
+**Metadata:** 11–13px `clay-mono` or `clay-label`.
 
-**Primary (Transparent with Hover Animation)**
-- Background: transparent (`rgba(239, 241, 243, 0)`)
-- Text: `#000000`
-- Padding: 6.4px 12.8px
-- Border: none (or `1px solid #717989` for outlined variant)
-- Hover: background shifts to swatch color (e.g., `#434346`), text to white, `rotateZ(-8deg)`, `translateY(-80%)`, hard shadow `rgb(0,0,0) -7px 7px`
-- Focus: `rgb(20, 110, 245) solid 2px` outline
+---
 
-**White Solid**
-- Background: `#ffffff`
-- Text: `#000000`
-- Padding: 6.4px
-- Hover: oat-200 swatch color, animated rotation + shadow
-- Use: Primary CTA on colored sections
+## 3. Utility classes (defined in `globals.css @layer utilities`)
 
-**Ghost Outlined**
-- Background: transparent
-- Text: `#000000`
-- Padding: 8px
-- Border: `1px solid #717989`
-- Radius: 4px
-- Hover: dragonfruit swatch color, white text, animated rotation
+These are the building blocks. Compose pages from these — do not re-invent.
 
-### Cards & Containers
-- Background: `#ffffff` on cream canvas
-- Border: `1px solid #dad4c8` (warm oat) or `1px dashed #dad4c8`
-- Radius: 12px (standard cards), 24px (feature cards/images), 40px (section containers/footer)
-- Shadow: `rgba(0,0,0,0.1) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px`
-- Colorful section backgrounds using swatch palette (matcha, slushie, ube, lemon)
+| Class | What it is | Use when |
+|---|---|---|
+| `clay-card` | White surface, oat-300 border, `radius-clay-lg`, shadow-clay, tilts -1.5° + hard-shadow on hover | **Interactive/clickable cards** (client cards, project cards, feature tiles) |
+| `clay-card-sm` | Smaller variant (radius-clay, shadow-hard-sm on hover) | Compact cards in dense grids |
+| `clay-card-static` | Same chrome as clay-card, no hover tilt | Non-interactive containers (settings sections, page-level wrappers, modals) |
+| `clay-card-dashed` | White, dashed oat-300 border | Empty states, "add new" placeholders |
+| `clay-section` | 40px radius wrapper | Large page-wide feature sections |
+| `clay-input` | oat-300 border, 4px radius, black focus ring | **Every form input** |
+| `clay-btn` | Base button — 12px radius, 220ms spring curve, tilts -4° on hover | Always pair with a variant |
+| `clay-btn-primary` | Black bg, white text | Primary CTA (New Client, Save) |
+| `clay-btn-secondary` | White bg, oat-300 border | Secondary/cancel |
+| `clay-btn-ghost` | Transparent, charcoal-300 border, 4px radius | Icon buttons, low-emphasis |
+| `clay-btn-danger` | Pomegranate bg | Destructive (Delete, Sign out) |
+| `clay-label` | 11px uppercase, 1.08px tracking, oat-500 | **Column headers, metadata captions** (replaces custom `text-xs uppercase`) |
+| `clay-mono` | Space Mono family | Timestamps, IDs, numeric values |
+| `clay-hatch` | Diagonal 135° hatch overlay | Hover texture reveal (absolute overlay) |
+| `clay-sticker` | Lemon 500 pill, 1.5px black border, rotated -6°, hard shadow | Count badges, "★ N active" accents |
+| `clay-sticky-note` | Ube 800 bg, white text, hatch, hard shadow | Pinned notes, ephemeral callouts |
 
-### Inputs & Forms
-- Text: `#000000`
-- Border: `1px solid #717989`
-- Radius: 4px
-- Focus: `rgb(20, 110, 245) solid 2px` outline
+---
 
-### Navigation
-- Sticky top nav on cream background
-- Roobert 15px weight 500 for nav links
-- Clay logo left-aligned
-- CTA buttons right-aligned with pill radius
-- Border bottom: `1px solid #dad4c8`
-- Mobile: hamburger collapse at 767px
+## 4. Page-level patterns (mandatory chrome)
 
-### Image Treatment
-- Product screenshots in white cards with oat borders
-- Colorful illustrated sections with swatch background colors
-- 8px–24px radius on images
-- Full-width colorful section backgrounds
+Every top-level page (`src/app/(authenticated)/*/page.tsx`) uses the same four-part structure. This is the non-negotiable chrome.
 
-### Distinctive Components
+### 4.1 Hero greeting (top of every page)
 
-**Swatch Color Sections**
-- Full-width sections with swatch-colored backgrounds (matcha green, slushie cyan, ube purple, lemon gold)
-- White text on dark swatches, black text on light swatches
-- Each section tells a distinct product story through its color
+```tsx
+<section className="relative mb-8">
+  <div className="clay-label">{CONTEXT_LINE}</div>
+  <h1
+    className="my-2 font-semibold text-black"
+    style={{
+      fontSize: 'clamp(44px, 6vw, 72px)',
+      lineHeight: 0.98,
+      letterSpacing: '-0.03em',
+      fontFeatureSettings: '"ss01","ss03"',
+    }}
+  >
+    Your <em className="not-italic text-matcha-600">page-noun</em>.
+  </h1>
+  <p className="clay-mono mt-2 text-[13px] text-charcoal-500">
+    {Primary metadata line, mono}
+  </p>
+  <div
+    className="clay-sticker absolute right-2 top-2 hidden sm:inline-flex"
+    style={{ transform: 'rotate(-6deg)' }}
+  >
+    ★ {live count}
+  </div>
+</section>
+```
 
-**Playful Hover Buttons**
-- Rotate -8deg + translate upward on hover
-- Hard offset shadow (`-7px 7px`) instead of soft blur
-- Background transitions to contrasting swatch color
-- Creates a physical, toy-like interaction quality
+**Italic accent color by page role:**
+- Primary / action pages → `text-matcha-600` (home, client detail)
+- Informational → `text-slushie-500` (calendar)
+- Warning / config → `text-lemon-700` (settings)
+- Read-only / archival → `text-ube-500` (archive)
+- Type-based (project page) → tint inline from project type
 
-**Dashed Border Elements**
-- Dashed borders (`1px dashed #dad4c8`) alongside solid borders
-- Used for secondary containers and decorative elements
-- Adds a hand-drawn, craft-like quality
+### 4.2 Colored top stripe on cards
 
-## 5. Layout Principles
+Every major card (profile header, profitability, table wrapper, settings section) gets a **6px colored stripe** matching the content's semantic role. It's the strongest visual anchor of the system.
 
-### Spacing System
-- Base unit: 8px
-- Scale: 1px, 2px, 4px, 6.4px, 8px, 12px, 12.8px, 16px, 18px, 20px, 24px
+```tsx
+<div className="clay-card-static overflow-hidden">
+  <div className="h-[6px] bg-matcha-500" />   {/* or slushie / ube / pomegranate / lemon */}
+  <div className="p-5">…</div>
+</div>
+```
 
-### Grid & Container
-- Max content width centered
-- Feature sections alternate between white cards and colorful swatch backgrounds
-- Card grids: 2–3 columns on desktop
-- Full-width colorful sections break the grid
-- Footer with generous 40px radius container
+### 4.3 Hatch overlays
 
-### Whitespace Philosophy
-- **Warm, generous breathing**: The cream background provides a warm rest between content blocks. Spacing is generous but not austere — it feels inviting, like a well-set table.
-- **Color as spatial rhythm**: The alternating swatch-colored sections create visual rhythm through hue rather than just whitespace. Each color section is its own "room."
-- **Craft-like density inside cards**: Within cards, content is compact and well-organized, contrasting with the generous outer spacing.
+Use `.clay-hatch` on hover reveals (cards) and on empty-state backgrounds. Always paired with `relative` on the container and `absolute inset-0` on the hatch div.
 
-### Border Radius Scale
-- Sharp (4px): Ghost buttons, inputs
-- Standard (8px): Small cards, images, links
-- Badge (11px): Tag badges
-- Card (12px): Standard cards, buttons
-- Feature (24px): Feature cards, images, panels
-- Section (40px): Large sections, footer, containers
-- Pill (1584px): CTAs, pill-shaped buttons
+### 4.4 Empty states
 
-## 6. Depth & Elevation
+Always feature a **lemon-sticker-style icon** (rotated -6°, 1.5px black border, hard-shadow-sm), a hatch overlay, and a primary CTA.
 
-| Level | Treatment | Use |
-|-------|-----------|-----|
-| Flat (Level 0) | No shadow, cream canvas | Page background |
-| Clay Shadow (Level 1) | `rgba(0,0,0,0.1) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px inset, rgba(0,0,0,0.05) 0px -0.5px` | Cards, buttons — multi-layer with inset highlight |
-| Hover Hard (Level 2) | `rgb(0,0,0) -7px 7px` | Hover state — playful hard offset shadow |
-| Focus (Level 3) | `rgb(20, 110, 245) solid 2px` | Keyboard focus ring |
+```tsx
+<div className="clay-card-dashed relative flex flex-col items-center justify-center overflow-hidden py-16">
+  <div className="clay-hatch absolute inset-0 opacity-50" />
+  <div
+    className="relative mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] border-[1.5px] border-black bg-lemon-500 shadow-[var(--shadow-hard-sm)]"
+    style={{ transform: 'rotate(-6deg)' }}
+  >
+    <svg>…</svg>
+  </div>
+  <h3 className="relative text-base font-semibold text-black">Empty title</h3>
+  <p className="relative mt-1 text-sm text-charcoal-500">Supporting copy.</p>
+  <button className="clay-btn clay-btn-primary relative mt-5">CTA</button>
+</div>
+```
 
-**Shadow Philosophy**: Clay's shadow system is uniquely three-layered: a downward cast (`0px 1px 1px`), an upward inset highlight (`0px -1px 1px inset`), and a subtle edge (`0px -0.5px 1px`). This creates a "pressed into clay" quality where elements feel both raised AND embedded — like a clay tablet where content is stamped into the surface. The hover hard shadow (`-7px 7px`) is deliberately retro-graphic, referencing print-era drop shadows and adding physical playfulness.
+### 4.5 Tabs
 
-### Decorative Depth
-- Full-width swatch-colored sections create dramatic depth through color contrast
-- Dashed borders add visual texture alongside solid borders
-- Product illustrations with warm, organic art style
+Pill-bar tabs inside a card-dark canvas — not flat underline tabs:
 
-## 7. Do's and Don'ts
+```tsx
+<div className="inline-flex gap-1 rounded-[12px] border border-oat-300 bg-cream-dark p-1">
+  <button className={active
+    ? 'bg-black text-white shadow-[var(--shadow-hard-sm)] rounded-[10px] px-3 py-2 ...'
+    : 'text-charcoal-500 hover:bg-white hover:text-black rounded-[10px] px-3 py-2 ...'}>
+    …
+  </button>
+</div>
+```
+
+### 4.6 Tables
+
+Wrap every data table in `clay-card-static` + colored top stripe + `overflow-hidden`. Column headers use `clay-label clay-mono` on a `bg-cream-dark` row with `border-b border-oat-300`.
+
+### 4.7 Error banners
+
+```tsx
+<div className="rounded-[12px] border border-pomegranate-400 bg-pomegranate-300/20 p-4">
+  <p className="text-sm text-pomegranate-600">{error}</p>
+</div>
+```
+
+### 4.8 Global recording indicator
+
+Fixed top-center black pill with lemon "LIVE" chip, white project name, mono timer, white Stop button. Already implemented in `src/modules/recording/components/GlobalRecordingIndicator.tsx` — rendered once in `src/app/(authenticated)/layout.tsx`. Do not duplicate.
+
+---
+
+## 5. Checklist for a new page
+
+- [ ] Hero section with `clay-label`, `clamp(44px, 6vw, 72px)` heading, italic matcha accent, mono sub-line
+- [ ] Lemon sticker rotated -6° if there's a live count to flaunt
+- [ ] Every major card uses `clay-card*` with a 6px colored top stripe
+- [ ] Every input uses `clay-input`
+- [ ] Every button uses `clay-btn` + variant
+- [ ] Column headers use `clay-label clay-mono`
+- [ ] Timestamps, IDs, numeric values use `clay-mono`
+- [ ] Empty states use lemon-sticker icon + hatch overlay
+- [ ] Error banners use `border-pomegranate-400 bg-pomegranate-300/20 text-pomegranate-600`
+- [ ] No `slate-*`, `indigo-*`, `red-*`, `amber-*`, `emerald-*`, `purple-*` classes anywhere
+
+## 6. Checklist for a new component
+
+- [ ] Reads tokens via Tailwind classes (`text-charcoal-500`) or CSS vars (`var(--color-matcha-500)`) — never hex literals
+- [ ] Uses a `clay-*` utility for chrome where one exists — does not re-invent borders/shadows
+- [ ] Any bespoke CSS lives in the file's CSS Module, not as inline styles (exception: dynamic color/transform values)
+- [ ] Hover state: tilt or border→black or hard-shadow — never a plain color dim
+- [ ] Focus state visible for keyboard users (inputs get it automatically via `clay-input`)
+- [ ] Supports the empty/loading/error triad if it fetches data
+
+---
+
+## 7. Do / Don't
 
 ### Do
-- Use warm cream (`#faf9f7`) as the page background — the warmth is the identity
-- Apply all 5 OpenType stylistic sets on Roobert headings: `"ss01", "ss03", "ss10", "ss11", "ss12"`
-- Use the named swatch palette (Matcha, Slushie, Lemon, Ube, Pomegranate, Blueberry) for section backgrounds
-- Apply the playful hover animation: `rotateZ(-8deg)`, `translateY(-80%)`, hard shadow `-7px 7px`
-- Use warm oat borders (`#dad4c8`) — not neutral gray
-- Mix solid and dashed borders for visual variety
-- Use generous radius: 24px for cards, 40px for sections
-- Use weight 600 exclusively for headings, 500 for UI, 400 for body
+- ✅ Reference tokens from `@theme` only
+- ✅ Use `clay-*` utilities for chrome
+- ✅ Compose hero + stripe + card + sticker + hatch for visual richness
+- ✅ Mono for numeric data; uppercase `clay-label` for metadata captions
+- ✅ `cream` page backgrounds, `white` card backgrounds
+- ✅ Hard offset shadows on hover
 
 ### Don't
-- Don't use cool gray backgrounds — the warm cream (`#faf9f7`) is non-negotiable
-- Don't use neutral gray borders (`#ccc`, `#ddd`) — always use the warm oat tones
-- Don't mix more than 2 swatch colors in the same section
-- Don't skip the OpenType stylistic sets — they define Roobert's character
-- Don't use subtle hover effects — the rotation + hard shadow is the signature interaction
-- Don't use small border radius (<12px) on feature cards — the generous rounding is structural
-- Don't use standard shadows (blur-based) — Clay uses hard offset and multi-layer inset
-- Don't forget the uppercase labels with 1.08px tracking — they're the wayfinding system
+- ❌ Hard-code hex values in components
+- ❌ Use `slate-*`, `indigo-*`, `red-*`, `amber-*`, `emerald-*`, `purple-*`, `sky-*`, `violet-*`
+- ❌ Use blurred ambient shadows (`shadow-lg`, `shadow-xl`, `shadow-2xl`)
+- ❌ Create a new radius, shadow, or color without adding it to `globals.css` `@theme`
+- ❌ Skip the hero on a top-level page
+- ❌ Flat "rounded-xl border bg-white p-5" cards — always use `clay-card*`
+- ❌ `text-xs uppercase tracking-widest` — use `clay-label`
+- ❌ Mix `charcoal-*` and `gray-*` (gray doesn't exist in theme)
 
-## 8. Responsive Behavior
+---
 
-### Breakpoints
-| Name | Width | Key Changes |
-|------|-------|-------------|
-| Mobile Small | <479px | Single column, tight padding |
-| Mobile | 479–767px | Standard mobile, stacked layout |
-| Tablet | 768–991px | 2-column grids, condensed nav |
-| Desktop | 992px+ | Full layout, 3-column grids, expanded sections |
+## 8. Ownership & rules enforcement
 
-### Touch Targets
-- Buttons: minimum 6.4px + 12.8px padding for adequate touch area
-- Nav links: 15px font with generous spacing
-- Mobile: full-width buttons for easy tapping
+**CLAUDE.md already says** `Styling: Tailwind CSS (utility-first, no custom CSS files unless absolutely necessary)`. This file overrides that with one exception: `globals.css` is the single allowed CSS module for shared utilities. Component-specific CSS Modules are allowed for overview-style rich layouts (see `src/modules/overview/portfolio/portfolio.module.css`) but must reference the same tokens.
 
-### Collapsing Strategy
-- Hero: 80px → 60px → smaller display text
-- Navigation: horizontal → hamburger at 767px
-- Feature sections: multi-column → stacked
-- Colorful sections: maintain full-width but compress padding
-- Card grids: 3-column → 2-column → single column
+**When adding a new pattern** that doesn't fit an existing utility: add the utility to `globals.css` `@layer utilities`, document it in §3 of this file, and rebase any one-off inline copy to use it.
 
-### Image Behavior
-- Product screenshots scale proportionally
-- Colorful section illustrations adapt to viewport width
-- Rounded corners maintained across breakpoints
+**When removing or renaming a token:** search the whole repo first (`grep -r 'matcha-500'`), update every usage, then remove from `@theme`. Never leave dangling references — Tailwind v4 silently drops unknown shades.
 
-## 9. Agent Prompt Guide
+---
 
-### Quick Color Reference
-- Background: Warm Cream (`#faf9f7`)
-- Text: Clay Black (`#000000`)
-- Secondary text: Warm Silver (`#9f9b93`)
-- Border: Oat Border (`#dad4c8`)
-- Green accent: Matcha 600 (`#078a52`)
-- Cyan accent: Slushie 500 (`#3bd3fd`)
-- Gold accent: Lemon 500 (`#fbbd41`)
-- Purple accent: Ube 800 (`#43089f`)
-- Pink accent: Pomegranate 400 (`#fc7981`)
+## 9. Where to find real examples
 
-### Example Component Prompts
-- "Create a hero on warm cream (#faf9f7) background. Headline at 80px Roobert weight 600, line-height 1.00, letter-spacing -3.2px, OpenType 'ss01 ss03 ss10 ss11 ss12', black text. Subtitle at 20px weight 400, line-height 1.40, #9f9b93 text. Two buttons: white solid pill (12px radius) and ghost outlined (4px radius, 1px solid #717989)."
-- "Design a colorful section with Matcha 800 (#02492a) background. Heading at 44px Roobert weight 600, letter-spacing -1.32px, white text. Body at 18px weight 400, line-height 1.60, #84e7a5 text. White card inset with oat border (#dad4c8), 24px radius."
-- "Build a button with playful hover: default transparent background, black text, 16px Roobert weight 500. On hover: background #434346, text white, transform rotateZ(-8deg) translateY(-80%), hard shadow rgb(0,0,0) -7px 7px."
-- "Create a card: white background, 1px solid #dad4c8 border, 24px radius. Shadow: rgba(0,0,0,0.1) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset. Title at 32px Roobert weight 600, letter-spacing -0.64px."
-- "Design an uppercase label: 12px Roobert weight 600, text-transform uppercase, letter-spacing 1.08px, OpenType 'ss03 ss10 ss11 ss12'."
-
-### Iteration Guide
-1. Start with warm cream (#faf9f7) — never cool white
-2. Swatch colors are for full sections, not small accents — go bold with matcha, slushie, ube
-3. Oat borders (#dad4c8) everywhere — dashed variants for decoration
-4. OpenType stylistic sets are mandatory — they make Roobert look like Roobert
-5. Hover animations are the signature — rotation + hard shadow, not subtle fades
-6. Generous radius: 24px cards, 40px sections — nothing looks sharp or corporate
-7. Three weights: 600 (headings), 500 (UI), 400 (body) — strict roles
+| Pattern | File |
+|---|---|
+| Hero greeting + sticker | `src/modules/overview/portfolio/Hero.tsx` · `src/modules/clients/components/ClientList.tsx` |
+| Colored top stripe card | `src/modules/profitability/components/ProfitabilityCard.tsx` |
+| Colored KPI tiles with hatch | `src/modules/overview/portfolio/KpiTile.tsx` |
+| Sticker + tilted accent | `.clay-sticker` rule in `globals.css` |
+| Sticky note | `.clay-sticky-note` rule in `globals.css` |
+| Recording indicator | `src/modules/recording/components/GlobalRecordingIndicator.tsx` |
+| Empty state with hatch | `src/app/(authenticated)/client/[id]/page.tsx` (no-projects branch) |
+| Tilted avatar swatch | `src/modules/clients/components/ClientList.tsx` (`getClientSwatch`) |
+| Pill tab bar | `src/app/(authenticated)/client/[id]/project/[projectId]/page.tsx` |

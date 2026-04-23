@@ -8,15 +8,15 @@ type SummaryBarProps = {
 };
 
 const STATUS_COLORS = {
-  on_track: 'bg-emerald-500',
-  warning: 'bg-amber-500',
-  over: 'bg-red-500',
+  on_track: 'bg-matcha-500',
+  warning: 'bg-lemon-500',
+  over: 'bg-pomegranate-300/200',
 } as const;
 
 const STATUS_BG = {
-  on_track: 'bg-emerald-50 border-emerald-200',
-  warning: 'bg-amber-50 border-amber-200',
-  over: 'bg-red-50 border-red-200',
+  on_track: 'bg-matcha-300/20 border-matcha-500',
+  warning: 'bg-lemon-400/20 border-lemon-700',
+  over: 'bg-pomegranate-300/20 border-pomegranate-400',
 } as const;
 
 export function SummaryBar({ summary }: SummaryBarProps) {
@@ -27,13 +27,13 @@ export function SummaryBar({ summary }: SummaryBarProps) {
     <div className={`rounded-xl border p-4 ${STATUS_BG[status]}`}>
       <div className="mb-2 flex items-center justify-between text-sm">
         <div className="flex gap-4">
-          <span className="text-slate-500">
+          <span className="text-charcoal-500">
             Budget: <strong>{totalBudget}h</strong>
           </span>
-          <span className="text-slate-500">
+          <span className="text-charcoal-500">
             Plan: <strong>{totalPlan}h</strong>
           </span>
-          <span className="text-slate-500">
+          <span className="text-charcoal-500">
             Actual: <strong>{formatHours(totalActual)}</strong>
           </span>
         </div>
@@ -41,7 +41,7 @@ export function SummaryBar({ summary }: SummaryBarProps) {
           {percentConsumed.toFixed(0)}% of plan consumed
         </span>
       </div>
-      <div className="h-2.5 w-full rounded-full bg-slate-200">
+      <div className="h-2.5 w-full rounded-full bg-oat-300">
         <div
           className={`h-full rounded-full transition-all ${STATUS_COLORS[status]}`}
           style={{ width: `${barWidth}%` }}

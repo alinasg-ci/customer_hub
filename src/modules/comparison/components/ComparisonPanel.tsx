@@ -20,9 +20,9 @@ const STATUS_ICONS = {
 } as const;
 
 const STATUS_STYLES = {
-  on_track: 'text-emerald-600',
-  warning: 'text-amber-600',
-  over: 'text-red-600 font-medium',
+  on_track: 'text-matcha-600',
+  warning: 'text-lemon-700',
+  over: 'text-pomegranate-600 font-medium',
 } as const;
 
 export function ComparisonPanel({ projectId, phases, timeEntries }: ComparisonPanelProps) {
@@ -41,19 +41,19 @@ export function ComparisonPanel({ projectId, phases, timeEntries }: ComparisonPa
 
   if (error) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-        <p className="text-sm text-red-700">{error}</p>
+      <div className="rounded-xl border border-pomegranate-400 bg-pomegranate-300/20 p-4">
+        <p className="text-sm text-pomegranate-600">{error}</p>
       </div>
     );
   }
 
   if (phaseLinks.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-slate-300 p-6 text-center">
-        <p className="text-sm text-slate-500">No phase links yet. Auto-generate from your phases?</p>
+      <div className="rounded-xl border border-dashed border-oat-500 p-6 text-center">
+        <p className="text-sm text-charcoal-500">No phase links yet. Auto-generate from your phases?</p>
         <button
           onClick={autoGenerate}
-          className="mt-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          className="mt-2 rounded-lg bg-black px-4 py-2 text-sm font-medium text-white hover:bg-charcoal-900"
         >
           Auto-generate links
         </button>
@@ -68,7 +68,7 @@ export function ComparisonPanel({ projectId, phases, timeEntries }: ComparisonPa
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-200 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-oat-300 text-left text-xs font-medium uppercase tracking-wide text-charcoal-500">
               <th className="py-2 pr-4">Phase</th>
               <th className="py-2 px-3 text-right">Budget</th>
               <th className="py-2 px-3 text-right">Plan</th>
@@ -79,14 +79,14 @@ export function ComparisonPanel({ projectId, phases, timeEntries }: ComparisonPa
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.phaseLinkId} className="border-b border-slate-100 hover:bg-slate-50">
+              <tr key={row.phaseLinkId} className="border-b border-oat-200 hover:bg-cream">
                 <td className="py-2 pr-4">
                   <div>
-                    <span className="font-medium text-slate-900">{row.canonicalName}</span>
+                    <span className="font-medium text-black">{row.canonicalName}</span>
                     {(row.budgetPhaseName || row.planPhaseName) &&
                       row.budgetPhaseName !== row.planPhaseName && (
                         <span
-                          className="ml-1 text-xs text-slate-400 cursor-help"
+                          className="ml-1 text-xs text-charcoal-300 cursor-help"
                           title={`Budget: "${row.budgetPhaseName ?? '—'}" | Plan: "${row.planPhaseName ?? '—'}"`}
                         >
                           ⓘ
@@ -94,16 +94,16 @@ export function ComparisonPanel({ projectId, phases, timeEntries }: ComparisonPa
                       )}
                   </div>
                 </td>
-                <td className="py-2 px-3 text-right text-slate-500">
+                <td className="py-2 px-3 text-right text-charcoal-500">
                   {row.budgetHours > 0 ? `${row.budgetHours}h` : '—'}
                 </td>
-                <td className="py-2 px-3 text-right text-slate-500">
+                <td className="py-2 px-3 text-right text-charcoal-500">
                   {row.planHours > 0 ? `${row.planHours}h` : '—'}
                 </td>
-                <td className="py-2 px-3 text-right text-slate-900 font-medium">
+                <td className="py-2 px-3 text-right text-black font-medium">
                   {row.actualHours > 0 ? formatHours(row.actualHours) : '0h'}
                 </td>
-                <td className={`py-2 px-3 text-right ${row.remaining >= 0 ? 'text-emerald-600' : 'text-red-600 font-medium'}`}>
+                <td className={`py-2 px-3 text-right ${row.remaining >= 0 ? 'text-matcha-600' : 'text-pomegranate-600 font-medium'}`}>
                   {formatHours(row.remaining)}
                   {row.remaining < 0 && ' ⚠'}
                 </td>
@@ -114,12 +114,12 @@ export function ComparisonPanel({ projectId, phases, timeEntries }: ComparisonPa
             ))}
           </tbody>
           <tfoot>
-            <tr className="border-t-2 border-slate-300 font-medium">
-              <td className="py-2 pr-4 text-slate-900">TOTAL</td>
+            <tr className="border-t-2 border-oat-500 font-medium">
+              <td className="py-2 pr-4 text-black">TOTAL</td>
               <td className="py-2 px-3 text-right">{summary.totalBudget}h</td>
               <td className="py-2 px-3 text-right">{summary.totalPlan}h</td>
               <td className="py-2 px-3 text-right">{formatHours(summary.totalActual)}</td>
-              <td className={`py-2 px-3 text-right ${summary.totalPlan - summary.totalActual >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+              <td className={`py-2 px-3 text-right ${summary.totalPlan - summary.totalActual >= 0 ? 'text-matcha-600' : 'text-pomegranate-600'}`}>
                 {formatHours(summary.totalPlan - summary.totalActual)}
               </td>
               <td></td>

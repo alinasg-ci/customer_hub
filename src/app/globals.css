@@ -1,58 +1,65 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 
-/* ── Warm Clay Design System — Tailwind v4 Theme ── */
+/* ═══════════════════════════════════════════════════════════════
+   Warm Clay Design System — Tailwind v4 Theme
+   Single source of truth. Edit here to change the app-wide style.
+   Every page/component must only reference these tokens.
+   See DESIGN.md for the usage guide.
+   ═══════════════════════════════════════════════════════════════ */
 @theme {
-  /* Canvas */
+  /* ── Canvas ── */
   --color-cream: #faf9f7;
   --color-cream-dark: #f5f3ef;
 
-  /* Oat neutrals */
+  /* ── Oat neutrals (warm grays, borders, backgrounds) ── */
   --color-oat-100: #f5f0e8;
   --color-oat-200: #eee9df;
   --color-oat-300: #dad4c8;
   --color-oat-400: #c4bdb0;
   --color-oat-500: #9f9b93;
 
-  /* Charcoal */
+  /* ── Charcoal (text hierarchy) ── */
   --color-charcoal-300: #717989;
   --color-charcoal-500: #55534e;
   --color-charcoal-700: #333333;
   --color-charcoal-900: #1a1a1a;
 
-  /* Matcha — growth, on-track, positive delta */
+  /* ── Matcha (growth, success, on-track, positive delta) ── */
   --color-matcha-300: #84e7a5;
   --color-matcha-500: #2db66e;
   --color-matcha-600: #078a52;
+  --color-matcha-700: #055f39;
   --color-matcha-800: #02492a;
 
-  /* Slushie — informational, onboarding, pending */
+  /* ── Slushie (informational, onboarding, pending) ── */
   --color-slushie-300: #7ee4fd;
   --color-slushie-500: #3bd3fd;
   --color-slushie-800: #0089ad;
 
-  /* Lemon — warnings, action accent, sticker */
+  /* ── Lemon (warnings, action accent, stickers) ── */
   --color-lemon-400: #f8cc65;
   --color-lemon-500: #fbbd41;
   --color-lemon-700: #d08a11;
   --color-lemon-800: #9d6a09;
 
-  /* Ube — sticky notes, playful contrast */
+  /* ── Ube (sticky notes, playful contrast, archive) ── */
   --color-ube-300: #c1b0ff;
   --color-ube-500: #8b6cf6;
   --color-ube-800: #43089f;
   --color-ube-900: #32037d;
 
-  /* Pomegranate — alerts, over-cap, negative delta */
+  /* ── Pomegranate (alerts, errors, over-cap, negative delta) ── */
   --color-pomegranate-300: #fda4aa;
   --color-pomegranate-400: #fc7981;
   --color-pomegranate-600: #e5383b;
+  --color-pomegranate-700: #b0282c;
 
-  /* Blueberry */
+  /* ── Blueberry (data accents) ── */
   --color-blueberry-500: #3859f9;
   --color-blueberry-800: #01418d;
 
-  /* Dragonfruit */
+  /* ── Dragonfruit (accent, avatars) ── */
   --color-dragonfruit-500: #e84393;
 
   /* Shadows — only two systems, never blurred ambient */

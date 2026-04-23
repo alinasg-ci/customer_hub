@@ -82,14 +82,14 @@ export function CustomerPlanningView({ projectId, projectName }: CustomerPlannin
 
   if (phases.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 py-16">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
-          <svg className="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+      <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-oat-300 py-16">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-oat-200">
+          <svg className="h-6 w-6 text-charcoal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
         </div>
-        <h3 className="text-base font-semibold text-slate-900">No phases yet</h3>
-        <p className="mt-1 text-sm text-slate-500">Create phases and tasks in My Planning first.</p>
+        <h3 className="text-base font-semibold text-black">No phases yet</h3>
+        <p className="mt-1 text-sm text-charcoal-500">Create phases and tasks in My Planning first.</p>
       </div>
     );
   }
@@ -98,13 +98,13 @@ export function CustomerPlanningView({ projectId, projectName }: CustomerPlannin
     <div>
       {/* Header with export buttons and total */}
       <div className="mb-4 flex items-center justify-between">
-        <span className="text-sm text-slate-500">
-          Total: <strong className="text-slate-900">{formatHours(grandTotal)}</strong>
+        <span className="text-sm text-charcoal-500">
+          Total: <strong className="text-black">{formatHours(grandTotal)}</strong>
         </span>
         <div className="flex gap-2">
           <button
             onClick={handleExportCsv}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50"
+            className="flex items-center gap-1.5 rounded-lg border border-oat-300 px-3 py-1.5 text-sm text-charcoal-500 hover:bg-cream"
           >
             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -113,7 +113,7 @@ export function CustomerPlanningView({ projectId, projectName }: CustomerPlannin
           </button>
           <button
             onClick={handleExportPng}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50"
+            className="flex items-center gap-1.5 rounded-lg border border-oat-300 px-3 py-1.5 text-sm text-charcoal-500 hover:bg-cream"
           >
             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
@@ -179,32 +179,32 @@ function SortableCustomerPhase({ phase, tasks, sensors, onReorderTasks }: {
       ref={setNodeRef}
       style={style}
       className={cn(
-        'rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden',
+        'rounded-xl border border-oat-300 bg-white shadow-sm overflow-hidden',
         isDragging && 'opacity-50'
       )}
     >
       {/* Phase header */}
-      <div className="flex items-center justify-between bg-slate-50/80 px-4 py-3 border-b border-slate-100">
+      <div className="flex items-center justify-between bg-cream/80 px-4 py-3 border-b border-oat-200">
         <div className="flex items-center gap-2">
           <button
             {...attributes}
             {...listeners}
-            className="cursor-grab rounded p-1 text-slate-300 hover:text-slate-500"
+            className="cursor-grab rounded p-1 text-oat-500 hover:text-charcoal-500"
             aria-label="Drag to reorder phase"
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 6h2v2H8V6zm6 0h2v2h-2V6zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zm-6 5h2v2H8v-2zm6 0h2v2h-2v-2z" />
             </svg>
           </button>
-          <span className="text-sm font-semibold text-slate-900">{phase.name}</span>
+          <span className="text-sm font-semibold text-black">{phase.name}</span>
         </div>
-        <span className="text-xs text-slate-500">{formatHours(phaseTotal)}</span>
+        <span className="text-xs text-charcoal-500">{formatHours(phaseTotal)}</span>
       </div>
 
       {/* Task table */}
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+          <tr className="border-b border-oat-200 text-[11px] font-semibold uppercase tracking-widest text-charcoal-300">
             <th className="w-8 py-2 pl-4"></th>
             <th className="py-2 px-3 text-left">Task</th>
             <th className="py-2 px-3 text-right w-28">Planned hours</th>
@@ -220,7 +220,7 @@ function SortableCustomerPhase({ phase, tasks, sensors, onReorderTasks }: {
           </DndContext>
           {tasks.length === 0 && (
             <tr>
-              <td colSpan={3} className="py-3 px-4 text-sm text-slate-400 italic text-center">
+              <td colSpan={3} className="py-3 px-4 text-sm text-charcoal-300 italic text-center">
                 No client-facing tasks in this phase
               </td>
             </tr>
@@ -246,7 +246,7 @@ function SortableCustomerTask({ task }: { readonly task: Task }) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        'border-b border-slate-50 hover:bg-slate-50',
+        'border-b border-cream hover:bg-cream',
         isDragging && 'opacity-50'
       )}
     >
@@ -254,17 +254,17 @@ function SortableCustomerTask({ task }: { readonly task: Task }) {
         <button
           {...attributes}
           {...listeners}
-          className="cursor-grab rounded p-0.5 text-slate-300 hover:text-slate-500"
+          className="cursor-grab rounded p-0.5 text-oat-500 hover:text-charcoal-500"
         >
           <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 6h2v2H8V6zm6 0h2v2h-2V6zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zm-6 5h2v2H8v-2zm6 0h2v2h-2v-2z" />
           </svg>
         </button>
       </td>
-      <td className="py-2 px-3 text-slate-800">
-        {task.name || <span className="italic text-slate-400">Untitled</span>}
+      <td className="py-2 px-3 text-black">
+        {task.name || <span className="italic text-charcoal-300">Untitled</span>}
       </td>
-      <td className="py-2 px-3 text-right text-slate-600">
+      <td className="py-2 px-3 text-right text-charcoal-500">
         {formatHours(task.planned_hours)}
       </td>
     </tr>

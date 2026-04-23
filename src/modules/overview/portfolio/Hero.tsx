@@ -28,14 +28,6 @@ export function TopBar() {
         Workspace / <b>Overview</b>
       </div>
       <div className={s.spacer} />
-      <div className={s.ticker}>
-        <span className={s.livePill}>LIVE</span>
-        <span>
-          Tracking · Autumn Campaign ·{' '}
-          <span style={{ fontFamily: 'var(--font-mono)' }}>00:42:18</span>
-        </span>
-        <button type="button" className={s.tickerStop}>Stop</button>
-      </div>
       <button type="button" className={`${s.btn} ${s.btnSecondary}`}>Export</button>
       <button type="button" className={`${s.btn} ${s.btnSwatch}`}>+ New client</button>
     </div>

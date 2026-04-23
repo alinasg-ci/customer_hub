@@ -78,21 +78,26 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
 
   if (error || !project) {
     return (
-      <div className="rounded-[12px] border border-pomegranate-200 bg-pomegranate-50 p-4">
-        <p className="text-sm text-pomegranate-700">{error ?? 'Project not found'}</p>
-        <button onClick={() => router.back()} className="mt-2 text-sm font-medium text-pomegranate-600 hover:text-pomegranate-800">
+      <div className="rounded-[12px] border border-pomegranate-400 bg-pomegranate-300/20 p-4">
+        <p className="text-sm text-pomegranate-600">{error ?? 'Project not found'}</p>
+        <button onClick={() => router.back()} className="mt-2 text-sm font-medium text-pomegranate-600 underline underline-offset-4 decoration-dashed hover:text-black">
           Go back
         </button>
       </div>
     );
   }
 
+  const tintColor =
+    project.type === 'retainer' ? 'var(--color-slushie-500)' :
+    project.type === 'hour_bank' ? 'var(--color-ube-500)' :
+    'var(--color-matcha-500)';
+
   return (
     <div>
       {/* Back button */}
       <button
         onClick={() => router.push(`/client/${clientId}`)}
-        className="mb-3 flex items-center gap-1 text-sm text-oat-500 transition-colors hover:text-charcoal-700"
+        className="mb-3 flex items-center gap-1 text-sm text-charcoal-500 transition-colors hover:text-black"
       >
         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -100,36 +105,62 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
         Back to client
       </button>
 
+      {/* Hero greeting */}
+      <section className="relative mb-8">
+        <div className="clay-label">{TYPE_LABELS[project.type].toUpperCase()} · {project.status.toUpperCase()}</div>
+        <h1
+          className="my-2 font-semibold text-black"
+          style={{
+            fontSize: 'clamp(40px, 5vw, 64px)',
+            lineHeight: 0.98,
+            letterSpacing: '-0.03em',
+            fontFeatureSettings: '"ss01","ss03"',
+          }}
+        >
+          <em className="not-italic" style={{ color: tintColor }}>{project.name}</em>
+        </h1>
+        {project.deadline && (
+          <p className="clay-mono mt-2 text-[13px] text-charcoal-500">
+            Due {new Date(project.deadline).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+          </p>
+        )}
+        <div
+          className="clay-sticker absolute right-2 top-2 hidden sm:inline-flex"
+          style={{ transform: 'rotate(-6deg)' }}
+        >
+          ★ Active project
+        </div>
+      </section>
+
       {/* Project header card */}
       <ProjectHeaderCard
         project={project}
         clientId={clientId}
         refreshKey={refreshKey}
+        tintColor={tintColor}
         onEdit={() => setShowEditForm(true)}
         onRecordingSaved={() => setRefreshKey((k) => k + 1)}
       />
 
-      {/* Tab navigation */}
-      <div className="border-b border-oat-300">
-        <nav className="flex gap-1">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                'flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors',
-                activeTab === tab.id
-                  ? 'border-matcha-600 text-matcha-600'
-                  : 'border-transparent text-charcoal-500 hover:border-oat-300 hover:text-charcoal-700'
-              )}
-            >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d={tab.icon} />
-              </svg>
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+      {/* Tab navigation — pill bar */}
+      <div className="mb-6 mt-2 inline-flex items-center gap-1 rounded-[12px] border border-oat-300 bg-cream-dark p-1">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={cn(
+              'flex items-center gap-2 rounded-[10px] px-3 py-2 text-sm font-medium transition-all',
+              activeTab === tab.id
+                ? 'bg-black text-white shadow-[var(--shadow-hard-sm)]'
+                : 'text-charcoal-500 hover:bg-white hover:text-black'
+            )}
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+              <path strokeLinecap="round" strokeLinejoin="round" d={tab.icon} />
+            </svg>
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* Tab content */}
@@ -162,32 +193,39 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string; 
 
 // ─── Project Header Card ──────────────────────────────────────────────────────
 
-function ProjectHeaderCard({ project, clientId, refreshKey, onEdit, onRecordingSaved }: {
+function ProjectHeaderCard({ project, clientId, refreshKey, tintColor, onEdit, onRecordingSaved }: {
   readonly project: Project;
   readonly clientId: string;
   readonly refreshKey: number;
+  readonly tintColor: string;
   readonly onEdit: () => void;
   readonly onRecordingSaved: () => void;
 }) {
   return (
-    <div className="clay-card-static mb-6">
-      {/* Top section: name, badges, actions */}
-      <div className="flex items-center justify-between border-b border-oat-200 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <h1 className="text-xl font-semibold tracking-tight text-black">{project.name}</h1>
-          <span className="rounded-md border border-oat-300 bg-cream px-2 py-0.5 text-[11px] font-medium text-charcoal-500">
+    <div className="clay-card-static mb-6 overflow-hidden">
+      {/* Colored top stripe matching overview KPI/card pattern */}
+      <div className="h-[6px]" style={{ background: tintColor }} />
+
+      {/* Top section: badges, actions */}
+      <div className="relative flex items-center justify-between border-b border-oat-200 px-6 py-4">
+        <div className="clay-hatch absolute inset-0 opacity-40 pointer-events-none" />
+        <div className="relative flex items-center gap-3">
+          <span
+            className="rounded-[8px] border-[1.5px] border-black px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider"
+            style={{ background: tintColor, color: project.type === 'hour_bank' ? '#fff' : '#000' }}
+          >
             {TYPE_LABELS[project.type]}
           </span>
           <span className={cn(
             'rounded-md border px-1.5 py-0.5 text-[11px] font-medium',
-            project.status === 'active' ? 'bg-matcha-50 text-matcha-700 border-matcha-200' :
-            project.status === 'pending' ? 'bg-lemon-50 text-lemon-700 border-lemon-200' :
+            project.status === 'active' ? 'bg-matcha-300/30 text-matcha-800 border-matcha-500' :
+            project.status === 'pending' ? 'bg-lemon-400/30 text-lemon-800 border-lemon-700' :
             'bg-oat-100 text-charcoal-500 border-oat-300'
           )}>
             {project.status}
           </span>
           {project.deadline && (
-            <span className="flex items-center gap-1 text-xs text-oat-500">
+            <span className="clay-mono flex items-center gap-1 text-[11px] text-charcoal-500">
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
               </svg>
@@ -195,10 +233,10 @@ function ProjectHeaderCard({ project, clientId, refreshKey, onEdit, onRecordingS
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="relative flex items-center gap-2">
           <button
             onClick={onEdit}
-            className="flex items-center gap-1.5 rounded-lg border border-oat-300 px-3 py-1.5 text-sm text-charcoal-500 transition-colors hover:bg-oat-100"
+            className="clay-btn clay-btn-secondary flex items-center gap-1.5 text-sm"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
@@ -226,12 +264,12 @@ function PlannerTab({ projectId, projectName, activeSubTab, onSubTabChange, onDa
 }) {
   return (
     <div>
-      <div className="mb-6 flex gap-1 rounded-lg bg-oat-100 p-1 w-fit">
+      <div className="mb-6 inline-flex gap-1 rounded-[12px] border border-oat-300 bg-cream-dark p-1">
         <button
           onClick={() => onSubTabChange('my-planning')}
           className={cn(
-            'rounded-md px-4 py-2 text-sm font-medium transition-colors',
-            activeSubTab === 'my-planning' ? 'bg-white text-black shadow-sm' : 'text-charcoal-500 hover:text-charcoal-700'
+            'rounded-[10px] px-4 py-2 text-sm font-medium transition-all',
+            activeSubTab === 'my-planning' ? 'bg-white text-black shadow-[var(--shadow-clay)] border border-oat-300' : 'text-charcoal-500 hover:text-black'
           )}
         >
           My Planning
@@ -239,8 +277,8 @@ function PlannerTab({ projectId, projectName, activeSubTab, onSubTabChange, onDa
         <button
           onClick={() => onSubTabChange('customer-planning')}
           className={cn(
-            'rounded-md px-4 py-2 text-sm font-medium transition-colors',
-            activeSubTab === 'customer-planning' ? 'bg-white text-black shadow-sm' : 'text-charcoal-500 hover:text-charcoal-700'
+            'rounded-[10px] px-4 py-2 text-sm font-medium transition-all',
+            activeSubTab === 'customer-planning' ? 'bg-white text-black shadow-[var(--shadow-clay)] border border-oat-300' : 'text-charcoal-500 hover:text-black'
           )}
         >
           Customer Planning
@@ -323,14 +361,18 @@ function EmptyTabPlaceholder({ icon, title, description }: {
   readonly description: string;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-oat-300 py-16">
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-[12px] bg-oat-100">
-        <svg className="h-6 w-6 text-oat-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+    <div className="clay-card-dashed relative flex flex-col items-center justify-center overflow-hidden py-16">
+      <div className="clay-hatch absolute inset-0 opacity-50" />
+      <div
+        className="relative mb-4 flex h-12 w-12 items-center justify-center rounded-[12px] border-[1.5px] border-black bg-lemon-500 shadow-[var(--shadow-hard-sm)]"
+        style={{ transform: 'rotate(-6deg)' }}
+      >
+        <svg className="h-6 w-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
           <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
         </svg>
       </div>
-      <h3 className="text-base font-semibold text-black">{title}</h3>
-      <p className="mt-1 max-w-sm text-center text-sm text-charcoal-500">{description}</p>
+      <h3 className="relative text-base font-semibold text-black">{title}</h3>
+      <p className="relative mt-1 max-w-sm text-center text-sm text-charcoal-500">{description}</p>
     </div>
   );
 }

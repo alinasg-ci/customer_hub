@@ -45,9 +45,9 @@ export function ListView({ entries, clientIds }: ListViewProps) {
             {/* Day header */}
             <div className={cn(
               'flex items-center justify-between px-4 py-2.5 border-b border-oat-200',
-              isToday ? 'bg-matcha-50' : 'bg-cream-dark'
+              isToday ? 'bg-matcha-300/20' : 'bg-cream-dark'
             )}>
-              <span className={cn('text-sm font-medium', isToday ? 'text-matcha-700' : 'text-charcoal-700')}>
+              <span className={cn('text-sm font-medium', isToday ? 'text-matcha-800' : 'text-charcoal-700')}>
                 {dateObj.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
               </span>
               <span className="text-xs font-semibold text-charcoal-500">{formatHours(dayTotal)}</span>
@@ -82,7 +82,7 @@ export function ListView({ entries, clientIds }: ListViewProps) {
                         <span className={cn(
                           'inline-flex rounded-md border px-1.5 py-0.5 text-[10px] font-medium',
                           entry.billable
-                            ? 'bg-matcha-50 text-matcha-700 border-matcha-200'
+                            ? 'bg-matcha-300/20 text-matcha-800 border-matcha-500'
                             : 'bg-oat-100 text-charcoal-500 border-oat-300'
                         )}>
                           {entry.billable ? 'Billable' : 'Non-bill'}

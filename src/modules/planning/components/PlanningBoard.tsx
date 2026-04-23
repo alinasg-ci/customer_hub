@@ -61,9 +61,9 @@ export function PlanningBoard({ projectId }: PlanningBoardProps) {
 
   if (error) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-        <p className="text-sm text-red-700">{error}</p>
-        <button onClick={reload} className="mt-2 text-sm font-semibold text-red-600 hover:text-red-800">
+      <div className="rounded-xl border border-pomegranate-400 bg-pomegranate-300/20 p-4">
+        <p className="text-sm text-pomegranate-600">{error}</p>
+        <button onClick={reload} className="mt-2 text-sm font-semibold text-pomegranate-600 hover:text-pomegranate-600">
           Try again
         </button>
       </div>
@@ -73,7 +73,7 @@ export function PlanningBoard({ projectId }: PlanningBoardProps) {
   return (
     <div>
       {/* Layer tabs */}
-      <div className="mb-4 flex gap-1 rounded-lg bg-slate-100 p-1">
+      <div className="mb-4 flex gap-1 rounded-lg bg-oat-200 p-1">
         {([
           { key: 'client' as const, label: 'Client Budget' },
           { key: 'internal' as const, label: 'Internal Plan' },
@@ -84,8 +84,8 @@ export function PlanningBoard({ projectId }: PlanningBoardProps) {
             onClick={() => setActiveLayer(key)}
             className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
               activeLayer === key
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
+                ? 'bg-white text-black shadow-sm'
+                : 'text-charcoal-500 hover:text-charcoal-700'
             }`}
           >
             {label}
@@ -103,18 +103,18 @@ export function PlanningBoard({ projectId }: PlanningBoardProps) {
       ) : (
         <>
           {/* Totals bar */}
-          <div className="mb-3 flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm">
-            <span className="text-slate-500">
+          <div className="mb-3 flex items-center justify-between rounded-lg bg-cream px-3 py-2 text-sm">
+            <span className="text-charcoal-500">
               {activeLayer === 'client' ? 'Quoted' : 'Planned'} total:
             </span>
-            <span className="font-semibold text-slate-900">
+            <span className="font-semibold text-black">
               {activeLayer === 'client' ? totalQuotedHours : totalInternalHours}h
             </span>
           </div>
 
           {/* Phase tiles with drag-and-drop */}
           {phases.length === 0 ? (
-            <p className="py-8 text-center text-sm text-slate-400">
+            <p className="py-8 text-center text-sm text-charcoal-300">
               No phases yet. Add your first phase below.
             </p>
           ) : (
@@ -147,18 +147,18 @@ export function PlanningBoard({ projectId }: PlanningBoardProps) {
                   if (e.key === 'Enter') handleAddPhase();
                   if (e.key === 'Escape') setAddingPhase(false);
                 }}
-                className="flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+                className="flex-1 rounded-lg border border-oat-300 px-3 py-1.5 text-sm focus:border-black focus:outline-none focus:ring-2 focus:ring-black/10"
                 autoFocus
               />
               <button
                 onClick={handleAddPhase}
-                className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm text-white hover:bg-indigo-700"
+                className="rounded-lg bg-black px-3 py-1.5 text-sm text-white hover:bg-charcoal-900"
               >
                 Add
               </button>
               <button
                 onClick={() => { setAddingPhase(false); setNewPhaseName(''); }}
-                className="px-2 text-sm text-slate-500 hover:text-slate-700"
+                className="px-2 text-sm text-charcoal-500 hover:text-charcoal-700"
               >
                 Cancel
               </button>
@@ -166,7 +166,7 @@ export function PlanningBoard({ projectId }: PlanningBoardProps) {
           ) : (
             <button
               onClick={() => setAddingPhase(true)}
-              className="mt-3 text-sm text-indigo-600 hover:text-indigo-800"
+              className="mt-3 text-sm text-black hover:text-black"
             >
               + Add phase
             </button>

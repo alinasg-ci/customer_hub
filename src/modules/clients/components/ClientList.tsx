@@ -8,9 +8,37 @@ import { ConfirmDeleteDialog } from '@/shared/ui/ConfirmDeleteDialog';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { fetchAllProjects } from '@/modules/projects';
 import { fetchHoursByProject } from '@/modules/time-tracking';
+import { cn } from '@/shared/utils/cn';
 import type { Client, CreateClientInput, UpdateClientInput } from '../types';
 import type { Project } from '@/modules/projects';
 import { formatHours } from '@/shared/utils/formatHours';
+
+const CLIENT_SWATCHES = [
+  'bg-matcha-600',
+  'bg-slushie-500',
+  'bg-ube-500',
+  'bg-lemon-500 !text-black',
+  'bg-pomegranate-400',
+  'bg-blueberry-500',
+  'bg-dragonfruit-500',
+] as const;
+
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
+function getClientSwatch(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return CLIENT_SWATCHES[Math.abs(hash) % CLIENT_SWATCHES.length];
+}
 
 const STATUS_STYLES: Record<string, string> = {
   active: 'bg-matcha-300/20 text-matcha-800 border-matcha-300',
@@ -150,15 +178,37 @@ export function ClientList() {
     projectsByClient.set(project.client_id, list);
   }
 
+  const now = new Date();
+  const dateLabel = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+
   return (
     <div>
-      <div className="mb-8 flex items-end justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-black">Projects</h1>
-          <p className="mt-1 text-sm text-oat-500">
-            {clients.length} {clients.length === 1 ? 'client' : 'clients'} · {projects.length} {projects.length === 1 ? 'project' : 'projects'}
-          </p>
-        </div>
+      {/* ── Hero ── */}
+      <section className="relative mb-10">
+        <div className="clay-label">{dateLabel.toUpperCase()}</div>
+        <h1
+          className="my-2 font-semibold text-black"
+          style={{
+            fontSize: 'clamp(44px, 6vw, 72px)',
+            lineHeight: 0.98,
+            letterSpacing: '-0.03em',
+            fontFeatureSettings: '"ss01","ss03"',
+          }}
+        >
+          Your <em className="not-italic text-matcha-600">clients</em>.
+        </h1>
+        <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-charcoal-500">
+          {clients.length} {clients.length === 1 ? 'client' : 'clients'} · {projects.length} {projects.length === 1 ? 'project' : 'projects'} — tap a project to drill into time, finances, and comments.
+        </p>
+        {clients.length > 0 && (
+          <div className="clay-sticker absolute right-2 top-2 hidden sm:inline-flex">
+            ★ {clients.length} active
+          </div>
+        )}
+      </section>
+
+      {/* ── Actions ── */}
+      <div className="mb-6 flex items-center justify-end">
         <button
           onClick={() => setShowForm(true)}
           className="clay-btn clay-btn-primary flex items-center gap-2 text-sm"
@@ -171,19 +221,20 @@ export function ClientList() {
       </div>
 
       {clients.length === 0 ? (
-        <div className="clay-card-dashed flex flex-col items-center justify-center py-20">
-          <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-[24px] bg-matcha-300/20">
-            <svg className="h-8 w-8 text-matcha-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+        <div className="clay-card-dashed relative flex flex-col items-center justify-center overflow-hidden py-20">
+          <div className="clay-hatch absolute inset-0 opacity-60" />
+          <div className="relative mb-5 flex h-16 w-16 items-center justify-center rounded-[24px] bg-lemon-500 border-[1.5px] border-black shadow-[var(--shadow-hard-sm)]" style={{ transform: 'rotate(-6deg)' }}>
+            <svg className="h-8 w-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
             </svg>
           </div>
-          <h2 className="text-lg font-semibold text-black">No clients yet</h2>
-          <p className="mt-1.5 max-w-sm text-center text-sm text-charcoal-500">
+          <h2 className="relative text-lg font-semibold text-black">No clients yet</h2>
+          <p className="relative mt-1.5 max-w-sm text-center text-sm text-charcoal-500">
             Add your first client to start tracking projects, hours, and profitability.
           </p>
           <button
             onClick={() => setShowForm(true)}
-            className="clay-btn clay-btn-primary mt-6 flex items-center gap-2 text-sm"
+            className="clay-btn clay-btn-primary relative mt-6 flex items-center gap-2 text-sm"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -192,17 +243,20 @@ export function ClientList() {
           </button>
         </div>
       ) : (
-        <div className="overflow-x-auto clay-card">
+        <div className="clay-card-static overflow-hidden">
+          {/* Colored stripe (matches overview KPI tiles) */}
+          <div className="h-[6px] bg-matcha-500" />
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-oat-200 bg-cream text-left text-[11px] font-semibold uppercase tracking-widest text-oat-500">
-                <th className="py-3 pl-4 pr-2">Project / Client</th>
-                <th className="py-3 px-3 text-center">Due date</th>
-                <th className="py-3 px-3 text-right">Estimated</th>
-                <th className="py-3 px-3 text-right">Actual</th>
-                <th className="py-3 px-3 w-40">Progress</th>
-                <th className="py-3 px-3 text-right">Value</th>
-                <th className="py-3 px-3 text-center">Status</th>
+              <tr className="relative border-b border-oat-300 bg-cream-dark text-left">
+                <th className="clay-label clay-mono py-3 pl-5 pr-2">Project / Client</th>
+                <th className="clay-label clay-mono py-3 px-3 text-center">Due date</th>
+                <th className="clay-label clay-mono py-3 px-3 text-right">Estimated</th>
+                <th className="clay-label clay-mono py-3 px-3 text-right">Actual</th>
+                <th className="clay-label clay-mono py-3 px-3 w-40">Progress</th>
+                <th className="clay-label clay-mono py-3 px-3 text-right">Value</th>
+                <th className="clay-label clay-mono py-3 px-3 text-center">Status</th>
                 <th className="w-10 py-3 pr-4"></th>
               </tr>
             </thead>
@@ -233,6 +287,7 @@ export function ClientList() {
               })}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
@@ -297,9 +352,9 @@ function ClientSection({
   return (
     <>
       {/* Client header row */}
-      <tr className="group border-b border-oat-200 bg-cream-dark">
-        <td className="py-3 pl-4 pr-2">
-          <div className="flex items-center gap-2">
+      <tr className="group border-b-2 border-oat-300 bg-cream-dark">
+        <td className="py-3 pl-5 pr-2">
+          <div className="flex items-center gap-3">
             <button
               onClick={onToggle}
               className="flex h-5 w-5 items-center justify-center rounded text-oat-500 hover:bg-oat-200 hover:text-charcoal-700"
@@ -314,17 +369,27 @@ function ClientSection({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </button>
+            <div
+              className={cn(
+                'flex h-7 w-7 items-center justify-center rounded-[8px] text-[11px] font-semibold text-white shadow-[var(--shadow-hard-sm)]',
+                getClientSwatch(client.name)
+              )}
+              style={{ transform: 'rotate(-4deg)' }}
+              aria-hidden="true"
+            >
+              {getInitials(client.name)}
+            </div>
             <button
               onClick={onClientClick}
-              className="font-semibold text-matcha-600 hover:text-matcha-800 hover:underline"
+              className="text-[15px] font-semibold text-black hover:underline underline-offset-4 decoration-dashed"
             >
               {client.name}
             </button>
             {client.company && (
-              <span className="text-xs text-oat-500">{client.company}</span>
+              <span className="text-xs text-charcoal-500">· {client.company}</span>
             )}
-            <span className="text-[11px] text-oat-500">
-              ({projects.length} {projects.length === 1 ? 'project' : 'projects'})
+            <span className="clay-mono text-[11px] text-oat-500">
+              {projects.length}&nbsp;{projects.length === 1 ? 'project' : 'projects'}
             </span>
           </div>
         </td>

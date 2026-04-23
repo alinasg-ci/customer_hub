@@ -24,7 +24,7 @@ export function TimelineBar({ startDate, endDate, color, timelineStart, timeline
   const widthPercent = Math.max(2, Math.min(100 - leftPercent, ((barEnd - barStart) / totalRange) * 100));
 
   return (
-    <div className="relative h-4 w-full rounded-lg bg-slate-100">
+    <div className="relative h-4 w-full rounded-lg bg-oat-200">
       <div
         className="absolute top-0.5 h-3 rounded-lg"
         style={{

@@ -35,11 +35,11 @@ export function NoteList({ parentType, parentId }: NoteListProps) {
   return (
     <div className="mt-3">
       <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-semibold text-slate-700">Notes</h4>
+        <h4 className="text-sm font-semibold text-charcoal-700">Notes</h4>
         {!adding && (
           <button
             onClick={() => setAdding(true)}
-            className="text-xs text-indigo-600 hover:text-indigo-800"
+            className="text-xs text-black hover:text-black"
           >
             + Add note
           </button>
@@ -53,20 +53,20 @@ export function NoteList({ parentType, parentId }: NoteListProps) {
             onChange={(e) => setNewText(e.target.value)}
             placeholder="Write a note..."
             rows={3}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+            className="w-full rounded-lg border border-oat-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-2 focus:ring-black/10"
             autoFocus
           />
           <div className="mt-1 flex justify-end gap-2">
             <button
               type="button"
               onClick={() => { setAdding(false); setNewText(''); }}
-              className="rounded-lg px-3 py-1 text-sm text-slate-500 hover:text-slate-700 hover:bg-slate-100"
+              className="rounded-lg px-3 py-1 text-sm text-charcoal-500 hover:text-charcoal-700 hover:bg-oat-200"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-indigo-600 px-3 py-1 text-sm text-white hover:bg-indigo-700"
+              className="rounded-lg bg-black px-3 py-1 text-sm text-white hover:bg-charcoal-900"
             >
               Save
             </button>
@@ -75,21 +75,21 @@ export function NoteList({ parentType, parentId }: NoteListProps) {
       )}
 
       {loading ? (
-        <p className="text-xs text-slate-400">Loading notes...</p>
+        <p className="text-xs text-charcoal-300">Loading notes...</p>
       ) : error ? (
-        <p className="text-xs text-red-500">{error}</p>
+        <p className="text-xs text-pomegranate-600">{error}</p>
       ) : notes.length === 0 ? (
-        <p className="text-xs text-slate-400">No notes yet.</p>
+        <p className="text-xs text-charcoal-300">No notes yet.</p>
       ) : (
         <div className="space-y-2">
           {notes.map((note) => (
-            <div key={note.id} className="group rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
-              <p className="whitespace-pre-wrap text-sm text-slate-800">{note.text}</p>
+            <div key={note.id} className="group rounded-xl border border-oat-200 bg-cream px-3 py-2">
+              <p className="whitespace-pre-wrap text-sm text-black">{note.text}</p>
               <div className="mt-1 flex items-center justify-between">
-                <span className="text-xs text-slate-400">{formatDate(note.created_at)}</span>
+                <span className="text-xs text-charcoal-300">{formatDate(note.created_at)}</span>
                 <button
                   onClick={() => remove(note.id)}
-                  className="text-xs text-slate-300 opacity-0 hover:text-red-500 group-hover:opacity-100"
+                  className="text-xs text-oat-500 opacity-0 hover:text-pomegranate-600 group-hover:opacity-100"
                 >
                   Delete
                 </button>

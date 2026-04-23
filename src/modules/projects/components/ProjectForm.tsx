@@ -78,17 +78,17 @@ export function ProjectForm({ clientId, project, onSubmit, onCancel }: ProjectFo
     }
   }
 
-  const inputClass = "mt-1.5 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20";
-  const labelClass = "block text-sm font-medium text-slate-700";
+  const inputClass = "mt-1.5 block w-full rounded-lg border border-oat-300 px-3 py-2 text-sm transition-colors focus:border-black focus:outline-none focus:ring-2 focus:ring-black/10";
+  const labelClass = "block text-sm font-medium text-charcoal-700";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/60 py-8 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
-        <h2 className="mb-5 text-lg font-semibold text-slate-900">{isEdit ? 'Edit Project' : 'New Project'}</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 py-8 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-2xl border border-oat-300 bg-white p-6 shadow-2xl">
+        <h2 className="mb-5 text-lg font-semibold text-black">{isEdit ? 'Edit Project' : 'New Project'}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="project-name" className={labelClass}>
-              Project Name <span className="text-red-400">*</span>
+              Project Name <span className="text-pomegranate-400">*</span>
             </label>
             <input
               id="project-name"
@@ -101,7 +101,7 @@ export function ProjectForm({ clientId, project, onSubmit, onCancel }: ProjectFo
           </div>
 
           <div>
-            <label className={`${labelClass} mb-2`}>Project Type <span className="text-red-400">*</span></label>
+            <label className={`${labelClass} mb-2`}>Project Type <span className="text-pomegranate-400">*</span></label>
             <div className="flex gap-2">
               {(['project', 'retainer', 'hour_bank'] as const).map((t) => (
                 <button
@@ -111,8 +111,8 @@ export function ProjectForm({ clientId, project, onSubmit, onCancel }: ProjectFo
                   disabled={isEdit}
                   className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
                     type === t
-                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                      : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                      ? 'border-black bg-oat-100 text-black'
+                      : 'border-oat-300 bg-white text-charcoal-500 hover:bg-cream'
                   }`}
                 >
                   {t === 'hour_bank' ? 'Hour Bank' : t.charAt(0).toUpperCase() + t.slice(1)}
@@ -132,7 +132,7 @@ export function ProjectForm({ clientId, project, onSubmit, onCancel }: ProjectFo
                     <select
                       value={rateCurrency}
                       onChange={(e) => setRateCurrency(e.target.value as Currency)}
-                      className="rounded-l-lg border border-r-0 border-slate-200 bg-slate-50 px-2 text-sm text-slate-600"
+                      className="rounded-l-lg border border-r-0 border-oat-300 bg-cream px-2 text-sm text-charcoal-500"
                     >
                       {CURRENCIES.map((c) => (
                         <option key={c} value={c}>{CURRENCY_SYMBOLS[c]}</option>
@@ -144,7 +144,7 @@ export function ProjectForm({ clientId, project, onSubmit, onCancel }: ProjectFo
                       step="0.01"
                       value={ratePerHour}
                       onChange={(e) => setRatePerHour(e.target.value)}
-                      className="block w-full rounded-r-lg border border-slate-200 px-3 py-2 text-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+                      className="block w-full rounded-r-lg border border-oat-300 px-3 py-2 text-sm transition-colors focus:border-black focus:outline-none focus:ring-2 focus:ring-black/10"
                     />
                   </div>
                 </div>
@@ -164,7 +164,7 @@ export function ProjectForm({ clientId, project, onSubmit, onCancel }: ProjectFo
               </div>
 
               {autoFee !== null && (
-                <div className="rounded-lg bg-indigo-50 px-3.5 py-2.5 text-sm text-indigo-900">
+                <div className="rounded-lg bg-oat-100 px-3.5 py-2.5 text-sm text-black">
                   Total {type === 'hour_bank' ? 'cost' : 'fee'}:{' '}
                   <span className="font-semibold">
                     {CURRENCY_SYMBOLS[rateCurrency]}{autoFee.toLocaleString('en-IL', { minimumFractionDigits: 2 })}
@@ -196,7 +196,7 @@ export function ProjectForm({ clientId, project, onSubmit, onCancel }: ProjectFo
                     <select
                       value={retainerFeeCurrency}
                       onChange={(e) => setRetainerFeeCurrency(e.target.value as Currency)}
-                      className="rounded-l-lg border border-r-0 border-slate-200 bg-slate-50 px-2 text-sm text-slate-600"
+                      className="rounded-l-lg border border-r-0 border-oat-300 bg-cream px-2 text-sm text-charcoal-500"
                     >
                       {CURRENCIES.map((c) => (
                         <option key={c} value={c}>{CURRENCY_SYMBOLS[c]}</option>
@@ -208,7 +208,7 @@ export function ProjectForm({ clientId, project, onSubmit, onCancel }: ProjectFo
                       step="0.01"
                       value={retainerFee}
                       onChange={(e) => setRetainerFee(e.target.value)}
-                      className="block w-full rounded-r-lg border border-slate-200 px-3 py-2 text-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+                      className="block w-full rounded-r-lg border border-oat-300 px-3 py-2 text-sm transition-colors focus:border-black focus:outline-none focus:ring-2 focus:ring-black/10"
                     />
                   </div>
                 </div>
@@ -238,20 +238,20 @@ export function ProjectForm({ clientId, project, onSubmit, onCancel }: ProjectFo
             </>
           )}
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-pomegranate-600">{error}</p>}
 
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={onCancel}
-              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+              className="rounded-lg border border-oat-300 px-4 py-2 text-sm font-medium text-charcoal-700 transition-colors hover:bg-cream"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:opacity-50"
+              className="rounded-lg bg-black px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-charcoal-900 disabled:opacity-50"
             >
               {loading ? (isEdit ? 'Saving...' : 'Creating...') : (isEdit ? 'Save Changes' : 'Create Project')}
             </button>

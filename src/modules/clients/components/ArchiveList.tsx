@@ -35,9 +35,9 @@ export function ArchiveList() {
 
   if (error) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-        <p className="text-sm text-red-700">{error}</p>
-        <button onClick={reload} className="mt-2 text-sm font-semibold text-red-600 hover:text-red-800">
+      <div className="rounded-xl border border-pomegranate-400 bg-pomegranate-300/20 p-4">
+        <p className="text-sm text-pomegranate-600">{error}</p>
+        <button onClick={reload} className="mt-2 text-sm font-semibold text-pomegranate-600 hover:text-pomegranate-600">
           Try again
         </button>
       </div>
@@ -46,25 +46,42 @@ export function ArchiveList() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-slate-900">Archive</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Archived clients and their full project history.
+      {/* Hero */}
+      <section className="relative mb-8">
+        <div className="clay-label">STORAGE · READ-ONLY</div>
+        <h1
+          className="my-2 font-semibold text-black"
+          style={{
+            fontSize: 'clamp(44px, 6vw, 72px)',
+            lineHeight: 0.98,
+            letterSpacing: '-0.03em',
+            fontFeatureSettings: '"ss01","ss03"',
+          }}
+        >
+          <em className="not-italic text-ube-500">Archive</em>.
+        </h1>
+        <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-charcoal-500">
+          Archived clients and their full project history — searchable, reactivatable.
         </p>
-      </div>
+        {clients.length > 0 && (
+          <div className="clay-sticker absolute right-2 top-2 hidden sm:inline-flex" style={{ transform: 'rotate(-6deg)' }}>
+            ★ {clients.length} archived
+          </div>
+        )}
+      </section>
 
-      <div className="mb-4">
+      <div className="mb-5">
         <input
           type="text"
           placeholder="Search archived clients..."
           value={searchQuery}
           onChange={(e) => handleSearch(e.target.value)}
-          className="w-full max-w-sm rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+          className="clay-input w-full max-w-sm text-sm"
         />
       </div>
 
       {clients.length === 0 ? (
-        <p className="py-12 text-center text-sm text-slate-500">
+        <p className="py-12 text-center text-sm text-charcoal-500">
           {searchQuery ? 'No archived clients match your search.' : 'No archived clients yet.'}
         </p>
       ) : (

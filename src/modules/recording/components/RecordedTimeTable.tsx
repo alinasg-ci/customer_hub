@@ -237,7 +237,7 @@ export function RecordedTimeTable({
                       ) : (
                         <span className={`inline-flex rounded-md border px-1.5 py-0.5 text-[11px] font-medium ${
                           entry.billable
-                            ? 'bg-matcha-300/20 text-matcha-800 border-emerald-200'
+                            ? 'bg-matcha-300/20 text-matcha-800 border-matcha-500'
                             : 'bg-oat-100 text-charcoal-500 border-oat-300'
                         }`}>
                           {entry.billable ? 'Billable' : 'Non-billable'}
@@ -281,7 +281,7 @@ export function RecordedTimeTable({
                           </button>
                           <button
                             onClick={() => setDeletingId(entry.id)}
-                            className="rounded-lg p-1.5 text-oat-500 hover:bg-red-50 hover:text-pomegranate-600"
+                            className="rounded-lg p-1.5 text-oat-500 hover:bg-pomegranate-300/20 hover:text-pomegranate-600"
                             aria-label="Delete"
                           >
                             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>

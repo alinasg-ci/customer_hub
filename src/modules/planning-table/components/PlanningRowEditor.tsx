@@ -53,7 +53,7 @@ export function PlanningRowEditor({
   if (!editing) {
     return (
       <span
-        className={`cursor-text rounded-lg px-1 py-0.5 hover:bg-slate-100 ${className} ${!value ? 'text-slate-400 italic' : ''}`}
+        className={`cursor-text rounded-lg px-1 py-0.5 hover:bg-oat-200 ${className} ${!value ? 'text-charcoal-300 italic' : ''}`}
         onClick={() => setEditing(true)}
       >
         {value || placeholder || 'Click to edit'}
@@ -70,7 +70,7 @@ export function PlanningRowEditor({
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className={`w-full rounded-lg border border-indigo-300 px-1 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400/20 ${className}`}
+        className={`w-full rounded-lg border border-oat-300 px-1 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/10 ${className}`}
         rows={2}
       />
     );
@@ -85,7 +85,7 @@ export function PlanningRowEditor({
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
-      className={`w-full rounded-lg border border-indigo-300 px-1 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400/20 ${className}`}
+      className={`w-full rounded-lg border border-oat-300 px-1 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/10 ${className}`}
     />
   );
 }

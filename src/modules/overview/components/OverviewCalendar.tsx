@@ -30,8 +30,8 @@ export function OverviewCalendar() {
 
   if (error) {
     return (
-      <div className="rounded-[12px] border border-pomegranate-200 bg-pomegranate-50 p-4">
-        <p className="text-sm text-pomegranate-700">{error}</p>
+      <div className="rounded-[12px] border border-pomegranate-400 bg-pomegranate-300/20 p-4">
+        <p className="text-sm text-pomegranate-600">{error}</p>
       </div>
     );
   }

@@ -14,39 +14,39 @@ export function ComparisonView({ rows, totalQuoted, totalInternal }: ComparisonV
 
   if (rows.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-slate-400">
+      <p className="py-8 text-center text-sm text-charcoal-300">
         Add phases to see the comparison view.
       </p>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-oat-300 shadow-sm">
       <table className="w-full text-sm">
         <thead>
-          <tr className="bg-slate-50">
-            <th className="px-4 py-2 text-left font-medium text-slate-500">Phase</th>
-            <th className="px-4 py-2 text-right font-medium text-slate-500">Quoted</th>
-            <th className="px-4 py-2 text-right font-medium text-slate-500">Internal</th>
-            <th className="px-4 py-2 text-right font-medium text-slate-500">Delta</th>
+          <tr className="bg-cream">
+            <th className="px-4 py-2 text-left font-medium text-charcoal-500">Phase</th>
+            <th className="px-4 py-2 text-right font-medium text-charcoal-500">Quoted</th>
+            <th className="px-4 py-2 text-right font-medium text-charcoal-500">Internal</th>
+            <th className="px-4 py-2 text-right font-medium text-charcoal-500">Delta</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-oat-200">
           {rows.map(({ phase, quotedHours, internalHours, delta, overBudget }) => (
-            <tr key={phase.id} className={cn(overBudget && 'bg-red-50')}>
-              <td className="px-4 py-2 font-medium text-slate-900">
+            <tr key={phase.id} className={cn(overBudget && 'bg-pomegranate-300/20')}>
+              <td className="px-4 py-2 font-medium text-black">
                 {phase.name}
                 {overBudget && (
-                  <span className="ml-2 inline-flex rounded-full bg-red-100 px-1.5 py-0.5 text-xs text-red-700">
+                  <span className="ml-2 inline-flex rounded-full bg-pomegranate-300/30 px-1.5 py-0.5 text-xs text-pomegranate-600">
                     over
                   </span>
                 )}
               </td>
-              <td className="px-4 py-2 text-right text-slate-700">{quotedHours}h</td>
-              <td className="px-4 py-2 text-right text-slate-700">{internalHours}h</td>
+              <td className="px-4 py-2 text-right text-charcoal-700">{quotedHours}h</td>
+              <td className="px-4 py-2 text-right text-charcoal-700">{internalHours}h</td>
               <td className={cn(
                 'px-4 py-2 text-right font-medium',
-                delta > 0 ? 'text-red-600' : delta < 0 ? 'text-emerald-600' : 'text-slate-400'
+                delta > 0 ? 'text-pomegranate-600' : delta < 0 ? 'text-matcha-600' : 'text-charcoal-300'
               )}>
                 {delta > 0 ? '+' : ''}{delta}h
               </td>
@@ -54,13 +54,13 @@ export function ComparisonView({ rows, totalQuoted, totalInternal }: ComparisonV
           ))}
         </tbody>
         <tfoot>
-          <tr className="border-t-2 border-slate-200 bg-slate-50 font-semibold">
-            <td className="px-4 py-2 text-slate-900">Total</td>
-            <td className="px-4 py-2 text-right text-slate-900">{totalQuoted}h</td>
-            <td className="px-4 py-2 text-right text-slate-900">{totalInternal}h</td>
+          <tr className="border-t-2 border-oat-300 bg-cream font-semibold">
+            <td className="px-4 py-2 text-black">Total</td>
+            <td className="px-4 py-2 text-right text-black">{totalQuoted}h</td>
+            <td className="px-4 py-2 text-right text-black">{totalInternal}h</td>
             <td className={cn(
               'px-4 py-2 text-right',
-              totalDelta > 0 ? 'text-red-600' : totalDelta < 0 ? 'text-emerald-600' : 'text-slate-400'
+              totalDelta > 0 ? 'text-pomegranate-600' : totalDelta < 0 ? 'text-matcha-600' : 'text-charcoal-300'
             )}>
               {totalDelta > 0 ? '+' : ''}{totalDelta}h
             </td>

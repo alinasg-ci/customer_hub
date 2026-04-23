@@ -6,13 +6,15 @@ Client Management Hub — a single-user web application for managing freelance c
 
 **Read `/docs/PRD.md` for the full product requirements.** This file covers coding conventions and rules that apply to every piece of code in the repo.
 
+**Read `/DESIGN.md` before touching any UI.** It is the authoritative style guide for the Warm Clay design system — tokens, utility classes, mandatory page chrome (hero + stripe + sticker + hatch), and global-change rules. Every page, component, and fix must follow it.
+
 ## Stack
 
 - **Frontend:** React (TypeScript) — deployed on Vercel
 - **Backend:** Vercel serverless functions (API routes, TypeScript)
 - **Database:** Supabase (PostgreSQL) — use `@supabase/supabase-js` client library
 - **Auth:** Supabase Auth — email/password, 30-day session
-- **Styling:** Tailwind CSS (utility-first, no custom CSS files unless absolutely necessary)
+- **Styling:** Tailwind CSS v4 + Warm Clay design system. Tokens + utilities live in `src/app/globals.css` (`@theme` + `@layer utilities`). Component-specific CSS Modules allowed only when Tailwind can't express the pattern. See `/DESIGN.md` for the full guide — treat it as non-negotiable.
 - **Drag-and-drop:** @dnd-kit/core + @dnd-kit/sortable
 - **State management:** React hooks (useState, useReducer, useContext). No Redux. Keep state as local as possible; lift only when shared across siblings.
 

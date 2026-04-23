@@ -20,7 +20,7 @@ export function ExportButton({ rows, tableName }: ExportButtonProps) {
     <button
       onClick={handleExport}
       disabled={rows.length === 0}
-      className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+      className="rounded-lg border border-oat-300 px-3 py-1.5 text-sm text-charcoal-500 hover:bg-cream disabled:cursor-not-allowed disabled:opacity-50"
     >
       Export CSV
     </button>

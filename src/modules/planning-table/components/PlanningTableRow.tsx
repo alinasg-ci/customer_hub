@@ -42,7 +42,7 @@ export function PlanningTableRow({
   return (
     <>
       <tr
-        className="group border-b border-slate-100 hover:bg-slate-50"
+        className="group border-b border-oat-200 hover:bg-cream"
         style={effectiveColor ? { borderLeftColor: effectiveColor, borderLeftWidth: '3px', borderLeftStyle: 'solid' } : undefined}
       >
         <td className={`py-2 pr-2 ${INDENT[row.level]}`}>
@@ -52,7 +52,7 @@ export function PlanningTableRow({
               {canOutdent && (
                 <button
                   onClick={() => onOutdent(row.id)}
-                  className="rounded-lg p-1 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+                  className="rounded-lg p-1 text-charcoal-300 hover:bg-oat-300 hover:text-charcoal-500"
                   aria-label="Outdent"
                   title="Outdent"
                 >
@@ -64,7 +64,7 @@ export function PlanningTableRow({
               {canIndent && (
                 <button
                   onClick={() => onIndent(row.id)}
-                  className="rounded-lg p-1 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+                  className="rounded-lg p-1 text-charcoal-300 hover:bg-oat-300 hover:text-charcoal-500"
                   aria-label="Indent"
                   title="Indent"
                 >
@@ -85,12 +85,12 @@ export function PlanningTableRow({
             <PlanningRowEditor
               value={row.name}
               placeholder="Phase name"
-              className={row.level === 1 ? 'font-semibold' : row.level === 3 ? 'text-xs text-slate-500' : ''}
+              className={row.level === 1 ? 'font-semibold' : row.level === 3 ? 'text-xs text-charcoal-500' : ''}
               onSave={(name) => onUpdate(row.id, { name })}
             />
 
             {row.linked_phase_id && (
-              <span className="ml-1 text-indigo-500" title="Linked to hours phase">
+              <span className="ml-1 text-matcha-600" title="Linked to hours phase">
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                 </svg>
@@ -104,7 +104,7 @@ export function PlanningTableRow({
             value={row.content ?? ''}
             placeholder="Notes..."
             multiline
-            className="text-sm text-slate-500"
+            className="text-sm text-charcoal-500"
             onSave={(content) => onUpdate(row.id, { content: content || null })}
           />
         </td>
@@ -114,7 +114,7 @@ export function PlanningTableRow({
             type="date"
             value={row.start_date ?? ''}
             onChange={(e) => onUpdate(row.id, { start_date: e.target.value || null })}
-            className="w-28 rounded-lg border border-slate-200 px-1.5 py-1 text-xs text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+            className="w-28 rounded-lg border border-oat-300 px-1.5 py-1 text-xs text-charcoal-500 focus:border-black focus:outline-none focus:ring-2 focus:ring-black/10"
           />
         </td>
 
@@ -123,7 +123,7 @@ export function PlanningTableRow({
             type="date"
             value={row.end_date ?? ''}
             onChange={(e) => onUpdate(row.id, { end_date: e.target.value || null })}
-            className="w-28 rounded-lg border border-slate-200 px-1.5 py-1 text-xs text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20"
+            className="w-28 rounded-lg border border-oat-300 px-1.5 py-1 text-xs text-charcoal-500 focus:border-black focus:outline-none focus:ring-2 focus:ring-black/10"
           />
         </td>
 
@@ -144,7 +144,7 @@ export function PlanningTableRow({
             {canAddChild && (
               <button
                 onClick={() => onAddChild(row.id, (row.level + 1) as 1 | 2 | 3)}
-                className="rounded-lg p-1 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600"
+                className="rounded-lg p-1 text-charcoal-300 hover:bg-oat-100 hover:text-black"
                 aria-label="Add sub-item"
                 title="Add sub-item"
               >
@@ -155,7 +155,7 @@ export function PlanningTableRow({
             )}
             <button
               onClick={() => onDelete(row.id)}
-              className="rounded-lg p-1 text-slate-400 hover:bg-red-50 hover:text-red-600"
+              className="rounded-lg p-1 text-charcoal-300 hover:bg-pomegranate-300/20 hover:text-pomegranate-600"
               aria-label="Delete row"
               title="Delete"
             >

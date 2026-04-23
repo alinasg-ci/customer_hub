@@ -71,9 +71,9 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
 
   if (clientError || !client) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-        <p className="text-sm text-red-700">{clientError ?? 'Client not found'}</p>
-        <button onClick={() => router.push('/')} className="mt-2 text-sm font-medium text-red-600 hover:text-red-800">
+      <div className="rounded-[12px] border border-pomegranate-400 bg-pomegranate-300/20 p-4">
+        <p className="text-sm text-pomegranate-600">{clientError ?? 'Client not found'}</p>
+        <button onClick={() => router.push('/')} className="mt-2 text-sm font-medium text-pomegranate-600 underline underline-offset-4 decoration-dashed hover:text-black">
           Back to clients
         </button>
       </div>
@@ -83,36 +83,60 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
   const activeProjects = projects.filter((p) => p.status === 'active');
   const pendingProjects = projects.filter((p) => p.status === 'pending');
   const closedProjects = projects.filter((p) => p.status === 'closed');
+  const totalProjects = projects.length;
 
   return (
     <div>
-      <div className="mb-8">
-        <button
-          onClick={() => router.push('/')}
-          className="mb-3 flex items-center gap-1 text-sm text-slate-400 transition-colors hover:text-slate-700"
-        >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-          </svg>
-          Back to clients
-        </button>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{client.name}</h1>
-            {client.company && (
-              <p className="mt-0.5 text-sm text-slate-500">{client.company}</p>
-            )}
-          </div>
-          <button
-            onClick={() => setShowProjectForm(true)}
-            className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
-          >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            New Project
-          </button>
+      <button
+        onClick={() => router.push('/')}
+        className="mb-3 flex items-center gap-1 text-sm text-charcoal-500 transition-colors hover:text-black"
+      >
+        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Back to clients
+      </button>
+
+      {/* Hero greeting */}
+      <section className="relative mb-8">
+        <div className="clay-label">
+          CLIENT{client.company ? ` · ${client.company.toUpperCase()}` : ''}
         </div>
+        <h1
+          className="my-2 font-semibold text-black"
+          style={{
+            fontSize: 'clamp(44px, 6vw, 72px)',
+            lineHeight: 0.98,
+            letterSpacing: '-0.03em',
+            fontFeatureSettings: '"ss01","ss03"',
+          }}
+        >
+          <em className="not-italic text-matcha-600">{client.name}</em>
+        </h1>
+        <p className="clay-mono mt-2 text-[13px] text-charcoal-500">
+          {totalProjects} {totalProjects === 1 ? 'project' : 'projects'} · {activeProjects.length} active · {pendingProjects.length} pending · {closedProjects.length} closed
+        </p>
+        {totalProjects > 0 && (
+          <div
+            className="clay-sticker absolute right-2 top-2 hidden sm:inline-flex"
+            style={{ transform: 'rotate(-6deg)' }}
+          >
+            ★ {activeProjects.length} active
+          </div>
+        )}
+      </section>
+
+      {/* Actions */}
+      <div className="mb-6 flex items-center justify-end">
+        <button
+          onClick={() => setShowProjectForm(true)}
+          className="clay-btn clay-btn-primary flex items-center gap-2 text-sm"
+        >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          New Project
+        </button>
       </div>
 
       {projectsLoading ? (
@@ -121,21 +145,25 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
           <Skeleton className="h-28 w-full rounded-xl" />
         </div>
       ) : projectsError ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-          <p className="text-sm text-red-700">{projectsError}</p>
+        <div className="rounded-[12px] border border-pomegranate-400 bg-pomegranate-300/20 p-4">
+          <p className="text-sm text-pomegranate-600">{projectsError}</p>
         </div>
       ) : projects.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 py-16">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50">
-            <svg className="h-7 w-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+        <div className="clay-card-dashed relative flex flex-col items-center justify-center overflow-hidden py-16">
+          <div className="clay-hatch absolute inset-0 opacity-50" />
+          <div
+            className="relative mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] border-[1.5px] border-black bg-lemon-500 shadow-[var(--shadow-hard-sm)]"
+            style={{ transform: 'rotate(-6deg)' }}
+          >
+            <svg className="h-7 w-7 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
             </svg>
           </div>
-          <h3 className="text-base font-semibold text-slate-900">No projects yet</h3>
-          <p className="mt-1 text-sm text-slate-500">Create your first project to start tracking.</p>
+          <h3 className="relative text-base font-semibold text-black">No projects yet</h3>
+          <p className="relative mt-1 text-sm text-charcoal-500">Create your first project to start tracking.</p>
           <button
             onClick={() => setShowProjectForm(true)}
-            className="mt-5 flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
+            className="clay-btn clay-btn-primary relative mt-5 flex items-center gap-2 text-sm"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -147,7 +175,7 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
         <div className="space-y-8">
           {activeProjects.length > 0 && (
             <section>
-              <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+              <h2 className="clay-label mb-3">
                 Active ({activeProjects.length})
               </h2>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -158,7 +186,7 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
                       <div className="mt-1.5">
                         <button
                           onClick={() => setExpandedHourBank(expandedHourBank === project.id ? null : project.id)}
-                          className="text-xs font-medium text-indigo-600 transition-colors hover:text-indigo-800"
+                          className="text-xs font-medium text-black underline underline-offset-4 decoration-dashed transition-colors hover:text-charcoal-500"
                         >
                           {expandedHourBank === project.id ? 'Hide' : 'Show'} sub-projects
                         </button>
@@ -175,7 +203,7 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
 
           {pendingProjects.length > 0 && (
             <section>
-              <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+              <h2 className="clay-label mb-3">
                 Pending ({pendingProjects.length})
               </h2>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -188,7 +216,7 @@ export default function ClientPage({ params }: { params: Promise<{ id: string }>
 
           {closedProjects.length > 0 && (
             <section>
-              <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+              <h2 className="clay-label mb-3">
                 Closed ({closedProjects.length})
               </h2>
               <div className="grid gap-3 sm:grid-cols-2">
